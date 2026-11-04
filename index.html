@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Catálogo Áureo</title>
+<meta name="description" content="Escudos de fútbol y figuras para armar con mini bloques. Lo que amas se arma.">
+<meta property="og:title" content="Catálogo Áureo">
+<meta property="og:description" content="Escudos de fútbol y figuras para armar con mini bloques.">
+<link rel="icon" href="isotipo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ======================================================================
+   CONFIGURACIÓN — lo único que se toca aquí
+   CSV_URL: el link «Publicar en la Web → CSV» de la Google Sheet
+   «Catálogo Aureo (web)». Mientras esté vacío se usa catalogo-inicial.csv.
+   ====================================================================== */
+</style>
+<script>
+  const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQpK1e9OMdtPyf5vG9DKsLMx9tUmnhjs_3ckbSN4UnbKXZhn7Jxz86oyfhc9xVWI7ZMDVq_aleGiCwL/pub?gid=390431306&single=true&output=csv";
+  const WHATSAPP = "56991412645";
+</script>
+<style>
+  :root{
+    --negro:#000; --blanco:#fff; --oro:#B8924A;
+    --fondo:#f6f4f0; --tarjeta:#fff; --texto:#111; --suave:#6b6660; --linea:#e4dfd6;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--fondo);color:var(--texto);font-family:Montserrat,system-ui,sans-serif;font-size:15px;line-height:1.45}
+  header{background:var(--negro);color:var(--blanco);text-align:center;padding:28px 16px 22px}
+  header img{height:58px;width:auto;max-width:80%}
+  .frase{margin:10px 0 0;font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:var(--oro)}
+  .barra{position:sticky;top:0;z-index:5;background:var(--negro);padding:0 16px 12px;border-bottom:1px solid #222}
+  .buscar{display:block;width:100%;max-width:640px;margin:0 auto 10px;padding:11px 14px;border-radius:999px;border:1px solid #333;background:#111;color:#fff;font:inherit}
+  .buscar::placeholder{color:#8a847c}
+  .chips{display:flex;gap:8px;overflow-x:auto;max-width:1100px;margin:0 auto;scrollbar-width:none;justify-content:flex-start}
+  .chips::-webkit-scrollbar{display:none}
+  .chip{flex:none;padding:7px 14px;border-radius:999px;border:1px solid #444;background:transparent;color:#ddd;font:500 12px Montserrat,sans-serif;letter-spacing:.04em;cursor:pointer;white-space:nowrap}
+  .chip.activa{background:var(--oro);border-color:var(--oro);color:#000}
+  main{max-width:1100px;margin:0 auto;padding:8px 16px 32px}
+  h2{font-family:"Cormorant Garamond",Georgia,serif;font-weight:600;font-size:30px;margin:30px 0 4px;scroll-margin-top:120px}
+  h2 small{font-family:Montserrat,sans-serif;font-size:12px;color:var(--suave);font-weight:500;margin-left:8px}
+  .grilla{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin-top:12px}
+  .card{background:var(--tarjeta);border:1px solid var(--linea);border-radius:14px;overflow:hidden;display:flex;flex-direction:column}
+  .foto{position:relative;aspect-ratio:1/1;background:#fbfaf7;display:flex;align-items:center;justify-content:center}
+  .foto img.p{width:100%;height:100%;object-fit:contain}
+  .foto img.ph{width:34%;opacity:.35}
+  .etq{position:absolute;top:8px;left:8px;background:var(--negro);color:var(--oro);font:600 10px Montserrat,sans-serif;letter-spacing:.08em;text-transform:uppercase;padding:4px 8px;border-radius:999px}
+  .info{padding:10px 12px 12px;display:flex;flex-direction:column;gap:3px;flex:1}
+  .nombre{font-weight:600;font-size:14px;line-height:1.25}
+  .tam{font-size:12px;color:var(--suave)}
+  .det{font-size:11.5px;color:var(--suave)}
+  .precio{margin-top:auto;padding-top:6px;font-weight:600;font-size:16px}
+  .precio s{color:var(--suave);font-weight:400;font-size:12.5px;margin-right:6px}
+  .precio.consultar{font-size:13px;color:var(--suave);font-weight:500}
+  .quiero{margin-top:8px;display:block;text-align:center;text-decoration:none;background:var(--negro);color:#fff;border-radius:999px;padding:8px 10px;font:600 12px Montserrat,sans-serif;letter-spacing:.04em}
+  .quiero:hover{background:#222}
+  .aviso{margin:28px 0 0;padding:16px;border:1px solid var(--linea);border-radius:14px;background:#fff;font-size:13px;color:var(--suave)}
+  .vacio{text-align:center;color:var(--suave);padding:40px 0}
+  footer{text-align:center;font-size:12px;color:var(--suave);padding:0 16px 90px}
+  .flotante{position:fixed;right:16px;bottom:16px;z-index:9;background:#25D366;color:#fff;text-decoration:none;border-radius:999px;padding:12px 18px;font:600 14px Montserrat,sans-serif;box-shadow:0 6px 18px rgba(0,0,0,.2)}
+  .foto img.p{cursor:zoom-in}
+  .zoom{position:absolute;right:8px;bottom:8px;width:30px;height:30px;border-radius:999px;background:rgba(0,0,0,.55);color:#fff;
+        display:flex;align-items:center;justify-content:center;pointer-events:none}
+  .visor{position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.92);display:none;flex-direction:column;align-items:center;justify-content:center;padding:16px}
+  .visor.abierto{display:flex}
+  .visor img{max-width:100%;max-height:calc(100vh - 170px);object-fit:contain;border-radius:10px;background:#fbfaf7}
+  .visor .pie{color:#fff;text-align:center;margin-top:14px;max-width:520px;width:100%}
+  .visor .pie .n{font-weight:600;font-size:16px}
+  .visor .pie .t{font-size:13px;color:#bbb;margin-top:2px}
+  .visor .pie .quiero{max-width:260px;margin:12px auto 0;background:var(--oro);color:#000}
+  .cerrar{position:absolute;top:12px;right:12px;width:44px;height:44px;border-radius:999px;border:0;background:rgba(255,255,255,.15);
+          color:#fff;font-size:26px;line-height:1;cursor:pointer}
+  @media (min-width:700px){ .grilla{grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px} header img{height:70px} }
+  @media print{
+    .barra,.flotante,.quiero,.zoom,.visor{display:none!important}
+    body{background:#fff}
+    header{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .grilla{grid-template-columns:repeat(4,1fr);gap:8px}
+    .card{break-inside:avoid}
+    h2{break-after:avoid}
+    section{break-before:auto}
+  }
+</style>
+</head>
+<body>
+<header>
+  <img src="logo.svg" alt="Áureo">
+  <p class="frase">Lo que amas se arma</p>
+</header>
+<div class="barra">
+  <input class="buscar" id="buscar" type="search" placeholder="Busca tu equipo o personaje…" autocomplete="off">
+  <nav class="chips" id="chips"></nav>
+</div>
+<main id="main"><p class="vacio">Cargando catálogo…</p></main>
+<footer>
+  <p>Precios en pesos chilenos. Envío según comuna, se paga junto con el pedido.<br>
+  Escudos desde $20.000: envío gratis en Santiago y a la región de tu equipo.</p>
+  <p>¿No está tu equipo? Lo diseñamos a pedido. Escríbenos.</p>
+</footer>
+<a class="flotante" id="flotante" target="_blank" rel="noopener">WhatsApp</a>
+<div class="visor" id="visor" role="dialog" aria-modal="true" aria-label="Foto ampliada">
+  <button class="cerrar" id="cerrar" aria-label="Cerrar">×</button>
+  <img id="visorImg" alt="">
+  <div class="pie"><div class="n" id="visorN"></div><div class="t" id="visorT"></div>
+    <a class="quiero" id="visorQ" target="_blank" rel="noopener">Lo quiero</a></div>
+</div>
+
+<script>
+const ORDEN = ["Escudos de fútbol","Figuras 3D mini","Figuras 3D grandes","Figuras 2D","Camisetas personalizadas","Personalizados"];
+
+function parseCSV(t){
+  const filas=[]; let f=[], c="", q=false;
+  for(let i=0;i<t.length;i++){
+    const ch=t[i];
+    if(q){ if(ch=='"'){ if(t[i+1]=='"'){c+='"';i++} else q=false } else c+=ch }
+    else if(ch=='"') q=true;
+    else if(ch==','){ f.push(c); c="" }
+    else if(ch=='\n'||ch=='\r'){ if(ch=='\r'&&t[i+1]=='\n') i++; f.push(c); filas.push(f); f=[]; c="" }
+    else c+=ch;
+  }
+  if(c!==""||f.length){ f.push(c); filas.push(f) }
+  return filas;
+}
+const norm = s => (s||"").normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().trim();
+const clp = n => "$" + Number(n).toLocaleString("es-CL");
+const num = s => { const d=String(s||"").replace(/[^\d]/g,""); return d?Number(d):0 };
+const esc = s => String(s||"").replace(/[&<>"]/g, m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]));
+
+// Un link de Drive («Compartir → cualquier persona con el link») se convierte en imagen directa.
+function foto(url){
+  url=(url||"").trim(); if(!url) return "";
+  const m = url.match(/\/d\/([\w-]{20,})/) || url.match(/[?&]id=([\w-]{20,})/);
+  if(m && /drive\.google|docs\.google/.test(url)) return "https://lh3.googleusercontent.com/d/"+m[1]+"=w600";
+  return url;
+}
+// Sin link en la planilla, se busca fotos/<nombre-del-producto>.jpg (ej. fotos/colo-colo.jpg).
+const slug = s => norm(s).replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+const wa = txt => "https://wa.me/"+WHATSAPP+"?text="+encodeURIComponent(txt);
+
+let productos=[], categoria="Todo";
+
+async function cargar(){
+  const url = CSV_URL ? CSV_URL + (CSV_URL.includes("?")?"&":"?") + "t=" + Date.now() : "catalogo-inicial.csv";
+  const r = await fetch(url, {cache:"no-store"});
+  const filas = parseCSV(await r.text()).filter(f=>f.some(x=>x.trim()));
+  const enc = filas.shift().map(norm);
+  const col = n => enc.findIndex(h=>h.startsWith(n));
+  const K = {mostrar:col("mostrar"),cat:col("categoria"),prod:col("producto"),tam:col("tamano"),precio:col("precio venta")>=0?col("precio venta"):col("precio"),
+             antes:col("precio antes"),etq:col("etiqueta"),det:col("detalle"),foto:col("foto")};
+  productos = filas.map(f=>({
+    mostrar: norm(f[K.mostrar]||"si"), cat:(f[K.cat]||"Otros").trim(), nombre:(f[K.prod]||"").trim(),
+    tam:(f[K.tam]||"").trim(), precio:num(f[K.precio]), antes:num(f[K.antes]), etq:(f[K.etq]||"").trim(),
+    det:(f[K.det]||"").trim(), foto:foto(f[K.foto])
+  })).filter(p=>p.nombre && !["no","n","0"].includes(p.mostrar));
+  pintar();
+}
+
+function categorias(){
+  const set=[...new Set(productos.map(p=>p.cat))];
+  return set.sort((a,b)=>{ const ia=ORDEN.indexOf(a), ib=ORDEN.indexOf(b); return (ia<0?99:ia)-(ib<0?99:ib) });
+}
+
+function tarjeta(p){
+  const precio = p.precio
+    ? `<div class="precio">${p.antes>p.precio?`<s>${clp(p.antes)}</s>`:""}${clp(p.precio)}</div>`
+    : `<div class="precio consultar">Precio a consultar</div>`;
+  const src = p.foto || `fotos/${slug(p.nombre)}.jpg`;
+  const img = `<img class="p" src="${esc(src)}" alt="${esc(p.nombre)}" loading="lazy" data-i="${productos.indexOf(p)}" onerror="this.onerror=null;this.className='ph';this.alt='';this.src='isotipo.svg';this.nextElementSibling&&this.nextElementSibling.remove()"><span class="zoom" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3M11 8v6M8 11h6"/></svg></span>`;
+  const msg = `Hola Áureo, me interesa: ${p.nombre}${p.tam?` (${p.tam})`:""}. ¿Me cuentas más?`;
+  return `<article class="card">
+    <div class="foto">${img}${p.etq?`<span class="etq">${esc(p.etq)}</span>`:""}</div>
+    <div class="info">
+      <div class="nombre">${esc(p.nombre)}</div>
+      ${p.tam?`<div class="tam">${esc(p.tam)}</div>`:""}
+      ${p.det?`<div class="det">${esc(p.det)}</div>`:""}
+      ${precio}
+      <a class="quiero" href="${wa(msg)}" target="_blank" rel="noopener">Lo quiero</a>
+    </div></article>`;
+}
+
+function pintar(){
+  const cats=categorias();
+  document.getElementById("chips").innerHTML = ["Todo",...cats].map(c=>
+    `<button class="chip${c===categoria?" activa":""}" data-c="${esc(c)}">${esc(c)}</button>`).join("");
+  const q=norm(document.getElementById("buscar").value);
+  const lista=productos.filter(p=>(categoria==="Todo"||p.cat===categoria) && (!q||norm(p.nombre+" "+p.cat).includes(q)));
+  const main=document.getElementById("main");
+  if(!lista.length){ main.innerHTML=`<p class="vacio">No encontramos «${esc(q)}». Escríbenos por WhatsApp: lo diseñamos a pedido.</p>`; return }
+  main.innerHTML = cats.filter(c=>lista.some(p=>p.cat===c)).map(c=>{
+    const ps=lista.filter(p=>p.cat===c);
+    return `<section><h2 id="${esc(norm(c).replace(/\s+/g,"-"))}">${esc(c)}<small>${ps.length}</small></h2>
+      <div class="grilla">${ps.map(tarjeta).join("")}</div></section>`;
+  }).join("");
+}
+
+document.getElementById("chips").addEventListener("click",e=>{
+  const b=e.target.closest(".chip"); if(!b) return;
+  categoria=b.dataset.c; pintar(); window.scrollTo({top:document.querySelector("main").offsetTop-110,behavior:"smooth"});
+});
+document.getElementById("buscar").addEventListener("input",pintar);
+
+// Foto grande: tocar la foto la abre a pantalla completa; se cierra con ×, tocando afuera, Esc o el botón Atrás.
+const visor=document.getElementById("visor");
+function abrirVisor(p, src){
+  document.getElementById("visorImg").src=src; document.getElementById("visorImg").alt=p.nombre;
+  document.getElementById("visorN").textContent=p.nombre;
+  document.getElementById("visorT").textContent=[p.tam, p.precio?clp(p.precio):""].filter(Boolean).join(" · ");
+  document.getElementById("visorQ").href=wa(`Hola Áureo, me interesa: ${p.nombre}${p.tam?` (${p.tam})`:""}. ¿Me cuentas más?`);
+  visor.classList.add("abierto"); document.body.style.overflow="hidden";
+  history.pushState({visor:1},"");
+}
+function cerrarVisor(desdeHistorial){
+  if(!visor.classList.contains("abierto")) return;
+  visor.classList.remove("abierto"); document.body.style.overflow="";
+  if(!desdeHistorial && history.state && history.state.visor) history.back();
+}
+document.getElementById("main").addEventListener("click",e=>{
+  const i=e.target.closest("img.p"); if(!i) return;
+  abrirVisor(productos[+i.dataset.i], i.currentSrc||i.src);
+});
+document.getElementById("cerrar").addEventListener("click",()=>cerrarVisor());
+visor.addEventListener("click",e=>{ if(e.target===visor) cerrarVisor(); });
+document.addEventListener("keydown",e=>{ if(e.key==="Escape") cerrarVisor(); });
+window.addEventListener("popstate",()=>cerrarVisor(true));
+document.getElementById("flotante").href = wa("Hola Áureo, vi el catálogo y tengo una consulta.");
+cargar().catch(()=>{ document.getElementById("main").innerHTML='<p class="vacio">No se pudo cargar el catálogo. Escríbenos por WhatsApp.</p>' });
+</script>
+</body>
+</html>

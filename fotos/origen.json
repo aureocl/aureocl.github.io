@@ -1,0 +1,290 @@
+{
+ "arcade-mega-man": {
+  "fecha": "2026-11-03T20:00:00",
+  "origen": "taller",
+  "producto": "arcade-mega-man",
+  "protegida": true
+ },
+ "audax-italiano": {
+  "fecha": "2026-11-03T20:06:47",
+  "origen": "laboratorio",
+  "producto": "Audax Italiano",
+  "protegida": true
+ },
+ "barcelona": {
+  "fecha": "2026-11-03T20:00:00",
+  "origen": "taller",
+  "producto": "barcelona",
+  "protegida": true
+ },
+ "blastoise-mini": {
+  "fecha": "2026-11-03T20:00:00",
+  "origen": "taller",
+  "producto": "blastoise-mini",
+  "protegida": true
+ },
+ "boca-juniors": {
+  "fecha": "2026-11-03T20:00:00",
+  "origen": "taller",
+  "producto": "boca-juniors",
+  "protegida": true
+ },
+ "camiseta-personalizada-con-escudo": {
+  "fecha": "2026-11-03T22:20:16",
+  "origen": "laboratorio",
+  "producto": "Camiseta personalizada (con escudo)",
+  "protegida": true
+ },
+ "camiseta-personalizada-sola": {
+  "fecha": "2026-11-03T22:18:56",
+  "origen": "laboratorio",
+  "producto": "Camiseta personalizada (sola)",
+  "protegida": true
+ },
+ "carabela-magallanes-grande": {
+  "fecha": "2026-11-03T20:00:00",
+  "origen": "taller",
+  "producto": "carabela-magallanes-grande",
+  "protegida": true
+ },
+ "celeste": {
+  "fecha": "2026-11-03T20:00:00",
+  "origen": "taller",
+  "producto": "celeste",
+  "protegida": true
+ },
+ "cobreloa": {
+  "fecha": "2026-11-03T20:00:00",
+  "origen": "taller",
+  "producto": "cobreloa",
+  "protegida": true
+ },
+ "colo-colo": {
+  "fecha": "2026-11-03T20:00:00",
+  "origen": "laboratorio",
+  "producto": "colo-colo",
+  "protegida": true
+ },
+ "coquimbo-unido": {
+  "fecha": "2026-11-03T20:00:00",
+  "origen": "taller",
+  "producto": "coquimbo-unido",
+  "protegida": true
+ },
+ "curico-unido": {
+  "fecha": "2026-11-03T20:00:00",
+  "origen": "taller",
+  "producto": "curico-unido",
+  "protegida": true
+ },
+ "deportes-concepcion": {
+  "fecha": "2026-11-03T20:06:48",
+  "origen": "laboratorio",
+  "producto": "Deportes Concepción",
+  "protegida": true
+ },
+ "deportes-iquique": {
+  "fecha": "2026-11-03T20:00:00",
+  "origen": "laboratorio",
+  "producto": "deportes-iquique",
+  "protegida": true
+ },
+ "deportes-temuco": {
+  "fecha": "2026-11-03T20:00:00",
+  "origen": "laboratorio",
+  "producto": "deportes-temuco",
+  "protegida": true
+ },
+ "everton": {
+  "fecha": "2026-11-03T20:00:00",
+  "origen": "taller",
+  "producto": "everton",
+  "protegida": true
+ },
+ "gengar-mini": {
+  "fecha": "2026-11-03T20:00:00",
+  "origen": "taller",
+  "producto": "gengar-mini",
+  "protegida": true
+ },
+ "goku-mini": {
+  "fecha": "2026-11-03T20:07:32",
+  "origen": "taller",
+  "producto": "Goku mini",
+  "protegida": true
+ },
+ "harry-potter-mini": {
+  "fecha": "2026-11-03T20:00:00",
+  "origen": "taller",
+  "producto": "harry-potter-mini",
+  "protegida": true
+ },
+ "hello-kitty-mini-azul": {
+  "fecha": "2026-11-03T20:00:00",
+  "origen": "taller",
+  "producto": "hello-kitty-mini-azul",
+  "protegida": true
+ },
+ "hello-kitty-mini-rosada": {
+  "fecha": "2026-11-03T20:00:00",
+  "origen": "taller",
+  "producto": "hello-kitty-mini-rosada",
+  "protegida": true
+ },
+ "homero-mini": {
+  "fecha": "2026-11-03T20:00:00",
+  "origen": "taller",
+  "producto": "homero-mini",
+  "protegida": true
+ },
+ "huachipato": {
+  "fecha": "2026-11-03T20:00:00",
+  "origen": "taller",
+  "producto": "huachipato",
+  "protegida": true
+ },
+ "iron-man-mini": {
+  "fecha": "2026-11-03T20:00:00",
+  "origen": "taller",
+  "producto": "iron-man-mini",
+  "protegida": true
+ },
+ "kyle-mini": {
+  "fecha": "2026-11-03T20:00:00",
+  "origen": "taller",
+  "producto": "kyle-mini",
+  "protegida": true
+ },
+ "luffy-mini": {
+  "fecha": "2026-11-03T20:00:00",
+  "origen": "taller",
+  "producto": "luffy-mini",
+  "protegida": true
+ },
+ "magallanes": {
+  "fecha": "2026-11-03T20:00:00",
+  "origen": "taller",
+  "producto": "magallanes",
+  "protegida": true
+ },
+ "marciano-mini": {
+  "fecha": "2026-11-03T20:00:00",
+  "origen": "taller",
+  "producto": "marciano-mini",
+  "protegida": true
+ },
+ "mario-y-luigi": {
+  "fecha": "2026-11-03T20:00:00",
+  "origen": "taller",
+  "producto": "mario-y-luigi",
+  "protegida": true
+ },
+ "mickey-mago-mini": {
+  "fecha": "2026-11-03T20:00:00",
+  "origen": "taller",
+  "producto": "mickey-mago-mini",
+  "protegida": true
+ },
+ "nublense": {
+  "fecha": "2026-11-03T20:00:00",
+  "origen": "taller",
+  "producto": "nublense",
+  "protegida": true
+ },
+ "o-higgins": {
+  "fecha": "2026-11-03T20:27:29",
+  "origen": "taller",
+  "producto": "O'Higgins",
+  "protegida": true
+ },
+ "palestino": {
+  "fecha": "2026-11-03T20:00:00",
+  "origen": "taller",
+  "producto": "palestino",
+  "protegida": true
+ },
+ "pelota-de-futbol-mini": {
+  "fecha": "2026-11-03T20:00:00",
+  "origen": "taller",
+  "producto": "pelota-de-futbol-mini",
+  "protegida": true
+ },
+ "pokebola-mini": {
+  "fecha": "2026-11-03T20:00:00",
+  "origen": "taller",
+  "producto": "pokebola-mini",
+  "protegida": true
+ },
+ "rangers-de-talca": {
+  "fecha": "2026-11-03T20:00:00",
+  "origen": "laboratorio",
+  "producto": "rangers-de-talca",
+  "protegida": true
+ },
+ "real-madrid": {
+  "fecha": "2026-11-03T20:30:14",
+  "origen": "taller",
+  "producto": "Real Madrid",
+  "protegida": true
+ },
+ "river-plate": {
+  "fecha": "2026-11-03T20:00:00",
+  "origen": "taller",
+  "producto": "river-plate",
+  "protegida": true
+ },
+ "rocky-mini": {
+  "fecha": "2026-11-03T20:00:00",
+  "origen": "taller",
+  "producto": "rocky-mini",
+  "protegida": true
+ },
+ "san-luis-de-quillota": {
+  "fecha": "2026-11-03T20:00:00",
+  "origen": "laboratorio",
+  "producto": "san-luis-de-quillota",
+  "protegida": true
+ },
+ "santiago-wanderers": {
+  "fecha": "2026-11-03T20:00:00",
+  "origen": "taller",
+  "producto": "santiago-wanderers",
+  "protegida": true
+ },
+ "spiderman-mini": {
+  "fecha": "2026-11-03T20:00:00",
+  "origen": "taller",
+  "producto": "spiderman-mini",
+  "protegida": true
+ },
+ "stan-mini": {
+  "fecha": "2026-11-03T20:00:00",
+  "origen": "taller",
+  "producto": "stan-mini",
+  "protegida": true
+ },
+ "stitch-mini": {
+  "fecha": "2026-11-03T20:00:00",
+  "origen": "taller",
+  "producto": "stitch-mini",
+  "protegida": true
+ },
+ "u-de-chile": {
+  "fecha": "2026-11-03T20:00:00",
+  "origen": "taller",
+  "producto": "u-de-chile",
+  "protegida": true
+ },
+ "uc": {
+  "fecha": "2026-11-03T20:00:00",
+  "origen": "taller",
+  "producto": "uc",
+  "protegida": true
+ },
+ "union-espanola": {
+  "fecha": "2026-11-03T20:00:00",
+  "origen": "laboratorio",
+  "producto": "union-espanola",
+  "protegida": true
+ }
+}
