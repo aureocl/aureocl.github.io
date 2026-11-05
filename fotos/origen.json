@@ -275,6 +275,12 @@
   "producto": "pelota-de-futbol-mini",
   "protegida": true
  },
+ "pikachu-mini": {
+  "fecha": "2026-11-05T16:22:17",
+  "origen": "taller",
+  "producto": "Pikachu mini",
+  "protegida": true
+ },
  "pokebola-mini": {
   "fecha": "2026-11-03T20:00:00",
   "origen": "taller",
