@@ -58,6 +58,14 @@
   .precio.consultar{font-size:13px;color:var(--suave);font-weight:500}
   .quiero{margin-top:8px;display:block;text-align:center;text-decoration:none;background:var(--negro);color:#fff;border-radius:999px;padding:8px 10px;font:600 12px Montserrat,sans-serif;letter-spacing:.04em}
   .quiero:hover{background:#222}
+  .combo-l{margin-top:6px;font-size:11.5px;line-height:1.3;color:#6d5320;background:#faf3e3;border:1px solid #ecdcb6;border-radius:8px;padding:5px 7px}
+  .combo-l b{color:#000}
+  .combo{display:flex;gap:14px;align-items:center;margin:14px 0 4px;padding:12px;border-radius:14px;background:var(--negro);color:#fff}
+  .combo img{width:96px;height:96px;flex:none;object-fit:cover;border-radius:10px;background:#fbfaf7}
+  .combo .t1{font:600 11px Montserrat,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--oro)}
+  .combo .t2{font-size:14px;font-weight:600;margin:3px 0}
+  .combo .t3{font-size:12.5px;color:#ccc}
+  .combo button{margin-top:8px;background:var(--oro);color:#000;border:0;border-radius:999px;padding:7px 12px;font:600 12px Montserrat,sans-serif;cursor:pointer}
   .aviso{margin:28px 0 0;padding:16px;border:1px solid var(--linea);border-radius:14px;background:#fff;font-size:13px;color:var(--suave)}
   .vacio{text-align:center;color:var(--suave);padding:40px 0}
   footer{text-align:center;font-size:12px;color:var(--suave);padding:0 16px 90px}
@@ -178,8 +186,24 @@ function tarjeta(p){
       ${p.tam?`<div class="tam">${esc(p.tam)}</div>`:""}
       ${p.det?`<div class="det">${esc(p.det)}</div>`:""}
       ${precio}
+      ${esEscudo(p)&&combo()?`<div class="combo-l">👕 + tu camiseta con nombre: <b>${clp(combo().precio)}</b></div>`:""}
       <a class="quiero" href="${wa(msg)}" target="_blank" rel="noopener">Lo quiero</a>
     </div></article>`;
+}
+
+// Combo camiseta (Hilo D2): el precio sale de la fila «Camiseta personalizada (con escudo)» de la planilla.
+const esEscudo = p => p.cat==="Escudos de fútbol" && !/a pedido/i.test(p.nombre);
+const combo = () => productos.find(p=>/camiseta/i.test(p.nombre) && /con escudo/i.test(p.nombre) && p.precio) || null;
+const sola  = () => productos.find(p=>/camiseta/i.test(p.nombre) && /sola/i.test(p.nombre) && p.precio) || null;
+function bannerCombo(){
+  const c=combo(); if(!c) return "";
+  const s=sola();
+  const src = c.foto || `fotos/${slug(c.nombre)}.jpg`;
+  return `<div class="combo"><img src="${esc(src)}" alt="Escudo y camiseta personalizada" loading="lazy" onerror="this.remove()">
+    <div><div class="t1">Combo hincha</div>
+    <div class="t2">Con tu escudo, tu camiseta con nombre y número a ${clp(c.precio)}${s?` <span style="color:#999;font-weight:400">(sola ${clp(s.precio)})</span>`:""}</div>
+    <div class="t3">${esc(c.det||"")}</div>
+    <button type="button" data-ir="Camisetas personalizadas">Ver camisetas</button></div></div>`;
 }
 
 function pintar(){
@@ -193,6 +217,7 @@ function pintar(){
   main.innerHTML = cats.filter(c=>lista.some(p=>p.cat===c)).map(c=>{
     const ps=lista.filter(p=>p.cat===c);
     return `<section><h2 id="${esc(norm(c).replace(/\s+/g,"-"))}">${esc(c)}<small>${ps.length}</small></h2>
+      ${c==="Escudos de fútbol"?bannerCombo():""}
       <div class="grilla">${ps.map(tarjeta).join("")}</div></section>`;
   }).join("");
 }
@@ -219,6 +244,8 @@ function cerrarVisor(desdeHistorial){
   if(!desdeHistorial && history.state && history.state.visor) history.back();
 }
 document.getElementById("main").addEventListener("click",e=>{
+  const ir=e.target.closest("[data-ir]");
+  if(ir){ categoria=ir.dataset.ir; pintar(); window.scrollTo({top:document.querySelector("main").offsetTop-110,behavior:"smooth"}); return; }
   const i=e.target.closest("img.p"); if(!i) return;
   abrirVisor(productos[+i.dataset.i], i.currentSrc||i.src);
 });
