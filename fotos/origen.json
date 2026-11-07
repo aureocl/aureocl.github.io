@@ -137,6 +137,12 @@
   "producto": "deportes-iquique",
   "protegida": true
  },
+ "deportes-puerto-montt": {
+  "fecha": "2026-11-07T00:20:17",
+  "origen": "taller",
+  "producto": "Deportes Puerto Montt",
+  "protegida": true
+ },
  "deportes-temuco": {
   "fecha": "2026-11-03T20:00:00",
   "origen": "laboratorio",
