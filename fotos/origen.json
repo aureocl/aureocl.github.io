@@ -137,6 +137,12 @@
   "producto": "deportes-iquique",
   "protegida": true
  },
+ "deportes-la-serena": {
+  "fecha": "2026-11-07T00:59:23",
+  "origen": "taller",
+  "producto": "Deportes La Serena",
+  "protegida": true
+ },
  "deportes-puerto-montt": {
   "fecha": "2026-11-07T00:20:17",
   "origen": "taller",
