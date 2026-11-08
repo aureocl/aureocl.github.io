@@ -258,6 +258,53 @@ footer{text-align:center;font-size:12px;color:var(--suave);padding:20px 16px 100
 .chips-ded{display:flex;flex-direction:column;gap:6px;margin-top:6px}
 .chips-ded button{text-align:left;border:1px dashed var(--oro);background:#fff;border-radius:10px;padding:7px 10px;font-size:12.5px}
 .cuenta{font-size:11px;color:var(--suave);text-align:right}
+/* Landing completa (piloto) */
+.f-top{background:#fff}
+.f-galeria .principal{width:100%;aspect-ratio:1/1;object-fit:cover;display:block;background:#fbfaf7}
+.miniaturas{display:flex;gap:8px;overflow-x:auto;padding:8px 16px;scrollbar-width:none;background:#fff}
+.miniaturas img{width:62px;height:62px;object-fit:cover;border-radius:10px;border:2px solid transparent;cursor:pointer;flex:none;opacity:.75}
+.miniaturas img.sel{border-color:var(--oro);opacity:1}
+.f-info{padding:18px 16px 20px}
+.f-info .eyebrow{font:600 11px Montserrat;letter-spacing:.16em;text-transform:uppercase;color:var(--oro)}
+.f-info h1{font-size:38px;line-height:1.02;margin:6px 0 10px}
+.prueba-corta{display:flex;gap:8px;align-items:center;font-size:12.5px;color:#3a3732;margin:2px 0 10px}
+.prueba-corta img{width:30px;height:30px;border-radius:50%;object-fit:cover}
+.confianza{list-style:none;padding:0;margin:14px 0 0;display:grid;gap:7px;font-size:13px}
+.confianza li{display:flex;gap:8px;align-items:center}
+.cta-info{display:none}
+.split img,.foto-bloque{width:100%;border-radius:16px;display:block;object-fit:cover;aspect-ratio:1/1;background:#fbfaf7}
+.clientes img{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:12px;display:block}
+.clientes figure{margin:0}
+.clientes figcaption{font-size:11px;color:var(--suave);margin-top:4px}
+.cita-grande{font-family:"Cormorant Garamond",Georgia,serif;font-size:24px;line-height:1.2;margin:14px 0 4px}
+.cita-grande small{display:block;font:500 12px Montserrat;color:var(--suave);margin-top:6px}
+@media(min-width:900px){
+  .ficha{padding-bottom:40px}
+  .f-top{display:grid;grid-template-columns:1.15fr 1fr;gap:44px;max-width:1180px;margin:0 auto;padding:32px 28px;align-items:start}
+  .f-galeria .principal{border-radius:20px}
+  .miniaturas{padding:12px 0 0}
+  .miniaturas img{width:84px;height:84px}
+  .f-info{position:sticky;top:90px;padding:8px 0}
+  .f-info h1{font-size:56px}
+  .cta-info{display:flex;gap:10px;margin-top:18px}
+  .cta-info .btn-grande{height:54px;font-size:16px}
+  body.en-ficha .barra-fija{display:none}
+  .bloque{max-width:1080px;margin:0 auto;padding:56px 28px;border-top:0}
+  .bloque h3{font-size:36px}
+  .bloque p{font-size:16px;line-height:1.6}
+  .historia{max-width:none;padding:70px 28px}
+  .historia>div{max-width:760px;margin:0 auto;text-align:center}
+  .historia h3{font-size:48px}
+  .split{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
+  .split.inv>:first-child{order:2}
+  .quien{grid-template-columns:repeat(4,1fr)}
+  .caja{grid-template-columns:repeat(4,1fr)}
+  .garantias{grid-template-columns:repeat(4,1fr)}
+  .clientes{grid-template-columns:repeat(3,1fr);gap:16px}
+  .contador b{font-size:34px}
+  .obj details,.faq details{max-width:760px}
+  .otros .card{width:200px}
+}
 .aviso-proto{background:#fff3cd;color:#664d03;font-size:11.5px;text-align:center;padding:5px 8px}
 </style>
 </head>
@@ -290,6 +337,16 @@ const tag = l => `<span class="prop">Propuesta ${l}</span><br>`;
 const EQUIPOS_CAM = [["Colo-Colo","ej-colo-colo-local.jpg"],["Colo-Colo (visita)","ej-colo-colo-visita.jpg"],["U de Chile","ej-universidad-de-chile-local.jpg"],["Audax Italiano","ej-audax-italiano-local.jpg"],["Cobreloa","ej-cobreloa-local.jpg"],["Deportes Concepción","ej-deportes-concepcion-local.jpg"],["Deportes Iquique","ej-deportes-iquique-local.jpg"],["Deportes Temuco","ej-deportes-temuco-local.jpg"],["Huachipato","ej-huachipato-local.jpg"],["Magallanes","ej-magallanes-local.jpg"],["O'Higgins","ej-o-higgins-local.jpg"],["Rangers de Talca","ej-rangers-de-talca-local.jpg"],["River Plate","ej-river-plate-local.jpg"],["San Luis de Quillota","ej-san-luis-local.jpg"],["Santiago Wanderers","ej-santiago-wanderers-local.jpg"],["Unión Española","ej-union-espanola-local.jpg"]];
 const OTRO_EQ = "Otro equipo (lo vemos por WhatsApp)";
 const fotoEq = eq => { const e = EQUIPOS_CAM.find(x=>x[0]===eq); return e ? CAM_BASE+e[1] : "isotipo.svg"; };
+/* Landing piloto con material real (Drive «5 Imágenes…/Colo Colo» y Estudio). Fotos a 500 px con marca de agua. */
+const LANDING_BASE = "landing/";
+const PILOTO = {"colo-colo": {
+  carpeta: "colo-colo/", galeria: ["hero","pared","detalle","caja","armando","real"],
+  pared: "pared", armando: "armando", caja: "caja", real: "real",
+  clientes: [["cliente1","Ya en la pared de un Albo"],["cliente2","«Muy entretenido, y eso que soy malo para las manualidades»"],["real","Así queda armado, de verdad"]],
+  cita: "Ya armé el escudo del más grande. Gracias, fue muy entretenido, y eso que soy malo para las manualidades.",
+  hincha: "Desde 1925, el Cacique. En 1991, el primer equipo chileno campeón de América. Y sobre el escudo, la franja negra por David Arellano, su fundador: la vas a armar fila por fila.",
+}};
+const fp = (pl, k) => LANDING_BASE + pl.carpeta + k + ".jpg";
 const SERIES = ["Anime","Pokémon","Harry Potter","Marvel","Mario Bros","Sonic","Disney","Star Wars","Sanrio","Zootopia","Minecraft","Bob Esponja","Los Simpsons"];
 /* Envío gratis a la región del club (regla de Áureo). Cobreloa: solo Calama. */
 const REGION_CLUB = {"santiago-wanderers":"Valparaíso","everton":"Valparaíso","san-luis-de-quillota":"Valparaíso","deportes-iquique":"Tarapacá","nublense":"Ñuble","huachipato":"Biobío","deportes-concepcion":"Biobío","rangers-de-talca":"Maule","curico-unido":"Maule","o-higgins":"O'Higgins","coquimbo-unido":"Coquimbo","deportes-la-serena":"Coquimbo","deportes-temuco":"Araucanía","cobreloa":"Antofagasta|calama","deportes-puerto-montt":"Los Lagos"};
@@ -371,54 +428,62 @@ function vistaCatalogo(){
 function vistaFicha(s){
   const p=porSlug(s);if(!p){location.hash="";return}
   modo("en-ficha",p.nombre);window.scrollTo(0,0);
-  const h=esEscudo(p)?hincha(p):null, tc=tramosCombo(), c=comboFila();
+  const h=esEscudo(p)?hincha(p):null, pl=PILOTO[p.slug]||null;
   const nombreCorto=p.nombre.replace(/ \(.*\)$/,"");
   const titulo=esEscudo(p)?`Tu ${esc(nombreCorto)},<br>armado por ti.`:`${esc(nombreCorto)},<br>armado por ti.`;
   const otros=P.filter(x=>x.cat===p.cat&&x.slug!==p.slug&&x.precio).slice(0,10);
+  const nEsc=P.filter(esEscudo).length;
+  const fotoO=(k,ph,ratio="1/1")=>pl&&pl[k]?`<img class="foto-bloque" src="${fp(pl,pl[k])}" alt="" loading="lazy">`:`<div class="placeholder" style="aspect-ratio:${ratio}">${ph}</div>`;
   let cant=1;
   document.getElementById("vista").innerHTML=`<div class="ficha">
-  <div class="f-hero">${img(p)}</div>
-  <div class="f-cab">
-    <div class="eyebrow">${h?`Para el ${esc(h[0])}`:esc(p.cat)}</div>
-    <h1 class="serif">${titulo}</h1>
-    <div class="datos">${p.tam?`<span class="dato">📏 ${esc(p.tam)}</span>`:""}${h&&h[1]?`<span class="dato">🧩 +${h[1]} piezas</span>`:""}${esEscudo(p)?`<span class="dato">⏳ 2 a 3 horas</span>`:""}</div>
-    ${p.precio?`<div class="f-precio"><b>${clp(p.precio)}</b><span>${p.precio>=19000?"Envío gratis en Santiago":"Envío desde $2.000"}</span></div>`:`<div class="f-precio"><b style="font-size:20px">Precio a consultar</b></div>`}
+  <div class="f-top">
+    <div class="f-galeria">${pl?`<img class="principal" id="fotoP" src="${fp(pl,pl.galeria[0])}" alt="${esc(p.nombre)}">
+      <div class="miniaturas">${pl.galeria.map((k,i)=>`<img src="${fp(pl,k)}" data-gal="${fp(pl,k)}" class="${i?"":"sel"}" alt="">`).join("")}</div>`:`<div class="f-hero">${img(p)}</div>`}</div>
+    <div class="f-info">
+      <div class="eyebrow">${h?`Para el ${esc(h[0])}`:esc(p.cat)}</div>
+      <h1 class="serif">${titulo}</h1>
+      ${pl?`<div class="prueba-corta"><img src="${fp(pl,"cliente2")}" alt="">«${esc(pl.cita.split(",")[1]?.trim()||pl.cita)}…»</div>`:""}
+      <div class="datos">${p.tam?`<span class="dato">📏 ${esc(p.tam)}</span>`:""}${h&&h[1]?`<span class="dato">🧩 +${h[1]} piezas</span>`:""}${esEscudo(p)?`<span class="dato">⏳ 2 a 3 horas</span>`:""}</div>
+      ${p.precio?`<div class="f-precio"><b>${clp(p.precio)}</b><span>${p.precio>=19000?"Envío gratis en Santiago":"Envío desde $2.000"}</span></div>`:`<div class="f-precio"><b style="font-size:20px">Precio a consultar</b></div>`}
+      ${p.precio?`<div class="cta-info"><div class="cant"><button data-menos>−</button><span data-cantn>1</span><button data-mas1>+</button></div><button class="btn-grande" data-cta>Agregar al pedido</button></div>`:""}
+      <ul class="confianza"><li>📦 Llega en caja, con las piezas separadas por color</li><li>🧩 Garantía piezas completas</li><li>🚚 Santiago 1 a 3 días hábiles · regiones 2 a 5</li><li>💬 Confirmas y pagas por WhatsApp, con Javi y Caro</li></ul>
+    </div>
   </div>
   ${esEscudo(p)?`
-  <div class="bloque historia"><h3>La camiseta la usas.<br><em>La pared está esperando.</em></h3>
+  <div class="bloque historia"><div><h3>La camiseta la usas.<br><em>La pared está esperando.</em></h3>
     <p>Llevas años alentando ${h?`como buen ${esc(h[0])}`:"a tu equipo"}: en el estadio, en la casa, en el grupo de WhatsApp. La camiseta, la bufanda y el gorro te acompañan a todas partes.</p>
-    <p>Pero en tu pieza, en el living o en la oficina, ¿dónde se ve que eres de ${esc(nombreCorto)}?</p></div>
-  <div class="bloque"><h3>La idea: lo armas tú</h3>
-    <p>No te lo mandamos armado, y es a propósito. Lo que uno arma con sus manos lo quiere más: cada fila es tuya, y cuando lo cuelgas sabes cuánto te costó dejarlo perfecto.</p>
-    <p>Por eso lo llamamos <b>tu escudo, armado por ti</b>. No es un cuadro que compraste: es uno que hiciste.</p>
-    <button class="btn-grande oro cta-medio" data-cta>Lo quiero · ${p.precio?clp(p.precio):""}</button></div>
-  <div class="bloque"><h3>Del porte de un póster</h3><p>${p.tam?`Armado mide ${esc(p.tam)}.`:""} Se ve desde la puerta.</p>
-    <div class="placeholder" style="aspect-ratio:4/3">[Foto: el escudo colgado en una pared, con una persona o un mueble al lado]</div></div>
-  <div class="bloque"><h3>Una tarde de panorama</h3><p>Son 2 a 3 horas: solo, en familia o con amigos. Vas fila por fila con el instructivo y ves cómo aparece tu escudo.</p>
-    <div class="placeholder video">[Video corto del armado, 15 a 20 s, vertical]</div></div>
+    <p>Pero en tu pieza, en el living o en la oficina, ¿dónde se ve que eres de ${esc(nombreCorto)}?</p></div></div>
+  <div class="bloque split"><div>${fotoO("armando","[Foto armándolo]")}</div><div><h3>La idea: lo armas tú</h3>
+    <p>No te lo mandamos armado, y es a propósito. Lo que uno arma con sus manos lo quiere más: cada fila es tuya, y cuando lo cuelgas sabes lo que te costó dejarlo perfecto.</p>
+    <p>No es un cuadro que compraste: <b>es uno que hiciste</b>.</p>
+    <button class="btn-grande oro cta-medio" data-cta>Lo quiero · ${p.precio?clp(p.precio):""}</button></div></div>
+  <div class="bloque split inv"><div>${fotoO("pared","[Foto: el escudo colgado en una pared]")}</div><div><h3>Del porte de un póster</h3><p>${p.tam?`Armado mide <b>${esc(p.tam)}</b>${h&&h[1]?`, con más de ${h[1]} piezas`:""}.`:""} Se ve desde la puerta, en tu pieza, el living o la oficina.</p></div></div>
+  <div class="bloque split"><div>${pl?`<div class="placeholder video" style="aspect-ratio:1/1">[Aquí va el timelapse del armado, 15 a 20 s, sin sonido. Ya existe en los reels de Colo-Colo]</div>`:`<div class="placeholder video">[Video corto del armado, 15 a 20 s, vertical]</div>`}</div><div><h3>Una tarde de panorama</h3><p>Son 2 a 3 horas: solo, en familia o con amigos. Vas fila por fila con el instructivo impreso y ves cómo aparece tu escudo.</p></div></div>
   <div class="bloque"><h3>¿Para quién es?</h3><div class="quien">
     <div><i>⚽</i><b>Para ti, hincha</b>Tu escudo en tu pieza, armado con tus manos.</div>
     <div><i>🎁</i><b>Para regalar</b>Al papá, la pareja o el amigo más ${h?esc(h[0]):"hincha"}. Se lo mandamos directo.</div>
     <div><i>👨‍👧</i><b>Para armar juntos</b>Una tarde con tus hijos sin pantallas, y algo que queda colgado.</div>
     <div><i>🏆</i><b>Para tu colección</b>Escudo, camisetas con nombre y figuras, todo en un envío.</div></div></div>`:""}
-  <div class="bloque"><h3>Lo que llega en la caja</h3><div class="caja">
+  <div class="bloque split inv"><div>${fotoO("caja","[Foto de la caja abierta]")}</div><div><h3>Lo que llega en la caja</h3><div class="caja">
     <div><b>🎨</b>Piezas separadas por color</div><div><b>📄</b>Instructivo impreso, paso a paso</div>
-    <div><b>➕</b>Piezas de repuesto</div><div><b>🪝</b>Tarjeta para armar el gancho con las mismas piezas</div></div></div>
-  ${h?`<div class="bloque"><h3>Para el ${esc(h[0])}</h3><p>[2 o 3 líneas para el hincha: un recuerdo, una gesta, lo que se siente. Las escribe Claude desde <i>contexto/fandoms</i> y las aprueba Áureo.]</p></div>`:""}
+    <div><b>➕</b>Piezas de repuesto</div><div><b>🪝</b>Tarjeta para armar el gancho con las mismas piezas</div></div></div></div>
+  ${h?`<div class="bloque"><h3>Para el ${esc(h[0])}</h3><p>${pl?esc(pl.hincha):"[2 o 3 líneas para el hincha: un recuerdo, una gesta, lo que se siente.]"}</p></div>`:""}
   <div class="bloque"><h3>Ya lo armaron</h3>
-    <div class="contador"><div><b>[N]</b>pedidos despachados</div><div><b>[N]</b>equipos en el catálogo</div><div><b>[N]</b>regiones</div></div>
-    <div class="clientes"><div class="placeholder">[Foto cliente 1 con su escudo]</div><div class="placeholder">[Foto cliente 2]</div><div class="placeholder">[Foto cliente 3]</div></div>
-    <p class="cita">[Frase real de un cliente, con su permiso]</p></div>
+    <div class="contador"><div><b>126</b>pedidos solo en octubre</div><div><b>${nEsc}</b>escudos para elegir</div><div><b>Todo Chile</b>despachamos a todas las regiones</div></div>
+    ${pl?`<div class="clientes">${pl.clientes.map(([k,txt])=>`<figure><img src="${fp(pl,k)}" alt="" loading="lazy"><figcaption>${esc(txt)}</figcaption></figure>`).join("")}</div>
+      <p class="cita-grande">«${esc(pl.cita)}»<small>Cliente de Áureo, por WhatsApp</small></p>`:
+      `<div class="clientes"><div class="placeholder">[Foto cliente 1]</div><div class="placeholder">[Foto cliente 2]</div><div class="placeholder">[Foto cliente 3]</div></div><p class="cita">[Frase real de un cliente, con su permiso]</p>`}</div>
   <div class="bloque obj"><h3>¿Y si…?</h3>
     <details open><summary>¿Y si no sé armarlo?</summary><p>Si sabes seguir colores, lo armas. El instructivo va fila por fila. Y si te trabas, nos escribes por WhatsApp y te ayudamos.</p></details>
     <details><summary>¿No es caro para unas piezas?</summary><p>${h&&h[1]?`Son más de ${h[1]} piezas, `:""}2 a 3 horas de panorama y un cuadro ${p.tam?`de ${esc(p.tam)} `:""}que vas a tener colgado por años. Y lo hiciste tú.</p></details>
-    <details><summary>¿Llega a tiempo?</summary><p>Santiago 1 a 3 días hábiles y regiones 2 a 5 desde que confirmamos el pago, con número de seguimiento. ¿Apurado? Elige envío prioritario.</p></details>
+    <details><summary>¿Llega a tiempo?</summary><p>Santiago 1 a 3 días hábiles y regiones 2 a 5 desde que confirmamos el pago, con número de seguimiento. ¿Apurado? Agrega prioridad al final.</p></details>
     <details><summary>¿Es seguro pagar por transferencia?</summary><p>Confirmas tu pedido por WhatsApp con nosotros, Javi y Caro. Te mandamos los datos y, cuando sale, el número de seguimiento.</p></details></div>
   <div class="bloque"><h3>Nuestras garantías</h3><div class="garantias">
     <div><i>🧩</i><b>Piezas completas</b>Vienen repuestos y, si falta alguna, te la mandamos.</div>
     <div><i>💬</i><b>Te ayudamos a armarlo</b>Si te trabas, nos escribes y te guiamos.</div>
     <div><i>📦</i><b>Seguimiento</b>Te mandamos el número apenas sale.</div>
-    <div><i>🛠️</i><b>Llega bien</b>Si algo llega dañado, te lo solucionamos.</div></div></div>
+    <div><i>🛠️</i><b>Llega bien</b>Si algo llega dañado, te lo solucionamos.</div></div>
+    ${p.precio?`<button class="btn-grande oro cta-medio" style="max-width:420px" data-cta>Lo quiero · ${clp(p.precio)}</button>`:""}</div>
   <div class="bloque faq"><h3>Preguntas</h3>
     <details><summary>¿Viene armado?</summary><p>No: lo armas tú. Esa es la gracia. Llega con todo lo necesario.</p></details>
     <details><summary>¿Cómo se cuelga?</summary><p>Viene una tarjeta que enseña a armar el gancho con las mismas piezas.</p></details>
@@ -427,16 +492,16 @@ function vistaFicha(s){
     <details><summary>¿Es para regalo?</summary><p>Lo mandamos directo a quien lo recibe. Márcalo al completar tus datos.</p></details></div>
   ${otros.length?`<div class="bloque"><h3>${esEscudo(p)?"Otros escudos":"También te puede gustar"}</h3><div class="otros">${otros.map(tarjeta).join("")}</div></div>`:""}
   </div>
-  ${p.precio?`<div class="barra-fija"><div class="cant"><button id="menos">−</button><span id="cantN">1</span><button id="mas">+</button></div>
-    <button class="btn-grande" id="agregarF">Agregar al pedido · ${clp(p.precio)}</button></div>`:
+  ${p.precio?`<div class="barra-fija"><div class="cant"><button data-menos>−</button><span data-cantn>1</span><button data-mas1>+</button></div>
+    <button class="btn-grande" data-cta id="agregarF">Agregar al pedido · ${clp(p.precio)}</button></div>`:
     `<div class="barra-fija"><a class="btn-grande wa" style="display:flex;align-items:center;justify-content:center;text-decoration:none" target="_blank" href="https://wa.me/${WHATSAPP}?text=${encodeURIComponent("Hola Áureo, me interesa: "+p.nombre+". ¿Me cuentas más?")}">Preguntar por WhatsApp</a></div>`}`;
-  if(p.precio){const n=document.getElementById("cantN"),b=document.getElementById("agregarF");
-    const upd=()=>{n.textContent=cant;b.textContent=`Agregar al pedido · ${clp(p.precio*cant)}`};
-    document.getElementById("menos").onclick=()=>{if(cant>1){cant--;upd()}};document.getElementById("mas").onclick=()=>{cant++;upd()};
-    b.onclick=()=>{agregar(p.slug,cant,true);paso=0;location.hash="#pedido"};
+  document.querySelectorAll("[data-gal]").forEach(m=>m.onclick=()=>{document.getElementById("fotoP").src=m.dataset.gal;document.querySelectorAll("[data-gal]").forEach(x=>x.classList.toggle("sel",x===m))});
+  if(p.precio){
+    const upd=()=>{document.querySelectorAll("[data-cantn]").forEach(n=>n.textContent=cant);const b=document.getElementById("agregarF");if(b)b.textContent=`Agregar al pedido · ${clp(p.precio*cant)}`};
+    document.querySelectorAll("[data-menos]").forEach(x=>x.onclick=()=>{if(cant>1){cant--;upd()}});
+    document.querySelectorAll("[data-mas1]").forEach(x=>x.onclick=()=>{cant++;upd()});
     document.querySelectorAll("[data-cta]").forEach(x=>x.onclick=()=>{agregar(p.slug,cant,true);paso=0;location.hash="#pedido"});
-    document.querySelectorAll("[data-pack]").forEach(x=>x.onclick=()=>{agregar(p.slug,1);if(x.dataset.pack)agregar(x.dataset.pack,1);camisetas=[{n:"",d:""},{n:"",d:""}];toast("Pack agregado: escribe los nombres al terminar")});
-    document.querySelectorAll("[data-add2]").forEach(x=>x.onclick=()=>{agregar(p.slug,1);toast("Agregaste otro para regalar")});}
+  }
 }
 
 /* ---------- Checkout guiado: una oferta por pantalla ---------- */

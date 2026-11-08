@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Áureo · computador y celular</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--fondo:#1b1916;--texto:#eee;--oro:#B8924A}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--fondo);color:var(--texto);font-family:Montserrat,system-ui,sans-serif}
+  header{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid #333}
+  header h1{font-size:15px;margin:0;font-weight:700;letter-spacing:.04em}
+  header h1 span{color:var(--oro)}
+  .vistas{display:flex;gap:28px;justify-content:center;align-items:flex-start;padding:24px 16px;flex-wrap:wrap}
+  .marco{display:flex;flex-direction:column;align-items:center;gap:10px}
+  .etq{font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#aaa}
+  .pc{width:calc(1280px * var(--e));height:calc(820px * var(--e));border-radius:12px;overflow:hidden;border:10px solid #2c2925;box-shadow:0 20px 60px rgba(0,0,0,.5);background:#fff}
+  .pc iframe{width:1280px;height:820px;border:0;transform:scale(var(--e));transform-origin:0 0}
+  .cel{width:calc(390px * var(--c) + 24px);height:calc(844px * var(--c) + 24px);border-radius:44px;padding:12px;background:#0d0d0d;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+  .cel>div{width:calc(390px * var(--c));height:calc(844px * var(--c));border-radius:32px;overflow:hidden;background:#fff}
+  .cel iframe{width:390px;height:844px;border:0;transform:scale(var(--c));transform-origin:0 0}
+  select,a.btn{background:#2c2925;color:#eee;border:1px solid #444;border-radius:999px;padding:8px 14px;font:600 12.5px Montserrat;text-decoration:none}
+  @media(max-width:700px){.pc{display:none}.etq.pc-e{display:none}}
+</style>
+</head>
+<body>
+<header>
+  <h1>ÁUREO · <span>la landing en computador y en celular</span></h1>
+  <div style="display:flex;gap:8px;flex-wrap:wrap">
+    <select id="ir">
+      <option value="#p/colo-colo">Landing Colo-Colo (con material real)</option>
+      <option value="#p/deportes-temuco">Landing Deportes Temuco (sin material)</option>
+      <option value="">Catálogo (portada)</option>
+      <option value="#pedido">Tu pedido (checkout)</option>
+    </select>
+    <a class="btn" id="abrir" href="prototipo.html#p/colo-colo" target="_blank">Abrir sola ↗</a>
+  </div>
+</header>
+<div class="vistas">
+  <div class="marco"><div class="etq pc-e">Computador · 1280 px</div><div class="pc" style="--e:.62"><iframe id="fPc" src="prototipo.html#p/colo-colo" title="Computador"></iframe></div></div>
+  <div class="marco"><div class="etq">Celular · 390 px</div><div class="cel" style="--c:.82"><div><iframe id="fCel" src="prototipo.html#p/colo-colo" title="Celular"></iframe></div></div></div>
+</div>
+<script>
+  document.getElementById("ir").onchange = e => {
+    const h = e.target.value;
+    ["fPc","fCel"].forEach(id => { const f = document.getElementById(id); f.src = "prototipo.html" + h + (h ? "" : "#"); });
+    document.getElementById("abrir").href = "prototipo.html" + h;
+  };
+</script>
+</body>
+</html>
