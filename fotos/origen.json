@@ -388,5 +388,11 @@
   "origen": "laboratorio",
   "producto": "union-espanola",
   "protegida": true
+ },
+ "universitario-de-deportes": {
+  "fecha": "2026-11-08T20:26:45",
+  "origen": "taller",
+  "producto": "Universitario de Deportes",
+  "protegida": true
  }
 }
