@@ -311,11 +311,34 @@ footer{text-align:center;font-size:12px;color:var(--suave);padding:20px 16px 100
 .ahorro .verde{color:#7ee2a4}
 .ahorro ul{list-style:none;margin:8px 0 0;padding:8px 0 0;border-top:1px solid #333;font-size:12.5px;color:#cfc8bd;display:grid;gap:4px}
 .ahorro li{display:flex;justify-content:space-between}
+.urgencia{background:#7a1f1f;color:#fff;text-align:center;font:600 12.5px Montserrat;padding:8px 12px}
+.listo{text-align:center;padding:26px 0 6px}
+.listo .ok{width:66px;height:66px;border-radius:50%;background:var(--wa);color:#fff;font-size:34px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px}
+.listo h2{font-family:"Cormorant Garamond",Georgia,serif;font-size:32px;margin:0}
+.paso-l{display:flex;gap:12px;align-items:flex-start;background:#fff;border:1px solid var(--linea);border-radius:16px;padding:14px;margin-top:12px;text-align:left}
+.paso-l .n{flex:none;width:30px;height:30px;border-radius:50%;background:var(--negro);color:var(--oro);font-weight:700;display:flex;align-items:center;justify-content:center}
+.paso-l h3{margin:2px 0 8px;font-size:15px}
+.dato-p{display:flex;justify-content:space-between;align-items:center;gap:8px;border-top:1px solid #f0ece4;padding:7px 0;font-size:13.5px}
+.dato-p span{color:var(--suave);font-size:12px}
+.dato-p button{border:1px solid var(--linea);background:#fff;border-radius:999px;padding:5px 10px;font-size:11.5px;font-weight:600}
+.quienes{display:grid;gap:14px;align-items:center}
+.quienes .foto{aspect-ratio:4/3}
+.avisame{display:inline-flex;gap:8px;align-items:center;border:1px solid var(--linea);background:#fff;border-radius:999px;padding:9px 14px;font-weight:600;font-size:13px;text-decoration:none;color:#111}
+.a-pedido{max-width:460px;margin:30px auto;background:#fff;border:1px solid var(--linea);border-radius:18px;padding:20px;text-align:center}
+.coleccion .item-c{display:flex;gap:10px;align-items:center;border:1.5px solid var(--linea);border-radius:12px;padding:8px;margin-top:8px;background:#fff}
+.coleccion .item-c img{width:64px;height:64px;object-fit:contain;background:#fbfaf7;border-radius:8px}
+.coleccion .item-c.prox{opacity:.55;border-style:dashed}
+.coleccion .item-c .info-c{flex:1;font-size:13px}
+.coleccion .item-c .info-c b{display:block;font-size:13.5px}
+.coleccion .item-c button{border:0;border-radius:999px;background:var(--negro);color:#fff;padding:7px 12px;font-weight:700;font-size:12px}
+.coleccion .item-c.en button{background:var(--verde)}
+@media(min-width:900px){.quienes{grid-template-columns:1fr 1fr;gap:40px}}
 .aviso-proto{background:#fff3cd;color:#664d03;font-size:11.5px;text-align:center;padding:5px 8px}
 </style>
 </head>
 <body>
 <div class="aviso-proto">Prototipo · no publicado · fotos de clientes y video son espacios por llenar</div>
+<div class="urgencia" id="urgencia" style="display:none"></div>
 <header id="cab"><img src="logo.svg" alt="Áureo"><p class="frase">Lo que amas se arma</p></header>
 <div class="top" id="top">
   <button class="volver" id="volver" aria-label="Volver">‹</button>
@@ -337,7 +360,7 @@ const CAMISETAS = [["manu-30.jpg","MANU 30","Colo-Colo"],["lucho-10.jpg","LUCHO 
 const carrusel = () => { const c = CAMISETAS.map(([f,n,club])=>`<div class="cam"><img src="${CAM_BASE}${f}" alt="Camiseta ${n}" loading="lazy"><b>${n}</b><span>${club}</span></div>`).join("");
   return `<div class="carrusel"><div class="cinta">${c}${c}</div></div>`; };
 /* Propuestas para subir el ticket (D7). Cada una se apaga con false; Áureo decide cuáles quedan. */
-const PROP = { barra:true, regaloMas:10000, porPoco:true, empaque:2000, segundoDesc:3000, camRegaloDesde:35000, prioridad:3000 };
+const PROP = { coleccionDesc:0.2, barra:true, regaloMas:10000, porPoco:true, empaque:2000, segundoDesc:3000, camRegaloDesde:35000, prioridad:3000 };
 const tag = l => `<span class="prop">Propuesta ${l}</span><br>`;
 /* Camiseta de ejemplo por equipo (AUREO 10, del Laboratorio): lo que ve el cliente al elegir el equipo de cada camiseta. */
 const EQUIPOS_CAM = [["Colo-Colo","ej-colo-colo-local.jpg"],["Colo-Colo (visita)","ej-colo-colo-visita.jpg"],["U de Chile","ej-universidad-de-chile-local.jpg"],["Audax Italiano","ej-audax-italiano-local.jpg"],["Cobreloa","ej-cobreloa-local.jpg"],["Deportes Concepción","ej-deportes-concepcion-local.jpg"],["Deportes Iquique","ej-deportes-iquique-local.jpg"],["Deportes Temuco","ej-deportes-temuco-local.jpg"],["Huachipato","ej-huachipato-local.jpg"],["Magallanes","ej-magallanes-local.jpg"],["O'Higgins","ej-o-higgins-local.jpg"],["Rangers de Talca","ej-rangers-de-talca-local.jpg"],["River Plate","ej-river-plate-local.jpg"],["San Luis de Quillota","ej-san-luis-local.jpg"],["Santiago Wanderers","ej-santiago-wanderers-local.jpg"],["Unión Española","ej-union-espanola-local.jpg"]];
@@ -353,6 +376,16 @@ const PILOTO = {"colo-colo": {
   hincha: "Desde 1925, el Cacique. En 1991, el primer equipo chileno campeón de América. Y sobre el escudo, la franja negra por David Arellano, su fundador: la vas a armar fila por fila.",
 }};
 const fp = (pl, k) => LANDING_BASE + pl.carpeta + k + ".jpg";
+/* Datos de transferencia: los completa Áureo (no van en el repositorio). */
+const DATOS_PAGO = [["Banco","(lo completa Áureo)"],["Tipo de cuenta","(lo completa Áureo)"],["N° de cuenta","(lo completa Áureo)"],["RUT","(lo completa Áureo)"],["Nombre","(lo completa Áureo)"],["Correo","(lo completa Áureo)"]];
+/* Urgencia real (Navidad): se muestra hasta la fecha de corte. Fecha por confirmar con Áureo (15–18 dic). */
+const URGENCIA = { hasta:"2026-12-15", texto:"🎄 Pagando hasta el 15 de diciembre te llega antes del 24" };
+/* Oferta única del paso 2: completar la colección del club con descuento. Lo «próximo» se muestra solo como ejemplo. */
+const PROXIMOS = {"colo-colo":[["Copa del Cacique en mini bloques","Próximamente"]]};
+const INSTAGRAM = "https://www.instagram.com/aureo.cl/";
+/* Medición: si la página tiene el píxel de Meta (fbq), manda el evento; si no, solo lo anota en la consola. */
+function medir(ev,d={}){try{if(window.fbq){["ViewContent","AddToCart","InitiateCheckout","Purchase"].includes(ev)?fbq("track",ev,d):fbq("trackCustom",ev,d)}}catch(e){}console.debug("[medir]",ev,d)}
+let ultimo=null, coleccion=new Set();
 const SERIES = ["Anime","Pokémon","Harry Potter","Marvel","Mario Bros","Sonic","Disney","Star Wars","Sanrio","Zootopia","Minecraft","Bob Esponja","Los Simpsons"];
 /* Envío gratis a la región del club (regla de Áureo). Cobreloa: solo Calama. */
 const REGION_CLUB = {"santiago-wanderers":"Valparaíso","everton":"Valparaíso","san-luis-de-quillota":"Valparaíso","deportes-iquique":"Tarapacá","nublense":"Ñuble","huachipato":"Biobío","deportes-concepcion":"Biobío","rangers-de-talca":"Maule","curico-unido":"Maule","o-higgins":"O'Higgins","coquimbo-unido":"Coquimbo","deportes-la-serena":"Coquimbo","deportes-temuco":"Araucanía","cobreloa":"Antofagasta|calama","deportes-puerto-montt":"Los Lagos"};
@@ -396,7 +429,7 @@ function envio(reg,com,mod,base){
   return{c:mod==="Domicilio"?3000:2000,porque:""};
 }
 function guardar(){try{localStorage.setItem("aureo-pedido",JSON.stringify(carro))}catch(e){}pintarFlot()}
-function agregar(s,c=1,silencio){const i=carro.find(x=>x.s===s);i?i.c+=c:carro.push({s,c});guardar();const p=porSlug(s);if(!silencio)toast(`${p.nombre} agregado a tu pedido`)}
+function agregar(s,c=1,silencio){const i=carro.find(x=>x.s===s);i?i.c+=c:carro.push({s,c});guardar();const p=porSlug(s);medir("AddToCart",{content_name:p.nombre,value:p.precio*c,currency:"CLP"});if(!silencio)toast(`${p.nombre} agregado a tu pedido`)}
 const items=()=>carro.map(x=>({...x,p:porSlug(x.s)})).filter(x=>x.p);
 const subtotal=()=>items().reduce((a,x)=>a+(x.p.precio||0)*x.c,0);
 function pintarFlot(){const n=items().reduce((a,x)=>a+x.c,0);const b=document.getElementById("carroFlot");b.classList.toggle("ver",n>0);b.textContent=`Mi pedido · ${n} · ${clp(subtotal())}`}
@@ -427,13 +460,13 @@ function vistaCatalogo(){
     <div class="sellos"><div class="sello"><b>🚚</b>Envío gratis desde $20.000</div><div class="sello"><b>📦</b>Llega en caja, piezas por color</div><div class="sello"><b>🧩</b>Garantía piezas completas</div></div></section>`:""}
   <div class="wrap">${L.length?cats.filter(x=>L.some(p=>p.cat===x)).map(x=>{const ps=L.filter(p=>p.cat===x);
     return `<section><h2 class="sec">${esc(x)}<small>${ps.length}</small></h2>
-    <div class="grilla">${ps.map(tarjeta).join("")}</div></section>`}).join(""):`<p class="vacio">No encontramos «${esc(q)}». Escríbenos: lo diseñamos a pedido.</p>`}</div>
-  <footer>Precios en pesos chilenos · Pago por transferencia, coordinado por WhatsApp.</footer>`;
+    <div class="grilla">${ps.map(tarjeta).join("")}</div></section>`}).join(""):`<div class="a-pedido"><p class="serif" style="font-size:26px;margin:0">¿No está «${esc(q)}»?</p><p>Lo diseñamos a pedido: nos mandas la imagen, te decimos si se puede y te damos el precio.</p><a class="btn-grande wa" style="display:flex;align-items:center;justify-content:center;text-decoration:none" target="_blank" href="https://wa.me/${WHATSAPP}?text=${encodeURIComponent("Hola Áureo! Quiero un escudo a pedido de: "+q)}">Pedir el mío por WhatsApp</a></div>`}</div>
+  <footer><a class="avisame" target="_blank" href="https://wa.me/${WHATSAPP}?text=${encodeURIComponent("Hola Áureo! Quiero que me avisen cuando lancen escudos y figuras nuevas.")}">🔔 Avísame de los lanzamientos</a><br><br>Precios en pesos chilenos · Pago por transferencia, coordinado por WhatsApp.</footer>`;
 }
 
 function vistaFicha(s){
   const p=porSlug(s);if(!p){location.hash="";return}
-  modo("en-ficha",p.nombre);window.scrollTo(0,0);
+  modo("en-ficha",p.nombre);window.scrollTo(0,0);medir("ViewContent",{content_name:p.nombre,value:p.precio,currency:"CLP"});
   const h=esEscudo(p)?hincha(p):null, pl=PILOTO[p.slug]||null;
   const nombreCorto=p.nombre.replace(/ \(.*\)$/,"");
   const titulo=esEscudo(p)?`Tu ${esc(nombreCorto)},<br>armado por ti.`:`${esc(nombreCorto)},<br>armado por ti.`;
@@ -490,6 +523,10 @@ function vistaFicha(s){
     <div><i>📦</i><b>Seguimiento</b>Te mandamos el número apenas sale.</div>
     <div><i>🛠️</i><b>Llega bien</b>Si algo llega dañado, te lo solucionamos.</div></div>
     ${p.precio?`<button class="btn-grande oro cta-medio" style="max-width:420px" data-cta>Lo quiero · ${clp(p.precio)}</button>`:""}</div>
+  <div class="bloque quienes"><div class="placeholder foto">[Foto de Javi y Caro armando o empacando]</div><div><h3>Quiénes somos</h3>
+    <p>Somos Javi y Caro. Diseñamos cada escudo pieza por pieza, lo empacamos nosotros y te atendemos por WhatsApp, de persona a persona.</p>
+    <p><a href="${INSTAGRAM}" target="_blank" rel="noopener">Míranos en Instagram @aureo.cl →</a></p>
+    <a class="avisame" target="_blank" href="https://wa.me/${WHATSAPP}?text=${encodeURIComponent("Hola Áureo! Quiero que me avisen cuando lancen escudos y figuras nuevas.")}">🔔 Avísame de los lanzamientos</a></div></div>
   <div class="bloque faq"><h3>Preguntas</h3>
     <details><summary>¿Viene armado?</summary><p>No: lo armas tú. Esa es la gracia. Llega con todo lo necesario.</p></details>
     <details><summary>¿Cómo se cuelga?</summary><p>Viene una tarjeta que enseña a armar el gancho con las mismas piezas.</p></details>
@@ -519,9 +556,12 @@ const camRegalo=()=>PROP.camRegaloDesde&&precioCams(camisetas.length)>=PROP.camR
 function totales(){
   const tc=tramosCombo(), cam=precioCams(camisetas.length), mini=minis*5000;
   const desc=PROP.segundoDesc&&nEscudos()>=2?PROP.segundoDesc:0, emp=bumps.empaque?PROP.empaque:0;
-  return {cam,mini,desc,emp,base:subtotal()+cam+mini+emp-desc};
+  const descCol=Math.round(items().filter(x=>coleccion.has(x.s)).reduce((s,x)=>s+x.p.precio*PROP.coleccionDesc,0)/10)*10;
+  return {cam,mini,desc,emp,descCol,base:subtotal()+cam+mini+emp-desc-descCol};
 }
-function pasos(){const e=escudosEn().length>0;return["pedido",...(e?["camisetas","segundo"]:["minis"]),"entrega"]}
+function complementos(){const e0=escudosEn()[0];if(!e0)return[];const club=norm(e0.p.nombre);
+  return P.filter(x=>x.precio&&!esEscudo(x)&&!/camiseta/i.test(x.nombre)&&(norm(x.nombre).includes(club)||/pelota|copa|bufanda/i.test(x.nombre)))}
+function pasos(){const e=escudosEn().length>0;return["pedido",...(e?["camisetas",complementos().length?"coleccion":"segundo"]:["minis"]),"entrega"]}
 let metaRegalo=0;
 const meta=()=>metaRegalo||subtotal()+PROP.regaloMas;
 function barra(base){if(!PROP.barra)return"";const meta=metaRegalo,pct=Math.min(100,base/meta*100);
@@ -580,6 +620,21 @@ function vistaPedido(){
     html+=`<button class="no-gracias" data-nogracias="camisetas">No, gracias, solo el escudo</button>`;
   }
 
+  if(etapa==="coleccion"){
+    const C=complementos(), pr=PROXIMOS[e0.s]||[], pct=Math.round(PROP.coleccionDesc*100);
+    const en=s=>carro.some(c=>c.s===s);
+    html=`<div class="oferta coleccion">${tag("2 de 2")}<div class="t1">Oferta única · solo en este paso</div>
+      <h2>Completa la colección del ${esc(apodo)}</h2>
+      <p style="margin:0">Escudo, camiseta y más: todo lo del ${esc(e0.p.nombre)} con <b>${pct}% de descuento</b>, en el mismo envío. Si sigues, esta oferta no vuelve a aparecer.</p>
+      <div class="montaje">${img(e0.p)}<span class="mas">+</span><div class="cams">${(camisetas.length?[fotoEq((EQUIPOS_CAM.find(x=>norm(x[0])===norm(e0.p.nombre))||[])[0])]:[]).map(s=>`<img src="${s}" alt="">`).join("")}${C.slice(0,1).map(x=>img(x)).join("")}</div></div>
+      ${C.map(x=>`<div class="item-c${en(x.slug)?" en":""}">${img(x)}<div class="info-c"><b>${esc(x.nombre)}</b><s style="color:var(--suave)">${clp(x.precio)}</s> ${clp(Math.round(x.precio*(1-PROP.coleccionDesc)/10)*10)}</div><button data-col="${x.slug}">${en(x.slug)?"✓ Agregado":"+ Agregar"}</button></div>`).join("")}
+      ${pr.map(([n,e])=>`<div class="item-c prox"><div class="placeholder" style="width:64px;height:64px;padding:2px;font-size:9px">[foto]</div><div class="info-c"><b>${esc(n)}</b>${esc(e)}</div></div>`).join("")}
+      ${T.descCol?`<div class="precios"><b>−${clp(T.descCol)}</b><span>Ahorro de la colección</span></div>`:""}
+      </div><button class="no-gracias" data-nogracias="coleccion">No, gracias</button>`;
+    pie=`<button class="btn-grande" data-sig>Continuar · ${clp(T.base)}</button>`;
+    medir("OfertaVista",{oferta:"coleccion"});
+  }
+
   if(etapa==="segundo"){
     const desc=PROP.segundoDesc, otros=P.filter(x=>esEscudo(x)&&x.precio&&x.slug!==e0.s).slice(0,9);
     html=`<div class="oferta">${tag("2 de 2")}<div class="t1">Una sola vez, aquí</div>
@@ -629,6 +684,7 @@ function vistaPedido(){
     <div class="panel"><h3>Resumen</h3>
     ${I.map(x=>`<div class="res"><span>${esc(x.p.nombre)} × ${x.c}</span><span>${clp(x.p.precio*x.c)}</span></div>`).join("")}
     ${T.cam?`<div class="res"><span>Camisetas × ${camisetas.length}${camRegalo()?" + 1 de regalo":""} <small style="color:var(--verde)">pack</small></span><span>${clp(T.cam)}</span></div>`:""}
+    ${T.descCol?`<div class="res"><span>Oferta de la colección</span><span style="color:var(--verde)">−${clp(T.descCol)}</span></div>`:""}
     ${T.desc?`<div class="res"><span>Segundo escudo</span><span style="color:var(--verde)">−${clp(T.desc)}</span></div>`:""}
     ${T.mini?`<div class="res"><span>Mini sorpresa × ${minis}</span><span>${clp(T.mini)}</span></div>`:""}
     ${T.emp?`<div class="res"><span>Empaque de regalo</span><span>${clp(T.emp)}</span></div>`:""}
@@ -644,7 +700,7 @@ function vistaPedido(){
   v.innerHTML=`<div class="wrap pedido">${puntos()}${html}</div><div class="barra-fija">${pie}</div>`;
 
   // Eventos comunes
-  v.querySelectorAll("[data-sig]").forEach(b=>b.onclick=()=>{if(etapa==="camisetas"&&([...camisetas,...(camRegalo()?[datos.camReg||{}]:[])]).some(c=>!c.n||c.d===""||c.d===undefined)){toast("Escribe el nombre y el número de cada camiseta");return}siguiente()});
+  v.querySelectorAll("[data-sig]").forEach(b=>b.onclick=()=>{if(etapa==="camisetas"&&camisetas.length)medir("OfertaAceptada",{oferta:"pack",camisetas:camisetas.length});if(etapa==="camisetas"&&([...camisetas,...(camRegalo()?[datos.camReg||{}]:[])]).some(c=>!c.n||c.d===""||c.d===undefined)){toast("Escribe el nombre y el número de cada camiseta");return}siguiente()});
   v.querySelectorAll("[data-nogracias]").forEach(b=>b.onclick=()=>{if(b.dataset.nogracias==="camisetas")camisetas=[];siguiente()});
   v.querySelectorAll("[data-mirar]").forEach(b=>b.onclick=()=>{mirando=!mirando;vistaPedido()});
   v.querySelectorAll("[data-mcat]").forEach(b=>b.onclick=()=>{mirarCat=b.dataset.mcat;const x=window.scrollY;vistaPedido();window.scrollTo(0,x)});
@@ -655,6 +711,7 @@ function vistaPedido(){
   v.querySelectorAll("[data-cn]").forEach(i=>i.oninput=()=>camDe(i.dataset.cn).n=i.value.toUpperCase());
   v.querySelectorAll("[data-cd]").forEach(i=>i.oninput=()=>camDe(i.dataset.cd).d=i.value.replace(/\D/g,""));
   v.querySelectorAll("[data-ceq]").forEach(s=>s.onchange=()=>{camDe(s.dataset.ceq).eq=s.value;v.querySelector(`[data-fimg="${s.dataset.ceq}"]`).src=fotoEq(s.value)});
+  v.querySelectorAll("[data-col]").forEach(b=>b.onclick=()=>{const s=b.dataset.col;if(carro.some(c=>c.s===s)){carro=carro.filter(c=>c.s!==s);coleccion.delete(s);guardar()}else{agregar(s,1,true);coleccion.add(s);medir("OfertaAceptada",{oferta:"coleccion",item:s})}const x=window.scrollY;vistaPedido();window.scrollTo(0,x)});
   v.querySelectorAll("[data-seg]").forEach(b=>b.onclick=()=>{agregar(b.dataset.seg,1,true);toast(`Segundo escudo agregado: −${clp(PROP.segundoDesc)}`);siguiente()});
   v.querySelectorAll("[data-mas]").forEach(b=>b.onclick=()=>{agregar(b.dataset.mas,1);vistaPedido()});
   if(etapa!=="entrega")return;
@@ -666,8 +723,8 @@ function vistaPedido(){
   const de=document.getElementById("dedTxt");if(de)de.oninput=()=>{datos.ded=de.value;document.getElementById("dedCuenta").textContent=de.value.length+"/50"};
   v.querySelectorAll("[data-ded]").forEach(b=>b.onclick=()=>{datos.ded=b.dataset.ded;de.value=datos.ded;document.getElementById("dedCuenta").textContent=datos.ded.length+"/50"});
   v.querySelectorAll("[data-serie]").forEach(s=>s.onchange=()=>{datos.series=datos.series||[];datos.series[+s.dataset.serie]=s.value});
-  const mapa=document.getElementById("mapa");let ultimo="";
-  const ponMapa=()=>{if(!mapa)return;const c=document.getElementById("fCom").value.trim(),r=document.getElementById("fReg").value;const q=`Blue Express ${c||""} ${r==="Metropolitana"?"Santiago":r} Chile`;if(q===ultimo)return;ultimo=q;mapa.src="https://www.google.com/maps?q="+encodeURIComponent(q)+"&output=embed"};
+  const mapa=document.getElementById("mapa");let ultimaQ="";
+  const ponMapa=()=>{if(!mapa)return;const c=document.getElementById("fCom").value.trim(),r=document.getElementById("fReg").value;const q=`Blue Express ${c||""} ${r==="Metropolitana"?"Santiago":r} Chile`;if(q===ultimaQ)return;ultimaQ=q;mapa.src="https://www.google.com/maps?q="+encodeURIComponent(q)+"&output=embed"};
   var calc=()=>{const reg=document.getElementById("fReg").value,com=document.getElementById("fCom").value,mod=datos.mod||"Domicilio",e=envio(reg,com,mod,base);
     const stgo=reg==="Metropolitana",dias=stgo?"1 a 3 días hábiles":"2 a 5 días hábiles";
     const donde=mod==="Domicilio"?`a domicilio${com?" en "+com:""}`:`a tu Punto Blue${com?" en "+com:""}`;
@@ -681,6 +738,7 @@ function vistaPedido(){
     if(camisetas.length){const d=solasPrecio(camisetas.length)-precioCams(camisetas.length);if(d>0)A.push(["Camisetas del pack (vs. sueltas)",d])}
     if(camRegalo())A.push(["Camiseta de regalo",solaFila()?solaFila().precio:0]);
     if(T.desc)A.push(["Segundo escudo",T.desc]);
+    if(T.descCol)A.push(["Oferta de la colección",T.descCol]);
     if(PROP.barra&&base>=metaRegalo)A.push(["Minifigura sorpresa de regalo",5000]);
     if(!e.c)A.push(["Envío gratis",mod==="Domicilio"?3000:2000]);
     const ah=A.reduce((s,x)=>s+x[1],0);
@@ -703,6 +761,7 @@ function vistaPedido(){
       M.push(`- Camiseta con escudo x${camisetas.length} - ${clp(T.cam)}`);camisetas.forEach((c,k)=>M.push(`  ${k+1}) ${c.n} ${c.d} - ${c.eq||eqB}`));
       if(camRegalo()){const r=datos.camReg||{};M.push(`  + 1 de REGALO: ${r.n||"?"} ${r.d||"?"} - ${r.eq||eqB}`)}}
     if(T.desc)M.push(`- Segundo escudo: -${clp(T.desc)}`);
+    if(T.descCol)M.push(`- Oferta coleccion (${Math.round(PROP.coleccionDesc*100)}%): -${clp(T.descCol)}`);
     if(T.mini)M.push(`- Mini sorpresa x${minis} - ${clp(T.mini)}`);
     if(T.emp)M.push(`- Empaque de regalo - ${clp(T.emp)}`+(datos.ded?`\n  Dedicatoria: ${datos.ded}`:""));
     if(PROP.barra&&base>=metaRegalo)M.push(`- Minifigura sorpresa de REGALO - $0`,`  Series: ${(datos.series||[]).filter(Boolean).join(", ")||"(elige por WhatsApp)"}`);
@@ -710,12 +769,37 @@ function vistaPedido(){
     if(datos.prio)M.push(`PRIORIDAD EN EL DESPACHO: si (+${clp(PROP.prioridad)})`);
     M.push(`TOTAL: ${clp(base+e.tot)}`);
     if(datos.regalo)M.push("","ES REGALO: si");
-    window.open(`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(sinTildes(M.join("\n")))}`,"_blank");
+    const link=`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(sinTildes(M.join("\n")))}`;
+    medir("InitiateCheckout",{value:base+e.tot,currency:"CLP",num_items:items().reduce((s,x)=>s+x.c,0)});
+    ultimo={id,total:base+e.tot,link};
+    window.open(link,"_blank");
+    carro=[];guardar();camisetas=[];coleccion=new Set();bumps={};metaRegalo=0;paso=0;
+    location.hash="#listo";
   };
 }
 
+function vistaListo(){
+  modo("en-pedido","Pedido listo");window.scrollTo(0,0);
+  const u=ultimo||{id:"AU-xxxxxx-xxx",total:0,link:`https://wa.me/${WHATSAPP}`};
+  const comp=`https://wa.me/${WHATSAPP}?text=${encodeURIComponent("Hola! Te envio el comprobante del pedido "+u.id)}`;
+  document.getElementById("vista").innerHTML=`<div class="wrap pedido" style="max-width:560px">
+    <div class="listo"><div class="ok">✓</div><h2>¡Tu pedido está listo!</h2>
+      <p class="nota">Pedido <b>${esc(u.id)}</b> · se abrió WhatsApp con todo escrito. Si no se envió, <a href="${u.link}" target="_blank">ábrelo de nuevo</a>.</p></div>
+    <div class="paso-l"><div class="n">1</div><div style="flex:1"><h3>Transfiere ${u.total?clp(u.total):"el total"}</h3>
+      ${DATOS_PAGO.map(([k,v])=>`<div class="dato-p"><div><span>${k}</span><br><b>${esc(v)}</b></div><button data-copiar="${esc(v)}">Copiar</button></div>`).join("")}
+      ${u.total?`<div class="dato-p"><div><span>Monto</span><br><b>${clp(u.total)}</b></div><button data-copiar="${u.total}">Copiar</button></div>`:""}</div></div>
+    <div class="paso-l"><div class="n">2</div><div style="flex:1"><h3>Mándanos el comprobante</h3>
+      <a class="btn-grande wa" style="display:flex;align-items:center;justify-content:center;text-decoration:none;height:46px" target="_blank" href="${comp}">Enviar comprobante por WhatsApp</a></div></div>
+    <div class="paso-l"><div class="n">3</div><div><h3>Te confirmamos y despachamos</h3><p class="nota" style="margin:0">Javi o Caro revisan el pago, te confirman y te mandan el número de seguimiento cuando sale.</p></div></div>
+    ${URGENCIA&&new Date()<=new Date(URGENCIA.hasta+"T23:59:59")?`<p class="nota" style="text-align:center;margin-top:14px"><b>${esc(URGENCIA.texto)}</b></p>`:""}
+    <p style="text-align:center;margin-top:18px"><a class="avisame" target="_blank" href="${INSTAGRAM}">Síguenos en Instagram @aureo.cl</a></p>
+  </div>`;
+  document.querySelectorAll("[data-copiar]").forEach(b=>b.onclick=async()=>{try{await navigator.clipboard.writeText(b.dataset.copiar);b.textContent="✓ Copiado"}catch(e){b.textContent="Mantén apretado para copiar"}});
+}
+
 /* ---------- Navegación ---------- */
-function ruta(){document.getElementById("toast").classList.remove("ver");const h=location.hash;if(h.startsWith("#p/"))vistaFicha(h.slice(3));else if(h==="#pedido")vistaPedido();else vistaCatalogo()}
+(()=>{const u=document.getElementById("urgencia");if(URGENCIA&&new Date()<=new Date(URGENCIA.hasta+"T23:59:59")){u.textContent=URGENCIA.texto;u.style.display=""}})();
+function ruta(){document.getElementById("toast").classList.remove("ver");const h=location.hash;if(h==="#listo"){vistaListo();return}if(h.startsWith("#p/"))vistaFicha(h.slice(3));else if(h==="#pedido")vistaPedido();else vistaCatalogo()}
 document.addEventListener("click",e=>{
   const a=e.target.closest("[data-add]");if(a){e.stopPropagation();agregar(a.dataset.add);return}
   const c=e.target.closest("[data-cat]");if(c){cat=c.dataset.cat;vistaCatalogo();return}
