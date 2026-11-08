@@ -1,0 +1,566 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Catálogo Áureo · prototipo</title>
+<meta name="description" content="Prototipo D7: catálogo → landing por producto → pedido → WhatsApp. No publicado.">
+<link rel="icon" href="isotipo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script>
+  /* PROTOTIPO D7 (Hilo D, 2026-11-07). Misma planilla que index.html. No se publica sin el ok de Áureo. */
+  const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQpK1e9OMdtPyf5vG9DKsLMx9tUmnhjs_3ckbSN4UnbKXZhn7Jxz86oyfhc9xVWI7ZMDVq_aleGiCwL/pub?gid=390431306&single=true&output=csv";
+  const WHATSAPP = "56991412645";
+</script>
+<style>
+:root{--negro:#0b0b0b;--blanco:#fff;--oro:#B8924A;--oro2:#d9b36a;--crema:#f6f4f0;--tarjeta:#fff;--texto:#111;--suave:#6b6660;--linea:#e4dfd6;--verde:#1f9d55;--wa:#25D366}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--crema);color:var(--texto);font-family:Montserrat,system-ui,sans-serif;font-size:15px;line-height:1.45;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+button{font:inherit;cursor:pointer}
+.serif{font-family:"Cormorant Garamond",Georgia,serif;font-weight:700}
+.wrap{max-width:1100px;margin:0 auto;padding:0 16px}
+
+/* Encabezado */
+header{background:var(--negro);color:#fff;text-align:center;padding:22px 16px 14px}
+header img{height:52px}
+.frase{margin:8px 0 0;font-size:10.5px;letter-spacing:.32em;text-transform:uppercase;color:var(--oro)}
+.top{position:sticky;top:0;z-index:20;background:var(--negro);padding:10px 16px;border-bottom:1px solid #222;display:flex;gap:10px;align-items:center}
+.top .volver{display:none;background:none;border:0;color:#fff;font-size:22px;padding:0 6px}
+.top.en-ficha .volver{display:block}
+.top .buscar{flex:1;max-width:640px;margin:0 auto;padding:10px 14px;border-radius:999px;border:1px solid #333;background:#151515;color:#fff;font:inherit}
+.top .buscar::placeholder{color:#8a847c}
+.top .titulo{display:none;flex:1;color:#fff;font-weight:600;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.top.en-ficha .buscar{display:none}.top.en-ficha .titulo{display:block}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:10px 16px 12px;background:var(--negro);scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;padding:7px 14px;border-radius:999px;border:1px solid #444;background:transparent;color:#ddd;font:500 12px Montserrat,sans-serif;white-space:nowrap}
+.chip.activa{background:var(--oro);border-color:var(--oro);color:#000}
+
+/* Portada */
+.hero{background:linear-gradient(180deg,var(--negro) 0,#1a1712 100%);color:#fff;padding:22px 16px 26px}
+.hero h1{font-size:34px;line-height:1.05;margin:0 0 8px}
+.hero h1 em{color:var(--oro2);font-style:normal}
+.hero p{margin:0 0 14px;color:#cfc8bd;font-size:14px;max-width:520px}
+.sellos{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:640px}
+.sello{background:#1e1b16;border:1px solid #3a3226;border-radius:12px;padding:9px 8px;text-align:center;font-size:11.5px;line-height:1.25;color:#e9e2d4}
+.sello b{display:block;font-size:18px;margin-bottom:2px}
+h2.sec{font-family:"Cormorant Garamond",Georgia,serif;font-weight:700;font-size:28px;margin:26px 0 4px}
+h2.sec small{font:500 12px Montserrat,sans-serif;color:var(--suave);margin-left:8px}
+.grilla{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:12px}
+@media(min-width:700px){.grilla{grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:16px}}
+.card{background:var(--tarjeta);border:1px solid var(--linea);border-radius:16px;overflow:hidden;display:flex;flex-direction:column;cursor:pointer;transition:transform .15s}
+.card:active{transform:scale(.98)}
+.foto{position:relative;aspect-ratio:1/1;background:#fbfaf7;display:flex;align-items:center;justify-content:center}
+.foto img{width:100%;height:100%;object-fit:contain}
+.foto img.ph{width:34%;opacity:.35}
+.etq{position:absolute;top:8px;left:8px;background:var(--negro);color:var(--oro);font:600 10px Montserrat;letter-spacing:.08em;text-transform:uppercase;padding:4px 8px;border-radius:999px}
+.info{padding:10px 12px 12px;display:flex;flex-direction:column;gap:3px;flex:1}
+.nombre{font-weight:600;font-size:14px;line-height:1.25}
+.tam{font-size:12px;color:var(--suave)}
+.precio{margin-top:auto;padding-top:6px;font-weight:700;font-size:16px}
+.precio.consultar{font-size:13px;color:var(--suave);font-weight:500}
+.combo-l{margin-top:6px;font-size:11px;line-height:1.3;color:#6d5320;background:#faf3e3;border:1px solid #ecdcb6;border-radius:8px;padding:5px 7px}
+.btn-agregar{margin-top:8px;border:0;border-radius:999px;background:var(--negro);color:#fff;padding:9px 10px;font-weight:600;font-size:12.5px}
+.combo{display:flex;gap:14px;align-items:center;margin:14px 0 4px;padding:12px;border-radius:16px;background:var(--negro);color:#fff}
+.combo img{width:92px;height:92px;flex:none;object-fit:cover;border-radius:10px;background:#fbfaf7}
+.combo .t1{font:600 11px Montserrat;letter-spacing:.14em;text-transform:uppercase;color:var(--oro)}
+.combo .t2{font-size:14px;font-weight:600;margin:3px 0}
+.combo .t3{font-size:12px;color:#ccc}
+.vacio{text-align:center;color:var(--suave);padding:40px 0}
+
+/* Ficha / landing */
+.ficha{padding-bottom:110px}
+.f-hero{background:#fbfaf7;position:relative}
+.f-hero img{width:100%;max-height:70vh;object-fit:contain;display:block;margin:0 auto}
+.f-cab{padding:18px 16px 4px}
+.f-cab .eyebrow{font:600 11px Montserrat;letter-spacing:.16em;text-transform:uppercase;color:var(--oro)}
+.f-cab h1{font-size:36px;line-height:1.02;margin:6px 0 10px}
+.datos{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 4px}
+.dato{background:#fff;border:1px solid var(--linea);border-radius:999px;padding:6px 11px;font-size:12.5px;font-weight:500}
+.f-precio{display:flex;align-items:baseline;gap:10px;margin:12px 0 2px}
+.f-precio b{font-size:28px}
+.f-precio span{font-size:12.5px;color:var(--verde);font-weight:600}
+.bloque{padding:22px 16px;border-top:1px solid var(--linea)}
+.bloque h3{font-family:"Cormorant Garamond",Georgia,serif;font-weight:700;font-size:25px;margin:0 0 10px;line-height:1.1}
+.bloque p{margin:0 0 10px;color:#2b2925}
+.caja{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.caja div{background:#fff;border:1px solid var(--linea);border-radius:14px;padding:12px;font-size:13px;line-height:1.3}
+.caja b{display:block;font-size:22px;margin-bottom:4px}
+.placeholder{border:2px dashed #cdbf9f;border-radius:14px;background:#fbf7ee;color:#8a7346;display:flex;align-items:center;justify-content:center;text-align:center;font-size:12.5px;padding:14px}
+.video{aspect-ratio:9/12;max-height:420px}
+.clientes{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.clientes .placeholder{aspect-ratio:3/4;font-size:11px;padding:6px}
+.cita{font-style:italic;color:var(--suave);font-size:13px;margin-top:10px}
+.garantia{display:flex;gap:12px;align-items:flex-start;background:var(--negro);color:#fff;border-radius:16px;padding:16px}
+.garantia .sello-g{flex:none;width:52px;height:52px;border-radius:50%;border:2px solid var(--oro);display:flex;align-items:center;justify-content:center;font-size:24px}
+.garantia p{color:#ddd;margin:4px 0 0;font-size:13.5px}
+.cross{background:#faf3e3;border:1px solid #ecdcb6;border-radius:16px;padding:14px;display:flex;gap:12px;align-items:center}
+.cross img{width:72px;height:72px;border-radius:10px;object-fit:cover;flex:none;background:#fff}
+.cross b{display:block}
+.faq details{background:#fff;border:1px solid var(--linea);border-radius:12px;padding:12px 14px;margin-bottom:8px}
+.faq summary{font-weight:600;cursor:pointer}
+.faq p{margin:8px 0 0;font-size:13.5px;color:#3a3732}
+.otros{display:flex;gap:10px;overflow-x:auto;padding-bottom:6px}
+.otros .card{flex:none;width:140px}
+.barra-fija{position:fixed;left:0;right:0;bottom:0;z-index:30;background:#fff;border-top:1px solid var(--linea);padding:10px 16px calc(10px + env(safe-area-inset-bottom));display:flex;gap:10px;align-items:center;box-shadow:0 -6px 20px rgba(0,0,0,.08)}
+.cant{display:flex;align-items:center;border:1px solid var(--linea);border-radius:999px;overflow:hidden;flex:none}
+.cant button{width:38px;height:44px;border:0;background:#fff;font-size:20px}
+.cant span{min-width:22px;text-align:center;font-weight:600}
+.btn-grande{flex:1;border:0;border-radius:999px;background:var(--negro);color:#fff;height:46px;font-weight:700;font-size:14.5px}
+.btn-grande.oro{background:var(--oro);color:#000}
+.btn-grande.wa{background:var(--wa);color:#fff}
+
+/* Botón de pedido flotante */
+.carro-flot{position:fixed;right:16px;bottom:16px;z-index:25;border:0;border-radius:999px;background:var(--oro);color:#000;padding:12px 18px;font-weight:700;box-shadow:0 8px 22px rgba(0,0,0,.25);display:none}
+.carro-flot.ver{display:block}
+body.en-ficha .carro-flot,body.en-pedido .carro-flot{display:none}
+.toast{position:fixed;left:16px;right:16px;bottom:84px;z-index:40;background:var(--negro);color:#fff;border-radius:14px;padding:12px 14px;display:flex;gap:10px;align-items:center;opacity:0;visibility:hidden;transform:translateY(20px);transition:all .25s;max-width:520px;margin:0 auto}
+.toast.ver{opacity:1;visibility:visible;transform:none}
+.toast span{flex:1;font-size:13.5px}
+.toast button{border:0;background:var(--oro);color:#000;border-radius:999px;padding:8px 12px;font-weight:700;font-size:12.5px}
+
+/* Pedido */
+.pedido{padding:8px 0 120px}
+.pasos{display:flex;gap:6px;margin:14px 0 6px}
+.pasos div{flex:1;height:4px;border-radius:4px;background:var(--linea)}
+.pasos div.ok{background:var(--oro)}
+.panel{background:#fff;border:1px solid var(--linea);border-radius:16px;padding:14px;margin-top:14px}
+.panel h3{margin:0 0 10px;font-size:15px}
+.item{display:flex;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid #f0ece4}
+.item:last-child{border-bottom:0}
+.item img{width:56px;height:56px;object-fit:contain;border-radius:10px;background:#fbfaf7;flex:none}
+.item .n{flex:1;font-size:13.5px;font-weight:600;line-height:1.25}
+.item .n small{display:block;font-weight:400;color:var(--suave)}
+.item .cant button{height:32px;width:30px;font-size:16px}
+.opciones{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+.op{border:1.5px solid var(--linea);background:#fff;border-radius:12px;padding:9px 12px;font-size:13px;text-align:left}
+.op b{display:block;font-size:14px}
+.op.sel{border-color:var(--oro);background:#faf3e3}
+.fila{display:flex;gap:8px;margin-top:8px}
+label.campo{display:block;margin-top:10px;font-size:12px;font-weight:600;color:#3a3732}
+.campo input,.campo select,.fila input{width:100%;margin-top:4px;padding:11px 12px;border:1px solid var(--linea);border-radius:10px;font:inherit;font-size:15px;background:#fff}
+.fila input.num{max-width:90px}
+.check{display:flex;gap:8px;align-items:center;margin-top:12px;font-size:13.5px}
+.res{display:flex;justify-content:space-between;font-size:14px;padding:4px 0}
+.res.total{font-size:18px;font-weight:700;border-top:1px solid var(--linea);margin-top:6px;padding-top:10px}
+.nota{font-size:12px;color:var(--suave);margin-top:8px}
+.vacio-carro{text-align:center;padding:40px 16px}
+footer{text-align:center;font-size:12px;color:var(--suave);padding:20px 16px 100px}
+/* Carrusel de camisetas reales */
+.carrusel{overflow:hidden;margin:10px -14px 4px;mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
+.cinta{display:flex;gap:10px;width:max-content;animation:correr 38s linear infinite}
+.carrusel:hover .cinta{animation-play-state:paused}
+@keyframes correr{to{transform:translateX(-50%)}}
+.cam{width:118px;flex:none;background:#fff;border:1px solid var(--linea);border-radius:12px;padding:6px 6px 8px;text-align:center}
+.cam img{width:100%;aspect-ratio:1/1;object-fit:contain;display:block}
+.cam b{display:block;font-size:12.5px;letter-spacing:.04em;margin-top:3px}
+.cam span{display:block;font-size:10.5px;color:var(--suave)}
+.combo .carrusel{margin:10px -12px 0;mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
+.combo.col{flex-direction:column;align-items:stretch}
+/* Landing: storytelling */
+.historia{background:var(--negro);color:#eee;border-top:0}
+.historia h3{color:#fff;font-size:30px}
+.historia p{color:#d6cfc2}
+.historia em{color:var(--oro2);font-style:normal}
+.quien{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.quien div{background:#fff;border:1px solid var(--linea);border-radius:14px;padding:12px;font-size:12.5px;line-height:1.3;color:#3a3732}
+.quien b{display:block;font-size:14px;color:#111;margin:4px 0 3px}
+.quien i{font-style:normal;font-size:22px}
+.contador{display:flex;gap:10px;margin-bottom:12px}
+.contador div{flex:1;background:var(--negro);color:#fff;border-radius:14px;padding:12px;text-align:center;font-size:11.5px;color:#cfc8bd}
+.contador b{display:block;font-size:22px;color:var(--oro2)}
+.obj details{background:#fff;border:1px solid var(--linea);border-left:4px solid var(--oro);border-radius:12px;padding:12px 14px;margin-bottom:8px}
+.obj summary{font-weight:700;cursor:pointer}
+.obj p{margin:8px 0 0;font-size:13.5px}
+.garantias{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.garantias div{background:var(--negro);color:#ddd;border-radius:14px;padding:12px;font-size:12px;line-height:1.3}
+.garantias b{display:block;color:#fff;font-size:13.5px;margin:6px 0 3px}
+.garantias i{font-style:normal;display:inline-flex;width:34px;height:34px;border-radius:50%;border:2px solid var(--oro);align-items:center;justify-content:center;font-size:16px}
+.cta-medio{display:block;width:100%;margin-top:14px}
+.envio-op{display:grid;gap:8px;margin-top:10px}
+.envio-op .op{width:100%;display:flex;justify-content:space-between;align-items:center}
+.envio-op .op small{display:block;font-weight:400;color:var(--suave);font-size:11.5px}
+.porque{font-size:12px;color:var(--verde);margin-top:6px;font-weight:600}
+.prop{display:inline-block;background:#e8f0ff;color:#2d4a8a;font:700 9.5px Montserrat;letter-spacing:.06em;text-transform:uppercase;padding:3px 7px;border-radius:999px;margin-bottom:6px}
+.progreso{background:#fff;border:1px solid var(--linea);border-radius:14px;padding:12px;margin-top:14px;font-size:13px}
+.progreso .riel{height:8px;border-radius:8px;background:#eee7da;margin:8px 0 4px;position:relative;overflow:hidden}
+.progreso .riel div{position:absolute;inset:0 auto 0 0;background:linear-gradient(90deg,var(--oro),var(--oro2));border-radius:8px;transition:width .3s}
+.progreso .hitos{display:flex;justify-content:space-between;font-size:10.5px;color:var(--suave)}
+.porpoco{display:flex;gap:10px;overflow-x:auto;padding-bottom:4px}
+.porpoco .mini{flex:none;width:112px;background:#fff;border:1px solid var(--linea);border-radius:12px;padding:6px;text-align:center;font-size:11.5px}
+.porpoco .mini img{width:100%;aspect-ratio:1/1;object-fit:contain}
+.porpoco .mini button{width:100%;margin-top:4px;border:0;border-radius:999px;background:var(--negro);color:#fff;padding:6px;font-weight:700;font-size:11.5px}
+.bump{display:flex;gap:10px;align-items:flex-start;border:1.5px dashed var(--oro);background:#fffaf0;border-radius:12px;padding:10px 12px;margin-top:8px;font-size:13px}
+.bump input{margin-top:3px;width:18px;height:18px;flex:none}
+.bump b{display:block}
+.pack{background:#fff;border:2px solid var(--oro);border-radius:16px;padding:14px}
+.pack .lin{display:flex;justify-content:space-between;font-size:13.5px;padding:3px 0}
+.pack .tot{border-top:1px solid var(--linea);margin-top:6px;padding-top:8px;font-weight:700;font-size:16px}
+.oferta{background:#fff;border:2px solid var(--oro);border-radius:18px;padding:16px;margin-top:14px}
+.oferta .t1{font:700 11px Montserrat;letter-spacing:.14em;text-transform:uppercase;color:var(--oro)}
+.oferta h2{font-family:"Cormorant Garamond",Georgia,serif;font-size:30px;line-height:1.05;margin:6px 0 8px}
+.montaje{display:flex;align-items:center;justify-content:center;gap:6px;background:#fbfaf7;border-radius:14px;padding:12px;margin:10px 0}
+.montaje img{width:42%;max-width:170px;aspect-ratio:1/1;object-fit:contain}
+.montaje .cams{display:flex;flex-direction:column;gap:6px;width:28%}
+.montaje .cams img{width:100%}
+.montaje .mas{font-size:26px;font-weight:700;color:var(--oro)}
+.precios{display:flex;align-items:baseline;gap:10px;margin:4px 0}
+.precios s{color:var(--suave)}
+.precios b{font-size:24px}
+.precios span{background:#e7f6ec;color:var(--verde);font-weight:700;font-size:12px;padding:3px 8px;border-radius:999px}
+.no-gracias{display:block;width:100%;margin-top:8px;border:0;background:none;color:var(--suave);text-decoration:underline;font-size:13px;padding:8px}
+.puntos{display:flex;gap:6px;justify-content:center;margin:12px 0 0}
+.puntos i{width:8px;height:8px;border-radius:50%;background:var(--linea)}
+.puntos i.ok{background:var(--oro);width:22px;border-radius:8px}
+.elige{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+.elige button{border:1.5px solid var(--linea);background:#fff;border-radius:12px;padding:6px;font-size:11px;line-height:1.2}
+.elige button img{width:100%;aspect-ratio:1/1;object-fit:contain}
+.elige button s{color:var(--suave);display:block}
+.elige button b{display:block;font-size:12.5px}
+.aviso-proto{background:#fff3cd;color:#664d03;font-size:11.5px;text-align:center;padding:5px 8px}
+</style>
+</head>
+<body>
+<div class="aviso-proto">Prototipo · no publicado · fotos de clientes y video son espacios por llenar</div>
+<header id="cab"><img src="logo.svg" alt="Áureo"><p class="frase">Lo que amas se arma</p></header>
+<div class="top" id="top">
+  <button class="volver" id="volver" aria-label="Volver">‹</button>
+  <input class="buscar" id="buscar" type="search" placeholder="Busca tu equipo o personaje…" autocomplete="off">
+  <div class="titulo" id="titulo"></div>
+</div>
+<main id="vista"><p class="vacio">Cargando catálogo…</p></main>
+<button class="carro-flot" id="carroFlot"></button>
+<div class="toast" id="toast"><span id="toastTxt"></span><button id="toastVer">Ver pedido</button></div>
+
+<script>
+/* ---------- Datos ---------- */
+const HINCHA = {"colo-colo":["Albo","2.500"],"universidad-de-chile":["Bullanguero","2.300"],"universidad-catolica":["Cruzado","1.000"],"santiago-wanderers":["Caturro","1.000"],"everton":["Ruletero","2.800"],"san-luis-de-quillota":["Canario","1.400"],"o-higgins":["Celeste","1.600"],"cobreloa":["Loíno","1.500"],"coquimbo-unido":["Pirata","2.500"],"deportes-iquique":["Dragón Celeste","2.800"],"nublense":["Diablo Rojo","1.200"],"huachipato":["Acerero","2.400"],"deportes-concepcion":["Lila","2.400"],"rangers-de-talca":["Rojinegro","2.300"],"curico-unido":["Tortero","2.800"],"deportes-temuco":["Pije","2.500"],"palestino":["Tino-Tino","1.500"],"union-espanola":["Hispano","2.300"],"audax-italiano":["Itálico","2.300"],"magallanes":["Carabelero","2.800"],"deportes-la-serena":["Papayero","2.100"],"deportes-puerto-montt":["Delfín","2.700"],"boca-juniors":["Xeneize","1.600"],"river-plate":["Millonario","2.300"],"barcelona":["Barcelonista",""],"real-madrid":["Merengue",""]};
+const ALIAS = {"u-de-chile":"universidad-de-chile","uc":"universidad-catolica"};
+const ORDEN = ["Escudos de fútbol","Camisetas personalizadas","Figuras 3D mini","Figuras 3D grandes","Figuras 2D","Música","Personalizados"];
+/* Camisetas reales hechas para clientes (Laboratorio). En la versión publicada van con marca de agua. */
+const CAM_BASE = "proto-camisetas/";
+const CAMISETAS = [["manu-30.jpg","MANU 30","Colo-Colo"],["lucho-10.jpg","LUCHO 10","O'Higgins"],["sofi-22.jpg","SOFI 22","Deportes Temuco"],["jimi-18.jpg","JIMI 18","Rangers de Talca"],["agus-30.jpg","AGUS 30","Deportes Iquique"],["trini-2.jpg","TRINI 2","Colo-Colo"],["marce-10.jpg","MARCE 10","Audax Italiano"],["jara-7.jpg","JARA 7","Unión Española"],["xan-23.jpg","XAN 23","Huachipato"],["seba-20.jpg","SEBA 20","Magallanes"],["bruno-19.jpg","BRUNO 19","Deportes Temuco"],["gotti-11.jpg","GOTTI 11","Cobreloa"],["benja-4.jpg","BENJA 4","O'Higgins"],["coni-12.jpg","CONI 12","Rangers de Talca"]];
+const carrusel = () => { const c = CAMISETAS.map(([f,n,club])=>`<div class="cam"><img src="${CAM_BASE}${f}" alt="Camiseta ${n}" loading="lazy"><b>${n}</b><span>${club}</span></div>`).join("");
+  return `<div class="carrusel"><div class="cinta">${c}${c}</div></div>`; };
+/* Propuestas para subir el ticket (D7). Cada una se apaga con false; Áureo decide cuáles quedan. */
+const PROP = { barra:true, regaloDesde:40000, porPoco:true, empaque:2000, segundoDesc:3000 };
+const tag = l => `<span class="prop">Propuesta ${l}</span><br>`;
+/* Envío gratis a la región del club (regla de Áureo). Cobreloa: solo Calama. */
+const REGION_CLUB = {"santiago-wanderers":"Valparaíso","everton":"Valparaíso","san-luis-de-quillota":"Valparaíso","deportes-iquique":"Tarapacá","nublense":"Ñuble","huachipato":"Biobío","deportes-concepcion":"Biobío","rangers-de-talca":"Maule","curico-unido":"Maule","o-higgins":"O'Higgins","coquimbo-unido":"Coquimbo","deportes-la-serena":"Coquimbo","deportes-temuco":"Araucanía","cobreloa":"Antofagasta|calama","deportes-puerto-montt":"Los Lagos"};
+const REGIONES = ["Metropolitana","Arica y Parinacota","Tarapacá","Antofagasta","Atacama","Coquimbo","Valparaíso","O'Higgins","Maule","Ñuble","Biobío","Araucanía","Los Ríos","Los Lagos","Aysén","Magallanes"];
+
+function parseCSV(t){const F=[];let f=[],c="",q=false;for(let i=0;i<t.length;i++){const ch=t[i];if(q){if(ch=='"'){if(t[i+1]=='"'){c+='"';i++}else q=false}else c+=ch}else if(ch=='"')q=true;else if(ch==','){f.push(c);c=""}else if(ch=='\n'||ch=='\r'){if(ch=='\r'&&t[i+1]=='\n')i++;f.push(c);F.push(f);f=[];c=""}else c+=ch}if(c!==""||f.length){f.push(c);F.push(f)}return F}
+const norm=s=>(s||"").normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().trim();
+const slug=s=>norm(s).replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+const clp=n=>"$"+Number(n).toLocaleString("es-CL");
+const num=s=>{const d=String(s||"").replace(/[^\d]/g,"");return d?Number(d):0};
+const esc=s=>String(s||"").replace(/[&<>"]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]));
+const sinTildes=s=>String(s||"").normalize("NFD").replace(/[̀-ͯ]/g,"");
+function fotoDe(p){const u=(p.foto||"").trim();if(u){const m=u.match(/\/d\/([\w-]{20,})/)||u.match(/[?&]id=([\w-]{20,})/);if(m&&/google/.test(u))return"https://lh3.googleusercontent.com/d/"+m[1]+"=w800";return u}return`fotos/${p.slug}.jpg`}
+const img=(p,cls="")=>`<img class="${cls}" src="${esc(fotoDe(p))}" alt="${esc(p.nombre)}" loading="lazy" onerror="this.onerror=null;this.className='ph';this.src='isotipo.svg'">`;
+
+let P=[];
+async function cargar(){
+  const r=await fetch(CSV_URL+"&t="+Date.now(),{cache:"no-store"});
+  const F=parseCSV(await r.text()).filter(f=>f.some(x=>x.trim()));
+  const H=F.shift().map(norm);const col=n=>H.findIndex(h=>h.startsWith(n));
+  const K={m:col("mostrar"),c:col("categoria"),n:col("producto"),t:col("tamano"),p:col("precio"),a:col("precio antes"),e:col("etiqueta"),d:col("detalle"),f:col("foto")};
+  P=F.map(f=>({mostrar:norm(f[K.m]||"si"),cat:(f[K.c]||"Otros").trim(),nombre:(f[K.n]||"").trim(),tam:(f[K.t]||"").trim(),precio:num(f[K.p]),etq:(f[K.e]||"").trim(),det:(f[K.d]||"").trim(),foto:(f[K.f]||"").trim()}))
+    .filter(p=>p.nombre&&!["no","n","0"].includes(p.mostrar)).map(p=>({...p,slug:slug(p.nombre)}));
+}
+const esEscudo=p=>p&&p.cat==="Escudos de fútbol"&&!/a pedido/i.test(p.nombre);
+const comboFila=()=>P.find(p=>/camiseta/i.test(p.nombre)&&/con escudo/i.test(p.nombre));
+const solaFila=()=>P.find(p=>/camiseta/i.test(p.nombre)&&/sola/i.test(p.nombre));
+function tramosCombo(){const c=comboFila();if(!c)return null;const n=(c.det.match(/\$[\d.]+/g)||[]).map(num);return{1:c.precio,2:n[0]||c.precio*2,3:n[1]||c.precio*3}}
+function hincha(p){const k=ALIAS[p.slug]||p.slug;return HINCHA[k]||null}
+const porSlug=s=>P.find(p=>p.slug===s);
+
+/* ---------- Pedido (solo productos se recuerdan; los datos personales nunca) ---------- */
+let carro=[];try{carro=JSON.parse(localStorage.getItem("aureo-pedido")||"[]")}catch(e){}
+let camisetas=[], minis=0, series="", datos={}, bumps={}, paso=0, vistos={};
+function regionClub(s,reg,com){const r=REGION_CLUB[ALIAS[s]||s];if(!r)return false;const[rr,cc]=r.split("|");return rr===reg&&(!cc||norm(com)===cc)}
+function envio(reg,com,mod,base){
+  const I=items(),esc19=I.some(x=>esEscudo(x.p)&&x.p.precio>=19000);
+  if(reg==="Metropolitana"){if(base>=20000||esc19)return{c:0,porque:"Envío gratis en Santiago (pedido desde $20.000)"};return{c:mod==="Domicilio"?3000:2000,porque:"Bajo $20.000 el envío se paga"}}
+  const club=I.find(x=>esEscudo(x.p)&&regionClub(x.p.slug,reg,com));
+  if(club&&base>=20000){return mod==="Punto Bluexpress"?{c:0,porque:`Tu ${club.p.nombre} viaja gratis a punto Bluexpress en ${reg}`}:{c:3000,porque:`Gratis a punto Bluexpress en ${reg}; a domicilio $3.000`}}
+  return{c:mod==="Domicilio"?3000:2000,porque:""};
+}
+function guardar(){try{localStorage.setItem("aureo-pedido",JSON.stringify(carro))}catch(e){}pintarFlot()}
+function agregar(s,c=1,silencio){const i=carro.find(x=>x.s===s);i?i.c+=c:carro.push({s,c});guardar();const p=porSlug(s);if(!silencio)toast(`${p.nombre} agregado a tu pedido`)}
+const items=()=>carro.map(x=>({...x,p:porSlug(x.s)})).filter(x=>x.p);
+const subtotal=()=>items().reduce((a,x)=>a+(x.p.precio||0)*x.c,0);
+function pintarFlot(){const n=items().reduce((a,x)=>a+x.c,0);const b=document.getElementById("carroFlot");b.classList.toggle("ver",n>0);b.textContent=`Mi pedido · ${n} · ${clp(subtotal())}`}
+let tt;function toast(t){document.getElementById("toastTxt").textContent=t;const el=document.getElementById("toast");el.classList.add("ver");clearTimeout(tt);tt=setTimeout(()=>el.classList.remove("ver"),3500)}
+
+/* ---------- Vistas ---------- */
+let cat="Todo";
+function modo(m,titulo=""){document.body.className=m;document.getElementById("top").classList.toggle("en-ficha",m!=="en-catalogo");document.getElementById("titulo").textContent=titulo;document.getElementById("cab").style.display=m==="en-catalogo"?"":"none"}
+
+function tarjeta(p){
+  const tc=tramosCombo();
+  return `<article class="card" data-ir="${p.slug}">
+    <div class="foto">${img(p)}${p.etq?`<span class="etq">${esc(p.etq)}</span>`:""}</div>
+    <div class="info"><div class="nombre">${esc(p.nombre)}</div>${p.tam?`<div class="tam">${esc(p.tam)}</div>`:""}
+    ${p.precio?`<div class="precio">${clp(p.precio)}</div>`:`<div class="precio consultar">Precio a consultar</div>`}
+    ${p.precio?`<button class="btn-agregar" data-add="${p.slug}">+ Agregar</button>`:""}</div></article>`;
+}
+function vistaCatalogo(){
+  modo("en-catalogo");
+  const cats=[...new Set(P.map(p=>p.cat))].sort((a,b)=>{const i=ORDEN.indexOf(a),j=ORDEN.indexOf(b);return(i<0?99:i)-(j<0?99:j)});
+  const q=norm(document.getElementById("buscar").value);
+  const L=P.filter(p=>(cat==="Todo"||p.cat===cat)&&(!q||norm(p.nombre+" "+p.cat).includes(q)));
+  const tc=tramosCombo(),c=comboFila(),s=solaFila();
+  document.getElementById("vista").innerHTML=`
+  <nav class="chips">${["Todo",...cats].map(x=>`<button class="chip${x===cat?" activa":""}" data-cat="${esc(x)}">${esc(x)}</button>`).join("")}</nav>
+  ${cat==="Todo"&&!q?`<section class="hero"><h1 class="serif">Tu equipo,<br><em>armado por ti.</em></h1>
+    <p>Escudos, camisetas y figuras en mini bloques. Llegan en caja, los armas en una tarde y quedan colgados en tu pared.</p>
+    <div class="sellos"><div class="sello"><b>🚚</b>Envío gratis desde $20.000</div><div class="sello"><b>📦</b>Llega en caja, piezas por color</div><div class="sello"><b>🧩</b>Garantía piezas completas</div></div></section>`:""}
+  <div class="wrap">${L.length?cats.filter(x=>L.some(p=>p.cat===x)).map(x=>{const ps=L.filter(p=>p.cat===x);
+    return `<section><h2 class="sec">${esc(x)}<small>${ps.length}</small></h2>
+    <div class="grilla">${ps.map(tarjeta).join("")}</div></section>`}).join(""):`<p class="vacio">No encontramos «${esc(q)}». Escríbenos: lo diseñamos a pedido.</p>`}</div>
+  <footer>Precios en pesos chilenos · Pago por transferencia, coordinado por WhatsApp.</footer>`;
+}
+
+function vistaFicha(s){
+  const p=porSlug(s);if(!p){location.hash="";return}
+  modo("en-ficha",p.nombre);window.scrollTo(0,0);
+  const h=esEscudo(p)?hincha(p):null, tc=tramosCombo(), c=comboFila();
+  const nombreCorto=p.nombre.replace(/ \(.*\)$/,"");
+  const titulo=esEscudo(p)?`Tu ${esc(nombreCorto)},<br>armado por ti.`:`${esc(nombreCorto)},<br>armado por ti.`;
+  const otros=P.filter(x=>x.cat===p.cat&&x.slug!==p.slug&&x.precio).slice(0,10);
+  let cant=1;
+  document.getElementById("vista").innerHTML=`<div class="ficha">
+  <div class="f-hero">${img(p)}</div>
+  <div class="f-cab">
+    <div class="eyebrow">${h?`Para el ${esc(h[0])}`:esc(p.cat)}</div>
+    <h1 class="serif">${titulo}</h1>
+    <div class="datos">${p.tam?`<span class="dato">📏 ${esc(p.tam)}</span>`:""}${h&&h[1]?`<span class="dato">🧩 +${h[1]} piezas</span>`:""}${esEscudo(p)?`<span class="dato">⏳ 2 a 3 horas</span>`:""}</div>
+    ${p.precio?`<div class="f-precio"><b>${clp(p.precio)}</b><span>${p.precio>=19000?"Envío gratis en Santiago":"Envío desde $2.000"}</span></div>`:`<div class="f-precio"><b style="font-size:20px">Precio a consultar</b></div>`}
+  </div>
+  ${esEscudo(p)?`
+  <div class="bloque historia"><h3>La camiseta la usas.<br><em>La pared está esperando.</em></h3>
+    <p>Llevas años alentando ${h?`como buen ${esc(h[0])}`:"a tu equipo"}: en el estadio, en la casa, en el grupo de WhatsApp. La camiseta, la bufanda y el gorro te acompañan a todas partes.</p>
+    <p>Pero en tu pieza, en el living o en la oficina, ¿dónde se ve que eres de ${esc(nombreCorto)}?</p></div>
+  <div class="bloque"><h3>La idea: lo armas tú</h3>
+    <p>No te lo mandamos armado, y es a propósito. Lo que uno arma con sus manos lo quiere más: cada fila es tuya, y cuando lo cuelgas sabes cuánto te costó dejarlo perfecto.</p>
+    <p>Por eso lo llamamos <b>tu escudo, armado por ti</b>. No es un cuadro que compraste: es uno que hiciste.</p>
+    <button class="btn-grande oro cta-medio" data-cta>Lo quiero · ${p.precio?clp(p.precio):""}</button></div>
+  <div class="bloque"><h3>Del porte de un póster</h3><p>${p.tam?`Armado mide ${esc(p.tam)}.`:""} Se ve desde la puerta.</p>
+    <div class="placeholder" style="aspect-ratio:4/3">[Foto: el escudo colgado en una pared, con una persona o un mueble al lado]</div></div>
+  <div class="bloque"><h3>Una tarde de panorama</h3><p>Son 2 a 3 horas: solo, en familia o con amigos. Vas fila por fila con el instructivo y ves cómo aparece tu escudo.</p>
+    <div class="placeholder video">[Video corto del armado, 15 a 20 s, vertical]</div></div>
+  <div class="bloque"><h3>¿Para quién es?</h3><div class="quien">
+    <div><i>⚽</i><b>Para ti, hincha</b>Tu escudo en tu pieza, armado con tus manos.</div>
+    <div><i>🎁</i><b>Para regalar</b>Al papá, la pareja o el amigo más ${h?esc(h[0]):"hincha"}. Se lo mandamos directo.</div>
+    <div><i>👨‍👧</i><b>Para armar juntos</b>Una tarde con tus hijos sin pantallas, y algo que queda colgado.</div>
+    <div><i>🏆</i><b>Para tu colección</b>Escudo, camisetas con nombre y figuras, todo en un envío.</div></div></div>`:""}
+  <div class="bloque"><h3>Lo que llega en la caja</h3><div class="caja">
+    <div><b>🎨</b>Piezas separadas por color</div><div><b>📄</b>Instructivo impreso, paso a paso</div>
+    <div><b>➕</b>Piezas de repuesto</div><div><b>🪝</b>Tarjeta para armar el gancho con las mismas piezas</div></div></div>
+  ${h?`<div class="bloque"><h3>Para el ${esc(h[0])}</h3><p>[2 o 3 líneas para el hincha: un recuerdo, una gesta, lo que se siente. Las escribe Claude desde <i>contexto/fandoms</i> y las aprueba Áureo.]</p></div>`:""}
+  <div class="bloque"><h3>Ya lo armaron</h3>
+    <div class="contador"><div><b>[N]</b>pedidos despachados</div><div><b>[N]</b>equipos en el catálogo</div><div><b>[N]</b>regiones</div></div>
+    <div class="clientes"><div class="placeholder">[Foto cliente 1 con su escudo]</div><div class="placeholder">[Foto cliente 2]</div><div class="placeholder">[Foto cliente 3]</div></div>
+    <p class="cita">[Frase real de un cliente, con su permiso]</p></div>
+  <div class="bloque obj"><h3>¿Y si…?</h3>
+    <details open><summary>¿Y si no sé armarlo?</summary><p>Si sabes seguir colores, lo armas. El instructivo va fila por fila. Y si te trabas, nos escribes por WhatsApp y te ayudamos.</p></details>
+    <details><summary>¿No es caro para unas piezas?</summary><p>${h&&h[1]?`Son más de ${h[1]} piezas, `:""}2 a 3 horas de panorama y un cuadro ${p.tam?`de ${esc(p.tam)} `:""}que vas a tener colgado por años. Y lo hiciste tú.</p></details>
+    <details><summary>¿Llega a tiempo?</summary><p>Santiago 1 a 3 días hábiles y regiones 2 a 5 desde que confirmamos el pago, con número de seguimiento. ¿Apurado? Elige envío prioritario.</p></details>
+    <details><summary>¿Es seguro pagar por transferencia?</summary><p>Confirmas tu pedido por WhatsApp con nosotros, Javi y Caro. Te mandamos los datos y, cuando sale, el número de seguimiento.</p></details></div>
+  <div class="bloque"><h3>Nuestras garantías</h3><div class="garantias">
+    <div><i>🧩</i><b>Piezas completas</b>Vienen repuestos y, si falta alguna, te la mandamos.</div>
+    <div><i>💬</i><b>Te ayudamos a armarlo</b>Si te trabas, nos escribes y te guiamos.</div>
+    <div><i>📦</i><b>Seguimiento</b>Te mandamos el número apenas sale.</div>
+    <div><i>🛠️</i><b>Llega bien</b>Si algo llega dañado, te lo solucionamos.</div></div></div>
+  <div class="bloque faq"><h3>Preguntas</h3>
+    <details><summary>¿Viene armado?</summary><p>No: lo armas tú. Esa es la gracia. Llega con todo lo necesario.</p></details>
+    <details><summary>¿Cómo se cuelga?</summary><p>Viene una tarjeta que enseña a armar el gancho con las mismas piezas.</p></details>
+    <details><summary>¿Cuánto demora en llegar?</summary><p>Santiago 1 a 3 días hábiles y regiones 2 a 5, desde que confirmamos el pago.</p></details>
+    <details><summary>¿Cómo pago?</summary><p>Por transferencia. Al enviar tu pedido por WhatsApp te mandamos los datos.</p></details>
+    <details><summary>¿Es para regalo?</summary><p>Lo mandamos directo a quien lo recibe. Márcalo al completar tus datos.</p></details></div>
+  ${otros.length?`<div class="bloque"><h3>${esEscudo(p)?"Otros escudos":"También te puede gustar"}</h3><div class="otros">${otros.map(tarjeta).join("")}</div></div>`:""}
+  </div>
+  ${p.precio?`<div class="barra-fija"><div class="cant"><button id="menos">−</button><span id="cantN">1</span><button id="mas">+</button></div>
+    <button class="btn-grande" id="agregarF">Agregar al pedido · ${clp(p.precio)}</button></div>`:
+    `<div class="barra-fija"><a class="btn-grande wa" style="display:flex;align-items:center;justify-content:center;text-decoration:none" target="_blank" href="https://wa.me/${WHATSAPP}?text=${encodeURIComponent("Hola Áureo, me interesa: "+p.nombre+". ¿Me cuentas más?")}">Preguntar por WhatsApp</a></div>`}`;
+  if(p.precio){const n=document.getElementById("cantN"),b=document.getElementById("agregarF");
+    const upd=()=>{n.textContent=cant;b.textContent=`Agregar al pedido · ${clp(p.precio*cant)}`};
+    document.getElementById("menos").onclick=()=>{if(cant>1){cant--;upd()}};document.getElementById("mas").onclick=()=>{cant++;upd()};
+    b.onclick=()=>{agregar(p.slug,cant,true);paso=0;location.hash="#pedido"};
+    document.querySelectorAll("[data-cta]").forEach(x=>x.onclick=()=>{agregar(p.slug,cant,true);paso=0;location.hash="#pedido"});
+    document.querySelectorAll("[data-pack]").forEach(x=>x.onclick=()=>{agregar(p.slug,1);if(x.dataset.pack)agregar(x.dataset.pack,1);camisetas=[{n:"",d:""},{n:"",d:""}];toast("Pack agregado: escribe los nombres al terminar")});
+    document.querySelectorAll("[data-add2]").forEach(x=>x.onclick=()=>{agregar(p.slug,1);toast("Agregaste otro para regalar")});}
+}
+
+/* ---------- Checkout guiado: una oferta por pantalla ---------- */
+const escudosEn=()=>items().filter(x=>esEscudo(x.p));
+const nEscudos=()=>escudosEn().reduce((a,x)=>a+x.c,0);
+function totales(){
+  const tc=tramosCombo(), cam=camisetas.length&&tc?tc[Math.min(camisetas.length,3)]:0, mini=minis*5000;
+  const desc=PROP.segundoDesc&&nEscudos()>=2?PROP.segundoDesc:0, emp=bumps.empaque?PROP.empaque:0;
+  return {cam,mini,desc,emp,base:subtotal()+cam+mini+emp-desc};
+}
+function pasos(){const e=escudosEn().length>0;return["pedido",...(e?["camisetas","segundo"]:["minis"]),"entrega"]}
+function barra(base){if(!PROP.barra)return"";const meta=PROP.regaloDesde,pct=Math.min(100,base/meta*100);
+  const txt=base<20000?`Te faltan <b>${clp(20000-base)}</b> para el envío gratis 🚚`:base<meta?`¡Envío gratis listo! Te faltan <b>${clp(meta-base)}</b> para una <b>mini sorpresa de regalo</b> 🎁`:`<b>¡Ganaste una mini sorpresa de regalo!</b> 🎁`;
+  return `<div class="progreso">${txt}<div class="riel"><div style="width:${pct}%"></div></div><div class="hitos"><span>$0</span><span>🚚 $20.000</span><span>🎁 ${clp(meta)}</span></div></div>`}
+function puntos(){const S=pasos();return `<div class="puntos">${S.map((_,k)=>`<i class="${k<=paso?"ok":""}"></i>`).join("")}</div>`}
+function siguiente(){const S=pasos();paso=Math.min(paso+1,S.length-1);vistaPedido()}
+
+function vistaPedido(){
+  modo("en-pedido","Tu pedido");window.scrollTo(0,0);
+  const v=document.getElementById("vista"), I=items(), S=pasos();
+  if(!I.length){paso=0;v.innerHTML=`<div class="wrap vacio-carro"><p class="serif" style="font-size:26px">Tu pedido está vacío</p><p class="nota">Elige tu escudo y vuelve aquí.</p><button class="btn-grande" style="max-width:280px;margin-top:10px" onclick="location.hash=''">Ver catálogo</button></div>`;return}
+  if(!escudosEn().length)camisetas=[];
+  if(paso>=S.length)paso=S.length-1;
+  const etapa=S[paso], T=totales(), tc=tramosCombo(), sola=solaFila();
+  const e0=escudosEn()[0], h=e0?hincha(e0.p):null, apodo=h?h[0]:"hincha";
+  let html="", pie="";
+
+  if(etapa==="pedido"){
+    html=`<div class="panel"><h3>Lo que llevas</h3>${I.map(x=>`<div class="item">${img(x.p)}<div class="n">${esc(x.p.nombre)}<small>${clp(x.p.precio)} c/u</small></div>
+      <div class="cant"><button data-q="${x.s}" data-d="-1">−</button><span>${x.c}</span><button data-q="${x.s}" data-d="1">+</button></div></div>`).join("")}
+      <button class="op" style="margin-top:8px" onclick="location.hash=''">+ Seguir mirando</button></div>${barra(T.base)}`;
+    pie=`<button class="btn-grande" data-sig>Continuar · ${clp(T.base)}</button>`;
+  }
+
+  if(etapa==="camisetas"){
+    const n=camisetas.length||2, normal=sola?[0,12000,sola.precio*0+20000,28000]:null;
+    const solas=(()=>{const s=sola;if(!s)return{1:0,2:0,3:0};const m=(s.det.match(/\$[\d.]+/g)||[]).map(num);return{1:s.precio,2:m[0]||s.precio*2,3:m[1]||s.precio*3}})();
+    const mismas=CAMISETAS.filter(c=>norm(c[2])===norm(e0.p.nombre)), cams=[...mismas,...CAMISETAS.filter(c=>!mismas.includes(c))].slice(0,2);
+    html=`<div class="oferta">${tag("1 de 2")}<div class="t1">Solo por llevar tu escudo</div>
+      <h2>El pack del ${esc(apodo)}</h2>
+      <p style="margin:0">Tu ${esc(e0.p.nombre)} + camisetas con el nombre y el número de cada uno. Todos en la casa con la suya, en el mismo envío.</p>
+      <div class="montaje">${img(e0.p)}<span class="mas">+</span><div class="cams">${cams.map(([f])=>`<img src="${CAM_BASE}${f}" alt="">`).join("")}</div></div>
+      ${carrusel()}
+      <div class="opciones">${[1,2,3].map(k=>`<button class="op${(camisetas.length||0)===k?" sel":""}" data-cam="${k}"><b>${k} camiseta${k>1?"s":""}</b><s style="color:var(--suave)">${clp(solas[k])}</s> ${clp(tc[k])}</button>`).join("")}</div>
+      ${camisetas.length?`<div class="precios"><s>${clp(e0.p.precio+solas[camisetas.length])}</s><b>${clp(e0.p.precio+tc[camisetas.length])}</b><span>Ahorras ${clp(solas[camisetas.length]-tc[camisetas.length])}</span></div>
+        ${camisetas.map((c,k)=>`<div class="fila"><input maxlength="5" placeholder="Nombre ${k+1} (máx. 5)" value="${esc(c.n)}" data-cn="${k}"><input class="num" inputmode="numeric" maxlength="2" placeholder="N°" value="${esc(c.d)}" data-cd="${k}"></div>`).join("")}`:""}
+      </div>`;
+    pie=camisetas.length?`<button class="btn-grande oro" data-sig>Sí, agregar el pack</button>`:`<button class="btn-grande oro" data-cam="2">Quiero el pack</button>`;
+    html+=`<button class="no-gracias" data-nogracias="camisetas">No, gracias, solo el escudo</button>`;
+  }
+
+  if(etapa==="segundo"){
+    const desc=PROP.segundoDesc, otros=P.filter(x=>esEscudo(x)&&x.precio&&x.slug!==e0.s).slice(0,9);
+    html=`<div class="oferta">${tag("2 de 2")}<div class="t1">Una sola vez, aquí</div>
+      <h2>¿Alguien más en tu familia es hincha?</h2>
+      <p style="margin:0">Llévale el suyo: el segundo escudo tiene <b>${clp(desc)} menos</b> y viaja en el mismo envío.</p>
+      <button class="op" style="width:100%;margin-top:12px;display:flex;gap:10px;align-items:center" data-seg="${e0.s}">${img(e0.p)}<span style="text-align:left"><b>Otro ${esc(e0.p.nombre)}</b><s style="color:var(--suave)">${clp(e0.p.precio)}</s> <b style="display:inline">${clp(e0.p.precio-desc)}</b></span></button>
+      <p class="nota" style="margin-top:12px">O elige el de otro equipo:</p>
+      <div class="elige">${otros.map(x=>`<button data-seg="${x.slug}">${img(x)}<b>${esc(x.nombre)}</b><s>${clp(x.precio)}</s>${clp(x.precio-desc)}</button>`).join("")}</div></div>
+      <button class="no-gracias" data-nogracias="segundo">No, gracias</button>`;
+    pie=`<button class="btn-grande" data-sig>Continuar · ${clp(T.base)}</button>`;
+  }
+
+  if(etapa==="minis"){
+    const M=P.filter(x=>/3D mini/i.test(x.cat)&&x.precio&&x.precio<=7000&&!carro.some(c=>c.s===x.slug)).slice(0,9);
+    html=`<div class="oferta">${tag("1 de 1")}<div class="t1">Antes de terminar</div>
+      <h2>Agrégale una mini por poco</h2><p style="margin:0">Van en el mismo envío. ${T.base<20000?`Con ${clp(20000-T.base)} más, tu envío es gratis.`:""}</p>
+      <div class="elige">${M.map(x=>`<button data-mas="${x.slug}">${img(x)}<b>${esc(x.nombre)}</b>+ ${clp(x.precio)}</button>`).join("")}</div></div>
+      <button class="no-gracias" data-nogracias="minis">No, gracias</button>`;
+    pie=`<button class="btn-grande" data-sig>Continuar · ${clp(T.base)}</button>`;
+  }
+
+  if(etapa==="entrega"){
+    html=`<div class="panel"><h3>¿A dónde lo mandamos?</h3>
+    <label class="campo">Nombre y apellido de quien recibe<input id="fNom" autocomplete="name"></label>
+    <div class="fila"><label class="campo" style="flex:1">Región<select id="fReg">${REGIONES.map(r=>`<option>${r}</option>`).join("")}</select></label>
+      <label class="campo" style="flex:1">Comuna<input id="fCom"></label></div>
+    <div class="opciones"><button class="op${datos.mod!=="Punto Bluexpress"?" sel":""}" data-mod="Domicilio"><b>A domicilio</b></button><button class="op${datos.mod==="Punto Bluexpress"?" sel":""}" data-mod="Punto Bluexpress"><b>Punto Bluexpress</b></button></div>
+    <label class="campo" id="lDir">Dirección (calle, número, depto)<input id="fDir" autocomplete="street-address"></label>
+    <label class="campo">¿Lo necesitas para una fecha? (opcional)<input id="fFec" placeholder="Ej: 24 de diciembre"></label>
+    <label class="check"><input type="checkbox" id="fReg2" ${datos.regalo?"checked":""}> Es para regalo: lo mandamos directo</label>
+    ${datos.regalo&&PROP.empaque?`<label class="bump"><input type="checkbox" data-bump="empaque" ${bumps.empaque?"checked":""}><span>${tag("D")}<b>Empaque de regalo + tarjeta escrita a mano · ${clp(PROP.empaque)}</b>Llega listo para entregar.</span></label>
+      ${bumps.empaque?`<div class="fila"><input id="dedTxt" placeholder="Dedicatoria (opcional)" value="${esc(datos.ded||"")}"></div>`:""}`:""}
+    <div class="envio-op"><button class="op${datos.prio?"":" sel"}" data-prio="0"><span><b>Envío normal</b><small id="diasN"></small></span><b id="precioN"></b></button>
+      <button class="op${datos.prio?" sel":""}" data-prio="1"><span><b>Prioritario ⚡</b><small id="diasP"></small></span><b>+ $3.000</b></button></div>
+    <div class="porque" id="porque"></div></div>
+    <div class="panel"><h3>Resumen</h3>
+    ${I.map(x=>`<div class="res"><span>${esc(x.p.nombre)} × ${x.c}</span><span>${clp(x.p.precio*x.c)}</span></div>`).join("")}
+    ${T.cam?`<div class="res"><span>Camisetas × ${camisetas.length} <small style="color:var(--verde)">pack</small></span><span>${clp(T.cam)}</span></div>`:""}
+    ${T.desc?`<div class="res"><span>Segundo escudo</span><span style="color:var(--verde)">−${clp(T.desc)}</span></div>`:""}
+    ${T.mini?`<div class="res"><span>Mini sorpresa × ${minis}</span><span>${clp(T.mini)}</span></div>`:""}
+    ${T.emp?`<div class="res"><span>Empaque de regalo</span><span>${clp(T.emp)}</span></div>`:""}
+    ${PROP.barra&&T.base>=PROP.regaloDesde?`<div class="res"><span>🎁 Mini sorpresa de regalo</span><span style="color:var(--verde)">$0</span></div>`:""}
+    <div class="res"><span>Envío</span><span id="envioTxt"></span></div>
+    <div class="res total"><span>Total</span><span id="totalTxt"></span></div>
+    <p class="nota">Pagas por transferencia: te mandamos los datos por WhatsApp. Tus datos no se guardan en esta página: viajan solo en tu mensaje.</p></div>`;
+    pie=`<button class="btn-grande wa" id="enviar">Enviar pedido por WhatsApp</button>`;
+  }
+
+  v.innerHTML=`<div class="wrap pedido">${puntos()}${html}</div><div class="barra-fija">${pie}</div>`;
+
+  // Eventos comunes
+  v.querySelectorAll("[data-sig]").forEach(b=>b.onclick=()=>{if(etapa==="camisetas"&&camisetas.some(c=>!c.n||c.d==="")){toast("Escribe el nombre y el número de cada camiseta");return}siguiente()});
+  v.querySelectorAll("[data-nogracias]").forEach(b=>b.onclick=()=>{if(b.dataset.nogracias==="camisetas")camisetas=[];siguiente()});
+  v.querySelectorAll("[data-q]").forEach(b=>b.onclick=()=>{const it=carro.find(x=>x.s===b.dataset.q);it.c+=+b.dataset.d;if(it.c<1)carro=carro.filter(x=>x!==it);guardar();vistaPedido()});
+  v.querySelectorAll("[data-cam]").forEach(b=>b.onclick=()=>{const k=+b.dataset.cam;camisetas=Array.from({length:k},(_,i)=>camisetas[i]||{n:"",d:""});vistaPedido()});
+  v.querySelectorAll("[data-cn]").forEach(i=>i.oninput=()=>camisetas[+i.dataset.cn].n=i.value.toUpperCase());
+  v.querySelectorAll("[data-cd]").forEach(i=>i.oninput=()=>camisetas[+i.dataset.cd].d=i.value.replace(/\D/g,""));
+  v.querySelectorAll("[data-seg]").forEach(b=>b.onclick=()=>{agregar(b.dataset.seg,1,true);toast(`Segundo escudo agregado: −${clp(PROP.segundoDesc)}`);siguiente()});
+  v.querySelectorAll("[data-mas]").forEach(b=>b.onclick=()=>{agregar(b.dataset.mas,1);vistaPedido()});
+  if(etapa!=="entrega")return;
+
+  const base=T.base;
+  [["fNom","nom"],["fReg","reg"],["fCom","com"],["fDir","dir"],["fFec","fec"]].forEach(([id,k])=>{const el=document.getElementById(id);if(datos[k])el.value=datos[k];el.addEventListener("input",()=>{datos[k]=el.value;calc()});el.addEventListener("change",()=>{datos[k]=el.value;calc()})});
+  const fr=document.getElementById("fReg2");fr.onchange=()=>{datos.regalo=fr.checked;if(!fr.checked)bumps.empaque=false;vistaPedido()};
+  v.querySelectorAll("[data-bump]").forEach(b=>b.onchange=()=>{bumps[b.dataset.bump]=b.checked;vistaPedido()});
+  const de=document.getElementById("dedTxt");if(de)de.oninput=()=>datos.ded=de.value;
+  const ponMod=()=>{document.getElementById("lDir").firstChild.textContent=datos.mod==="Punto Bluexpress"?"Punto Bluexpress (dirección o nombre)":"Dirección (calle, número, depto)"};
+  var calc=()=>{const e=envio(document.getElementById("fReg").value,document.getElementById("fCom").value,datos.mod||"Domicilio",base);
+    const stgo=document.getElementById("fReg").value==="Metropolitana";
+    document.getElementById("diasN").textContent=stgo?"1 a 3 días hábiles":"2 a 5 días hábiles";
+    document.getElementById("diasP").textContent=(stgo?"1 a 2 días hábiles":"2 a 3 días hábiles")+" · lo despachamos primero";
+    document.getElementById("precioN").textContent=e.c?clp(e.c):"Gratis";
+    document.getElementById("porque").textContent=e.porque;
+    const tot=e.c+(datos.prio?3000:0);
+    document.getElementById("envioTxt").textContent=(e.c?clp(e.c):"Gratis")+(datos.prio?" + prioritario $3.000":"");
+    document.getElementById("totalTxt").textContent=clp(base+tot);return{...e,tot}};
+  ponMod();calc();
+  v.querySelectorAll("[data-mod]").forEach(b=>b.onclick=()=>{datos.mod=b.dataset.mod;v.querySelectorAll("[data-mod]").forEach(x=>x.classList.toggle("sel",x===b));ponMod();calc()});
+  v.querySelectorAll("[data-prio]").forEach(b=>b.onclick=()=>{datos.prio=b.dataset.prio==="1";v.querySelectorAll("[data-prio]").forEach(x=>x.classList.toggle("sel",x===b));calc()});
+  document.getElementById("enviar").onclick=()=>{
+    const g=id=>document.getElementById(id).value.trim();
+    if(!g("fNom")||!g("fCom")||!g("fDir")){toast("Falta nombre, comuna o dirección");return}
+    const d=new Date(),pad=n=>String(n).padStart(2,"0"),e=calc(),mod=datos.mod||"Domicilio";
+    const id=`AU-${String(d.getFullYear()).slice(2)}${pad(d.getMonth()+1)}${pad(d.getDate())}-${Math.floor(100+Math.random()*900)}`;
+    const M=["Hola! Quiero confirmar mi pedido del catalogo.","",`PEDIDO: ${id}`,`FECHA: ${pad(d.getDate())}-${pad(d.getMonth()+1)}-${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`,"",
+      `CLIENTE: ${g("fNom")}`,`ENTREGA: ${mod}`,`REGION: ${g("fReg")}`,`COMUNA: ${g("fCom")}`,`${mod==="Domicilio"?"DIRECCION":"PUNTO"}: ${g("fDir")}`];
+    if(g("fFec"))M.push(`LO NECESITO PARA: ${g("fFec")}`);
+    M.push("","LO QUE LLEVO:",...items().map(x=>`- ${x.p.nombre} x${x.c} - ${clp(x.p.precio*x.c)}`));
+    if(camisetas.length){M.push(`- Camiseta con escudo x${camisetas.length} - ${clp(T.cam)}`);camisetas.forEach((c,k)=>M.push(`  ${k+1}) ${c.n} ${c.d}`))}
+    if(T.desc)M.push(`- Segundo escudo: -${clp(T.desc)}`);
+    if(T.mini)M.push(`- Mini sorpresa x${minis} - ${clp(T.mini)}`);
+    if(T.emp)M.push(`- Empaque de regalo - ${clp(T.emp)}`+(datos.ded?`\n  Dedicatoria: ${datos.ded}`:""));
+    if(PROP.barra&&base>=PROP.regaloDesde)M.push(`- Mini sorpresa de REGALO (pedido desde ${clp(PROP.regaloDesde)}) - $0`);
+    M.push("",`ENVIO: ${e.c?clp(e.c):"gratis"}${e.porque?` (${e.porque})`:""}`);
+    if(datos.prio)M.push("PRIORITARIO: si (+$3.000)");
+    M.push(`TOTAL: ${clp(base+e.tot)}`);
+    if(datos.regalo)M.push("","ES REGALO: si");
+    window.open(`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(sinTildes(M.join("\n")))}`,"_blank");
+  };
+}
+
+/* ---------- Navegación ---------- */
+function ruta(){document.getElementById("toast").classList.remove("ver");const h=location.hash;if(h.startsWith("#p/"))vistaFicha(h.slice(3));else if(h==="#pedido")vistaPedido();else vistaCatalogo()}
+document.addEventListener("click",e=>{
+  const a=e.target.closest("[data-add]");if(a){e.stopPropagation();agregar(a.dataset.add);return}
+  const c=e.target.closest("[data-cat]");if(c){cat=c.dataset.cat;vistaCatalogo();return}
+  const r=e.target.closest("[data-ir]");if(r){location.hash="#p/"+r.dataset.ir}
+});
+document.getElementById("buscar").addEventListener("input",()=>{if(!location.hash)vistaCatalogo()});
+document.getElementById("volver").onclick=()=>{if(location.hash==="#pedido"&&paso>0){paso--;vistaPedido();return}history.length>1?history.back():(location.hash="")};
+document.getElementById("carroFlot").onclick=()=>{paso=0;location.hash="#pedido"};
+document.getElementById("toastVer").onclick=()=>{document.getElementById("toast").classList.remove("ver");paso=0;location.hash="#pedido"};
+window.addEventListener("hashchange",ruta);
+cargar().then(()=>{pintarFlot();ruta()}).catch(()=>{document.getElementById("vista").innerHTML='<p class="vacio">No se pudo cargar el catálogo.</p>'});
+</script>
+</body>
+</html>
