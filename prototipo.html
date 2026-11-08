@@ -235,6 +235,29 @@ footer{text-align:center;font-size:12px;color:var(--suave);padding:20px 16px 100
 .mirar .prod.todo{display:flex;align-items:center;justify-content:center;text-align:center;font-weight:700;background:#faf3e3;cursor:pointer}
 .blue{display:flex;align-items:center;gap:10px;margin-top:10px;background:#eef4ff;border:1px solid #c9dafc;border-radius:12px;padding:10px 12px;font-size:12.5px;color:#1d3a73;text-decoration:none}
 .blue b{display:block;font-size:13.5px}
+.cam-fila{display:grid;grid-template-columns:76px 1fr;gap:10px;align-items:center;background:#fff;border:1px solid var(--linea);border-radius:14px;padding:8px;margin-top:8px}
+.cam-fila img{width:76px;height:76px;object-fit:contain;background:#fbfaf7;border-radius:10px}
+.cam-fila select,.cam-fila input{width:100%;padding:9px 10px;border:1px solid var(--linea);border-radius:9px;font:inherit;font-size:14px;background:#fff}
+.cam-fila .nn{display:flex;gap:6px;margin-top:6px}
+.cam-fila .nn input.num{max-width:70px}
+.cam-fila.regalo{border:2px solid var(--verde);background:#f3fbf6}
+.cam-fila .et{font-size:11px;font-weight:700;color:var(--suave);margin-bottom:4px}
+.cam-fila.regalo .et{color:var(--verde)}
+.meta-cam{font-size:12.5px;margin-top:8px;color:#6d5320;background:#faf3e3;border-radius:10px;padding:8px 10px}
+.mini-regalo{background:#f3fbf6;border:2px solid var(--verde);border-radius:16px;padding:14px;margin-top:14px}
+.mini-regalo .fotos{display:flex;gap:8px;margin:8px 0}
+.mini-regalo .fotos img{width:31%;aspect-ratio:1/1;object-fit:contain;background:#fff;border-radius:10px}
+.series{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.series select{width:100%;padding:9px;border:1px solid var(--linea);border-radius:9px;font:inherit;font-size:13.5px;background:#fff}
+.mapa{width:100%;height:260px;border:0;border-radius:12px;margin-top:10px;background:#eef4ff}
+.envio-linea{display:flex;gap:10px;align-items:center;background:#f3fbf6;border:1px solid #cfe9da;border-radius:12px;padding:10px 12px;margin-top:12px;font-size:13px}
+.envio-linea b{display:block;font-size:14px}
+.prio{display:flex;gap:10px;align-items:flex-start;border:1.5px solid var(--linea);border-radius:12px;padding:10px 12px;margin:10px 0 4px;font-size:13px;background:#fff}
+.prio input{width:18px;height:18px;margin-top:2px;flex:none}
+.prio b{display:block}
+.chips-ded{display:flex;flex-direction:column;gap:6px;margin-top:6px}
+.chips-ded button{text-align:left;border:1px dashed var(--oro);background:#fff;border-radius:10px;padding:7px 10px;font-size:12.5px}
+.cuenta{font-size:11px;color:var(--suave);text-align:right}
 .aviso-proto{background:#fff3cd;color:#664d03;font-size:11.5px;text-align:center;padding:5px 8px}
 </style>
 </head>
@@ -261,8 +284,13 @@ const CAMISETAS = [["manu-30.jpg","MANU 30","Colo-Colo"],["lucho-10.jpg","LUCHO 
 const carrusel = () => { const c = CAMISETAS.map(([f,n,club])=>`<div class="cam"><img src="${CAM_BASE}${f}" alt="Camiseta ${n}" loading="lazy"><b>${n}</b><span>${club}</span></div>`).join("");
   return `<div class="carrusel"><div class="cinta">${c}${c}</div></div>`; };
 /* Propuestas para subir el ticket (D7). Cada una se apaga con false; Áureo decide cuáles quedan. */
-const PROP = { barra:true, regaloDesde:40000, porPoco:true, empaque:2000, segundoDesc:3000 };
+const PROP = { barra:true, regaloDesde:40000, porPoco:true, empaque:2000, segundoDesc:3000, camRegaloDesde:35000, prioridad:3000 };
 const tag = l => `<span class="prop">Propuesta ${l}</span><br>`;
+/* Camiseta de ejemplo por equipo (AUREO 10, del Laboratorio): lo que ve el cliente al elegir el equipo de cada camiseta. */
+const EQUIPOS_CAM = [["Colo-Colo","ej-colo-colo-local.jpg"],["Colo-Colo (visita)","ej-colo-colo-visita.jpg"],["U de Chile","ej-universidad-de-chile-local.jpg"],["Audax Italiano","ej-audax-italiano-local.jpg"],["Cobreloa","ej-cobreloa-local.jpg"],["Deportes Concepción","ej-deportes-concepcion-local.jpg"],["Deportes Iquique","ej-deportes-iquique-local.jpg"],["Deportes Temuco","ej-deportes-temuco-local.jpg"],["Huachipato","ej-huachipato-local.jpg"],["Magallanes","ej-magallanes-local.jpg"],["O'Higgins","ej-o-higgins-local.jpg"],["Rangers de Talca","ej-rangers-de-talca-local.jpg"],["River Plate","ej-river-plate-local.jpg"],["San Luis de Quillota","ej-san-luis-local.jpg"],["Santiago Wanderers","ej-santiago-wanderers-local.jpg"],["Unión Española","ej-union-espanola-local.jpg"]];
+const OTRO_EQ = "Otro equipo (lo vemos por WhatsApp)";
+const fotoEq = eq => { const e = EQUIPOS_CAM.find(x=>x[0]===eq); return e ? CAM_BASE+e[1] : "isotipo.svg"; };
+const SERIES = ["Anime","Pokémon","Harry Potter","Marvel","Mario Bros","Sonic","Disney","Star Wars","Sanrio","Zootopia","Minecraft","Bob Esponja","Los Simpsons"];
 /* Envío gratis a la región del club (regla de Áureo). Cobreloa: solo Calama. */
 const REGION_CLUB = {"santiago-wanderers":"Valparaíso","everton":"Valparaíso","san-luis-de-quillota":"Valparaíso","deportes-iquique":"Tarapacá","nublense":"Ñuble","huachipato":"Biobío","deportes-concepcion":"Biobío","rangers-de-talca":"Maule","curico-unido":"Maule","o-higgins":"O'Higgins","coquimbo-unido":"Coquimbo","deportes-la-serena":"Coquimbo","deportes-temuco":"Araucanía","cobreloa":"Antofagasta|calama","deportes-puerto-montt":"Los Lagos"};
 const REGIONES = ["Metropolitana","Arica y Parinacota","Tarapacá","Antofagasta","Atacama","Coquimbo","Valparaíso","O'Higgins","Maule","Ñuble","Biobío","Araucanía","Los Ríos","Los Lagos","Aysén","Magallanes"];
@@ -414,8 +442,10 @@ function vistaFicha(s){
 /* ---------- Checkout guiado: una oferta por pantalla ---------- */
 const escudosEn=()=>items().filter(x=>esEscudo(x.p));
 const nEscudos=()=>escudosEn().reduce((a,x)=>a+x.c,0);
+function precioCams(n){const tc=tramosCombo();if(!n||!tc)return 0;return n<=3?tc[n]:tc[3]+(n-3)*tc[1]}
+const camRegalo=()=>PROP.camRegaloDesde&&precioCams(camisetas.length)>=PROP.camRegaloDesde;
 function totales(){
-  const tc=tramosCombo(), cam=camisetas.length&&tc?tc[Math.min(camisetas.length,3)]:0, mini=minis*5000;
+  const tc=tramosCombo(), cam=precioCams(camisetas.length), mini=minis*5000;
   const desc=PROP.segundoDesc&&nEscudos()>=2?PROP.segundoDesc:0, emp=bumps.empaque?PROP.empaque:0;
   return {cam,mini,desc,emp,base:subtotal()+cam+mini+emp-desc};
 }
@@ -453,19 +483,25 @@ function vistaPedido(){
   }
 
   if(etapa==="camisetas"){
-    const n=camisetas.length||2, normal=sola?[0,12000,sola.precio*0+20000,28000]:null;
-    const solas=(()=>{const s=sola;if(!s)return{1:0,2:0,3:0};const m=(s.det.match(/\$[\d.]+/g)||[]).map(num);return{1:s.precio,2:m[0]||s.precio*2,3:m[1]||s.precio*3}})();
+    const solas=(()=>{const s=sola;if(!s)return n=>0;const m=(s.det.match(/\$[\d.]+/g)||[]).map(num);const T3={1:s.precio,2:m[0]||s.precio*2,3:m[1]||s.precio*3};return n=>n<=3?T3[n]:T3[3]+(n-3)*s.precio})();
+    const eqBase=(EQUIPOS_CAM.find(x=>norm(x[0])===norm(e0.p.nombre))||[e0.p.nombre])[0];
     const mismas=CAMISETAS.filter(c=>norm(c[2])===norm(e0.p.nombre)), cams=[...mismas,...CAMISETAS.filter(c=>!mismas.includes(c))].slice(0,2);
+    const k=camisetas.length, opsEq=eq=>[eqBase,...EQUIPOS_CAM.map(x=>x[0]).filter(x=>x!==eqBase),OTRO_EQ].map(x=>`<option${x===eq?" selected":""}>${esc(x)}</option>`).join("");
+    const fila=(c,i,reg)=>`<div class="cam-fila${reg?" regalo":""}"><img src="${fotoEq(c.eq||eqBase)}" alt="" data-fimg="${reg?"r":i}">
+      <div><div class="et">${reg?"🎁 DE REGALO":"Camiseta "+(i+1)}</div><select data-ceq="${reg?"r":i}">${opsEq(c.eq||eqBase)}</select>
+      <div class="nn"><input maxlength="5" placeholder="Nombre (máx. 5)" value="${esc(c.n)}" data-cn="${reg?"r":i}"><input class="num" inputmode="numeric" maxlength="2" placeholder="N°" value="${esc(c.d)}" data-cd="${reg?"r":i}"></div></div></div>`;
+    const falta=PROP.camRegaloDesde&&k?PROP.camRegaloDesde-precioCams(k):0;
     html=`<div class="oferta">${tag("1 de 2")}<div class="t1">Solo por llevar tu escudo</div>
       <h2>El pack del ${esc(apodo)}</h2>
-      <p style="margin:0">Tu ${esc(e0.p.nombre)} + camisetas con el nombre y el número de cada uno. Todos en la casa con la suya, en el mismo envío.</p>
+      <p style="margin:0">Tu ${esc(e0.p.nombre)} + una camiseta con el nombre y el número de cada uno. ¿En tu casa hay de otro equipo? Cada camiseta puede ser de un club distinto.</p>
       <div class="montaje">${img(e0.p)}<span class="mas">+</span><div class="cams">${cams.map(([f])=>`<img src="${CAM_BASE}${f}" alt="">`).join("")}</div></div>
       ${carrusel()}
-      <div class="opciones">${[1,2,3].map(k=>`<button class="op${(camisetas.length||0)===k?" sel":""}" data-cam="${k}"><b>${k} camiseta${k>1?"s":""}</b><s style="color:var(--suave)">${clp(solas[k])}</s> ${clp(tc[k])}</button>`).join("")}</div>
-      ${camisetas.length?`<div class="precios"><s>${clp(e0.p.precio+solas[camisetas.length])}</s><b>${clp(e0.p.precio+tc[camisetas.length])}</b><span>Ahorras ${clp(solas[camisetas.length]-tc[camisetas.length])}</span></div>
-        ${camisetas.map((c,k)=>`<div class="fila"><input maxlength="5" placeholder="Nombre ${k+1} (máx. 5)" value="${esc(c.n)}" data-cn="${k}"><input class="num" inputmode="numeric" maxlength="2" placeholder="N°" value="${esc(c.d)}" data-cd="${k}"></div>`).join("")}`:""}
+      <div class="opciones">${[1,2,3,4,5].map(n=>`<button class="op${k===n?" sel":""}" data-cam="${n}"><b>${n}</b><s style="color:var(--suave)">${clp(solas(n))}</s> ${clp(precioCams(n))}</button>`).join("")}</div>
+      ${k?`<div class="precios"><s>${clp(e0.p.precio+solas(k))}</s><b>${clp(e0.p.precio+precioCams(k))}</b><span>Ahorras ${clp(solas(k)-precioCams(k))}</span></div>
+        ${camisetas.map((c,i)=>fila(c,i,false)).join("")}
+        ${camRegalo()?fila(datos.camReg||{},0,true):`<div class="meta-cam">${tag("G")}Con ${clp(PROP.camRegaloDesde)} en camisetas te regalamos una más. ${falta>0?`Te faltan ${clp(falta)}.`:""}</div>`}`:""}
       </div>`;
-    pie=camisetas.length?`<button class="btn-grande oro" data-sig>Sí, agregar el pack</button>`:`<button class="btn-grande oro" data-cam="2">Quiero el pack</button>`;
+    pie=k?`<button class="btn-grande oro" data-sig>Sí, agregar el pack</button>`:`<button class="btn-grande oro" data-cam="2">Quiero el pack</button>`;
     html+=`<button class="no-gracias" data-nogracias="camisetas">No, gracias, solo el escudo</button>`;
   }
 
@@ -491,28 +527,39 @@ function vistaPedido(){
   }
 
   if(etapa==="entrega"){
+    const punto=datos.mod==="Punto Bluexpress";
+    const dedOps=[escudosEn().length?`Para el ${apodo} más grande de la casa`:"Para el más fan de la casa","Feliz cumpleaños. Que lo disfrutes armándolo","Feliz Navidad, con todo el cariño"];
+    const minisFoto=P.filter(x=>/3D mini/i.test(x.cat)&&x.precio).slice(0,3);
+    const sel=(i)=>`<select data-serie="${i}"><option value="">Serie ${i+1}…</option>${SERIES.map(s=>`<option${(datos.series||[])[i]===s?" selected":""}>${s}</option>`).join("")}</select>`;
     html=`<div class="panel"><h3>¿A dónde lo mandamos?</h3>
     <label class="campo">Nombre y apellido de quien recibe<input id="fNom" autocomplete="name"></label>
     <div class="fila"><label class="campo" style="flex:1">Región<select id="fReg">${REGIONES.map(r=>`<option>${r}</option>`).join("")}</select></label>
       <label class="campo" style="flex:1">Comuna<input id="fCom"></label></div>
-    <div class="opciones"><button class="op${datos.mod!=="Punto Bluexpress"?" sel":""}" data-mod="Domicilio"><b>A domicilio</b></button><button class="op${datos.mod==="Punto Bluexpress"?" sel":""}" data-mod="Punto Bluexpress"><b>Punto Bluexpress</b></button></div>
-    ${datos.mod==="Punto Bluexpress"?`<a class="blue" href="https://www.blue.cl/lockers-puntos/encuentra-tu-punto" target="_blank" rel="noopener"><span style="font-size:22px">📍</span><span><b>Busca tu Punto Blue más cercano</b>Se abre el mapa de Blue Express. Copia la dirección del punto y pégala aquí abajo.</span></a>`:""}
-    <label class="campo" id="lDir">Dirección (calle, número, depto)<input id="fDir" autocomplete="street-address"></label>
+    <div class="opciones"><button class="op${!punto?" sel":""}" data-mod="Domicilio"><b>🏠 A domicilio</b></button><button class="op${punto?" sel":""}" data-mod="Punto Bluexpress"><b>📍 Punto Blue Express</b></button></div>
+    ${punto?`<p class="nota" style="margin:8px 0 0">Estos son los Puntos Blue Express cerca de tu comuna. Elige uno y escribe su nombre o dirección abajo.</p>
+      <iframe class="mapa" id="mapa" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      <a class="nota" style="display:block;margin-top:4px" href="https://www.blue.cl/lockers-puntos/encuentra-tu-punto" target="_blank" rel="noopener">¿No lo encuentras? Ver el buscador oficial de Blue Express →</a>`:""}
+    <label class="campo" id="lDir">${punto?"Punto Blue Express elegido (nombre o dirección)":"Dirección (calle, número, depto)"}<input id="fDir" autocomplete="${punto?"off":"street-address"}"></label>
+    <div class="envio-linea"><span style="font-size:22px">🚚</span><span id="envioLinea"></span></div>
     <label class="campo">¿Lo necesitas para una fecha? (opcional)<input id="fFec" placeholder="Ej: 24 de diciembre"></label>
     <label class="check"><input type="checkbox" id="fReg2" ${datos.regalo?"checked":""}> Es para regalo: lo mandamos directo</label>
     ${datos.regalo&&PROP.empaque?`<label class="bump"><input type="checkbox" data-bump="empaque" ${bumps.empaque?"checked":""}><span>${tag("D")}<b>Empaque de regalo + tarjeta escrita a mano · ${clp(PROP.empaque)}</b>Llega listo para entregar.</span></label>
-      ${bumps.empaque?`<div class="fila"><input id="dedTxt" placeholder="Dedicatoria (opcional)" value="${esc(datos.ded||"")}"></div>`:""}`:""}
-    <div class="envio-op"><button class="op${datos.prio?"":" sel"}" data-prio="0"><span><b>Envío normal</b><small id="diasN"></small></span><b id="precioN"></b></button>
-      <button class="op${datos.prio?" sel":""}" data-prio="1"><span><b>Prioritario ⚡</b><small id="diasP"></small></span><b>+ $3.000</b></button></div>
-    <div class="porque" id="porque"></div></div>
+      ${bumps.empaque?`<div style="margin-top:8px"><input id="dedTxt" maxlength="50" placeholder="Tu dedicatoria (máx. 50 caracteres)" value="${esc(datos.ded||"")}" style="width:100%;padding:10px;border:1px solid var(--linea);border-radius:10px;font:inherit"><div class="cuenta" id="dedCuenta">${(datos.ded||"").length}/50</div>
+        <div class="chips-ded">${dedOps.map(d=>`<button type="button" data-ded="${esc(d)}">“${esc(d)}”</button>`).join("")}</div></div>`:""}`:""}
+    </div>
+    ${PROP.barra&&T.base>=PROP.regaloDesde?`<div class="mini-regalo">${tag("B")}<b>🎁 Ganaste una minifigura sorpresa de regalo</b>
+      <p class="nota" style="margin:4px 0 0">Una figura 3D en mini bloques, como estas. Elige 4 series que te gusten y nosotros elegimos cuál te llega.</p>
+      <div class="fotos">${minisFoto.map(x=>img(x)).join("")}</div>
+      <div class="series">${[0,1,2,3].map(sel).join("")}</div></div>`:""}
     <div class="panel"><h3>Resumen</h3>
     ${I.map(x=>`<div class="res"><span>${esc(x.p.nombre)} × ${x.c}</span><span>${clp(x.p.precio*x.c)}</span></div>`).join("")}
-    ${T.cam?`<div class="res"><span>Camisetas × ${camisetas.length} <small style="color:var(--verde)">pack</small></span><span>${clp(T.cam)}</span></div>`:""}
+    ${T.cam?`<div class="res"><span>Camisetas × ${camisetas.length}${camRegalo()?" + 1 de regalo":""} <small style="color:var(--verde)">pack</small></span><span>${clp(T.cam)}</span></div>`:""}
     ${T.desc?`<div class="res"><span>Segundo escudo</span><span style="color:var(--verde)">−${clp(T.desc)}</span></div>`:""}
     ${T.mini?`<div class="res"><span>Mini sorpresa × ${minis}</span><span>${clp(T.mini)}</span></div>`:""}
     ${T.emp?`<div class="res"><span>Empaque de regalo</span><span>${clp(T.emp)}</span></div>`:""}
-    ${PROP.barra&&T.base>=PROP.regaloDesde?`<div class="res"><span>🎁 Mini sorpresa de regalo</span><span style="color:var(--verde)">$0</span></div>`:""}
-    <div class="res"><span>Envío</span><span id="envioTxt"></span></div>
+    ${PROP.barra&&T.base>=PROP.regaloDesde?`<div class="res"><span>🎁 Minifigura sorpresa</span><span style="color:var(--verde)">$0</span></div>`:""}
+    <div class="res"><span id="envioRes"></span><span id="envioTxt"></span></div>
+    ${PROP.prioridad?`<label class="prio"><input type="checkbox" id="fPrio" ${datos.prio?"checked":""}><span><b>⚡ ¿Lo necesitas antes? Prioridad +${clp(PROP.prioridad)}</b><span id="prioTxt"></span></span></label>`:""}
     <div class="res total"><span>Total</span><span id="totalTxt"></span></div>
     <p class="nota">Pagas por transferencia: te mandamos los datos por WhatsApp. Tus datos no se guardan en esta página: viajan solo en tu mensaje.</p></div>`;
     pie=`<button class="btn-grande wa" id="enviar">Enviar pedido por WhatsApp</button>`;
@@ -521,37 +568,43 @@ function vistaPedido(){
   v.innerHTML=`<div class="wrap pedido">${puntos()}${html}</div><div class="barra-fija">${pie}</div>`;
 
   // Eventos comunes
-  v.querySelectorAll("[data-sig]").forEach(b=>b.onclick=()=>{if(etapa==="camisetas"&&camisetas.some(c=>!c.n||c.d==="")){toast("Escribe el nombre y el número de cada camiseta");return}siguiente()});
+  v.querySelectorAll("[data-sig]").forEach(b=>b.onclick=()=>{if(etapa==="camisetas"&&([...camisetas,...(camRegalo()?[datos.camReg||{}]:[])]).some(c=>!c.n||c.d===""||c.d===undefined)){toast("Escribe el nombre y el número de cada camiseta");return}siguiente()});
   v.querySelectorAll("[data-nogracias]").forEach(b=>b.onclick=()=>{if(b.dataset.nogracias==="camisetas")camisetas=[];siguiente()});
   v.querySelectorAll("[data-mirar]").forEach(b=>b.onclick=()=>{mirando=!mirando;vistaPedido()});
   v.querySelectorAll("[data-mcat]").forEach(b=>b.onclick=()=>{mirarCat=b.dataset.mcat;const x=window.scrollY;vistaPedido();window.scrollTo(0,x)});
   v.querySelectorAll("[data-madd]").forEach(b=>b.onclick=()=>{agregar(b.dataset.madd,1,true);const x=window.scrollY;vistaPedido();window.scrollTo(0,x)});
   v.querySelectorAll("[data-q]").forEach(b=>b.onclick=()=>{const it=carro.find(x=>x.s===b.dataset.q);it.c+=+b.dataset.d;if(it.c<1)carro=carro.filter(x=>x!==it);guardar();vistaPedido()});
-  v.querySelectorAll("[data-cam]").forEach(b=>b.onclick=()=>{const k=+b.dataset.cam;camisetas=Array.from({length:k},(_,i)=>camisetas[i]||{n:"",d:""});vistaPedido()});
-  v.querySelectorAll("[data-cn]").forEach(i=>i.oninput=()=>camisetas[+i.dataset.cn].n=i.value.toUpperCase());
-  v.querySelectorAll("[data-cd]").forEach(i=>i.oninput=()=>camisetas[+i.dataset.cd].d=i.value.replace(/\D/g,""));
+  const camDe=k=>k==="r"?(datos.camReg=datos.camReg||{n:"",d:""}):camisetas[+k];
+  v.querySelectorAll("[data-cam]").forEach(b=>b.onclick=()=>{const k=+b.dataset.cam;camisetas=Array.from({length:k},(_,i)=>camisetas[i]||{n:"",d:""});const x=window.scrollY;vistaPedido();if(etapa==="camisetas")window.scrollTo(0,x)});
+  v.querySelectorAll("[data-cn]").forEach(i=>i.oninput=()=>camDe(i.dataset.cn).n=i.value.toUpperCase());
+  v.querySelectorAll("[data-cd]").forEach(i=>i.oninput=()=>camDe(i.dataset.cd).d=i.value.replace(/\D/g,""));
+  v.querySelectorAll("[data-ceq]").forEach(s=>s.onchange=()=>{camDe(s.dataset.ceq).eq=s.value;v.querySelector(`[data-fimg="${s.dataset.ceq}"]`).src=fotoEq(s.value)});
   v.querySelectorAll("[data-seg]").forEach(b=>b.onclick=()=>{agregar(b.dataset.seg,1,true);toast(`Segundo escudo agregado: −${clp(PROP.segundoDesc)}`);siguiente()});
   v.querySelectorAll("[data-mas]").forEach(b=>b.onclick=()=>{agregar(b.dataset.mas,1);vistaPedido()});
   if(etapa!=="entrega")return;
 
   const base=T.base;
   [["fNom","nom"],["fReg","reg"],["fCom","com"],["fDir","dir"],["fFec","fec"]].forEach(([id,k])=>{const el=document.getElementById(id);if(datos[k])el.value=datos[k];el.addEventListener("input",()=>{datos[k]=el.value;calc()});el.addEventListener("change",()=>{datos[k]=el.value;calc()})});
-  const fr=document.getElementById("fReg2");fr.onchange=()=>{datos.regalo=fr.checked;if(!fr.checked)bumps.empaque=false;vistaPedido()};
-  v.querySelectorAll("[data-bump]").forEach(b=>b.onchange=()=>{bumps[b.dataset.bump]=b.checked;vistaPedido()});
-  const de=document.getElementById("dedTxt");if(de)de.oninput=()=>datos.ded=de.value;
-  const ponMod=()=>{document.getElementById("lDir").firstChild.textContent=datos.mod==="Punto Bluexpress"?"Punto Bluexpress (dirección o nombre)":"Dirección (calle, número, depto)"};
-  var calc=()=>{const e=envio(document.getElementById("fReg").value,document.getElementById("fCom").value,datos.mod||"Domicilio",base);
-    const stgo=document.getElementById("fReg").value==="Metropolitana";
-    document.getElementById("diasN").textContent=stgo?"1 a 3 días hábiles":"2 a 5 días hábiles";
-    document.getElementById("diasP").textContent=(stgo?"1 a 2 días hábiles":"2 a 3 días hábiles")+" · lo despachamos primero";
-    document.getElementById("precioN").textContent=e.c?clp(e.c):"Gratis";
-    document.getElementById("porque").textContent=e.porque;
-    const tot=e.c+(datos.prio?3000:0);
-    document.getElementById("envioTxt").textContent=(e.c?clp(e.c):"Gratis")+(datos.prio?" + prioritario $3.000":"");
+  const fr=document.getElementById("fReg2");fr.onchange=()=>{datos.regalo=fr.checked;if(!fr.checked)bumps.empaque=false;const x=window.scrollY;vistaPedido();window.scrollTo(0,x)};
+  v.querySelectorAll("[data-bump]").forEach(b=>b.onchange=()=>{bumps[b.dataset.bump]=b.checked;const x=window.scrollY;vistaPedido();window.scrollTo(0,x)});
+  const de=document.getElementById("dedTxt");if(de)de.oninput=()=>{datos.ded=de.value;document.getElementById("dedCuenta").textContent=de.value.length+"/50"};
+  v.querySelectorAll("[data-ded]").forEach(b=>b.onclick=()=>{datos.ded=b.dataset.ded;de.value=datos.ded;document.getElementById("dedCuenta").textContent=datos.ded.length+"/50"});
+  v.querySelectorAll("[data-serie]").forEach(s=>s.onchange=()=>{datos.series=datos.series||[];datos.series[+s.dataset.serie]=s.value});
+  const mapa=document.getElementById("mapa");let ultimo="";
+  const ponMapa=()=>{if(!mapa)return;const c=document.getElementById("fCom").value.trim(),r=document.getElementById("fReg").value;const q=`Blue Express ${c||""} ${r==="Metropolitana"?"Santiago":r} Chile`;if(q===ultimo)return;ultimo=q;mapa.src="https://www.google.com/maps?q="+encodeURIComponent(q)+"&output=embed"};
+  var calc=()=>{const reg=document.getElementById("fReg").value,com=document.getElementById("fCom").value,mod=datos.mod||"Domicilio",e=envio(reg,com,mod,base);
+    const stgo=reg==="Metropolitana",dias=stgo?"1 a 3 días hábiles":"2 a 5 días hábiles",diasP=stgo?"1 a 2 días hábiles":"2 a 3 días hábiles";
+    const donde=mod==="Domicilio"?`a domicilio${com?" en "+com:""}`:`a tu Punto Blue${com?" en "+com:""}`;
+    document.getElementById("envioLinea").innerHTML=`<b>Envío ${donde}: ${e.c?clp(e.c):"Gratis"}</b>${e.porque?e.porque+" · ":""}llega en ${dias}`;
+    document.getElementById("envioRes").textContent="Envío "+(mod==="Domicilio"?"a domicilio":"a Punto Blue");
+    document.getElementById("envioTxt").textContent=e.c?clp(e.c):"Gratis";
+    const pt=document.getElementById("prioTxt");if(pt)pt.textContent=`Lo despachamos primero: llega en ${diasP}.`;
+    const tot=e.c+(datos.prio?PROP.prioridad:0);
     document.getElementById("totalTxt").textContent=clp(base+tot);return{...e,tot}};
-  ponMod();calc();
+  calc();ponMapa();
+  document.getElementById("fCom").addEventListener("change",ponMapa);document.getElementById("fReg").addEventListener("change",ponMapa);
+  const fp=document.getElementById("fPrio");if(fp)fp.onchange=()=>{datos.prio=fp.checked;calc()};
   v.querySelectorAll("[data-mod]").forEach(b=>b.onclick=()=>{datos.mod=b.dataset.mod;const x=window.scrollY;vistaPedido();window.scrollTo(0,x)});
-  v.querySelectorAll("[data-prio]").forEach(b=>b.onclick=()=>{datos.prio=b.dataset.prio==="1";v.querySelectorAll("[data-prio]").forEach(x=>x.classList.toggle("sel",x===b));calc()});
   document.getElementById("enviar").onclick=()=>{
     const g=id=>document.getElementById(id).value.trim();
     if(!g("fNom")||!g("fCom")||!g("fDir")){toast("Falta nombre, comuna o dirección");return}
@@ -561,13 +614,15 @@ function vistaPedido(){
       `CLIENTE: ${g("fNom")}`,`ENTREGA: ${mod}`,`REGION: ${g("fReg")}`,`COMUNA: ${g("fCom")}`,`${mod==="Domicilio"?"DIRECCION":"PUNTO"}: ${g("fDir")}`];
     if(g("fFec"))M.push(`LO NECESITO PARA: ${g("fFec")}`);
     M.push("","LO QUE LLEVO:",...items().map(x=>`- ${x.p.nombre} x${x.c} - ${clp(x.p.precio*x.c)}`));
-    if(camisetas.length){M.push(`- Camiseta con escudo x${camisetas.length} - ${clp(T.cam)}`);camisetas.forEach((c,k)=>M.push(`  ${k+1}) ${c.n} ${c.d}`))}
+    if(camisetas.length){const eqB=(EQUIPOS_CAM.find(x=>norm(x[0])===norm(escudosEn()[0].p.nombre))||[escudosEn()[0].p.nombre])[0];
+      M.push(`- Camiseta con escudo x${camisetas.length} - ${clp(T.cam)}`);camisetas.forEach((c,k)=>M.push(`  ${k+1}) ${c.n} ${c.d} - ${c.eq||eqB}`));
+      if(camRegalo()){const r=datos.camReg||{};M.push(`  + 1 de REGALO: ${r.n||"?"} ${r.d||"?"} - ${r.eq||eqB}`)}}
     if(T.desc)M.push(`- Segundo escudo: -${clp(T.desc)}`);
     if(T.mini)M.push(`- Mini sorpresa x${minis} - ${clp(T.mini)}`);
     if(T.emp)M.push(`- Empaque de regalo - ${clp(T.emp)}`+(datos.ded?`\n  Dedicatoria: ${datos.ded}`:""));
-    if(PROP.barra&&base>=PROP.regaloDesde)M.push(`- Mini sorpresa de REGALO (pedido desde ${clp(PROP.regaloDesde)}) - $0`);
+    if(PROP.barra&&base>=PROP.regaloDesde)M.push(`- Minifigura sorpresa de REGALO - $0`,`  Series: ${(datos.series||[]).filter(Boolean).join(", ")||"(elige por WhatsApp)"}`);
     M.push("",`ENVIO: ${e.c?clp(e.c):"gratis"}${e.porque?` (${e.porque})`:""}`);
-    if(datos.prio)M.push("PRIORITARIO: si (+$3.000)");
+    if(datos.prio)M.push(`PRIORIDAD: si (+${clp(PROP.prioridad)})`);
     M.push(`TOTAL: ${clp(base+e.tot)}`);
     if(datos.regalo)M.push("","ES REGALO: si");
     window.open(`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(sinTildes(M.join("\n")))}`,"_blank");
