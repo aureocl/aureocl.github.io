@@ -222,6 +222,19 @@ footer{text-align:center;font-size:12px;color:var(--suave);padding:20px 16px 100
 .elige button img{width:100%;aspect-ratio:1/1;object-fit:contain}
 .elige button s{color:var(--suave);display:block}
 .elige button b{display:block;font-size:12.5px}
+.mirar{margin-top:10px;animation:aparece .25s ease}
+@keyframes aparece{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+.mirar .chips2{display:flex;gap:6px;overflow-x:auto;margin-bottom:8px;scrollbar-width:none}
+.mirar .chips2 button{flex:none;border:1px solid var(--linea);background:#fff;border-radius:999px;padding:6px 11px;font-size:12px}
+.mirar .chips2 button.sel{background:var(--negro);color:#fff;border-color:var(--negro)}
+.mirar .fila-prod{display:flex;gap:10px;overflow-x:auto;padding-bottom:6px;scroll-snap-type:x mandatory}
+.mirar .prod{flex:none;width:132px;scroll-snap-align:start;background:#fff;border:1px solid var(--linea);border-radius:12px;padding:6px;font-size:12px}
+.mirar .prod img{width:100%;aspect-ratio:1/1;object-fit:contain}
+.mirar .prod b{display:block;font-size:12.5px;line-height:1.2;min-height:30px}
+.mirar .prod button{width:100%;margin-top:5px;border:0;border-radius:999px;background:var(--negro);color:#fff;padding:7px;font-weight:700;font-size:12px}
+.mirar .prod.todo{display:flex;align-items:center;justify-content:center;text-align:center;font-weight:700;background:#faf3e3;cursor:pointer}
+.blue{display:flex;align-items:center;gap:10px;margin-top:10px;background:#eef4ff;border:1px solid #c9dafc;border-radius:12px;padding:10px 12px;font-size:12.5px;color:#1d3a73;text-decoration:none}
+.blue b{display:block;font-size:13.5px}
 .aviso-proto{background:#fff3cd;color:#664d03;font-size:11.5px;text-align:center;padding:5px 8px}
 </style>
 </head>
@@ -282,7 +295,7 @@ const porSlug=s=>P.find(p=>p.slug===s);
 
 /* ---------- Pedido (solo productos se recuerdan; los datos personales nunca) ---------- */
 let carro=[];try{carro=JSON.parse(localStorage.getItem("aureo-pedido")||"[]")}catch(e){}
-let camisetas=[], minis=0, series="", datos={}, bumps={}, paso=0, vistos={};
+let camisetas=[], minis=0, series="", datos={}, bumps={}, paso=0, vistos={}, mirando=false, mirarCat="";
 function regionClub(s,reg,com){const r=REGION_CLUB[ALIAS[s]||s];if(!r)return false;const[rr,cc]=r.split("|");return rr===reg&&(!cc||norm(com)===cc)}
 function envio(reg,com,mod,base){
   const I=items(),esc19=I.some(x=>esEscudo(x.p)&&x.p.precio>=19000);
@@ -411,6 +424,15 @@ function barra(base){if(!PROP.barra)return"";const meta=PROP.regaloDesde,pct=Mat
   const txt=base<20000?`Te faltan <b>${clp(20000-base)}</b> para el envío gratis 🚚`:base<meta?`¡Envío gratis listo! Te faltan <b>${clp(meta-base)}</b> para una <b>mini sorpresa de regalo</b> 🎁`:`<b>¡Ganaste una mini sorpresa de regalo!</b> 🎁`;
   return `<div class="progreso">${txt}<div class="riel"><div style="width:${pct}%"></div></div><div class="hitos"><span>$0</span><span>🚚 $20.000</span><span>🎁 ${clp(meta)}</span></div></div>`}
 function puntos(){const S=pasos();return `<div class="puntos">${S.map((_,k)=>`<i class="${k<=paso?"ok":""}"></i>`).join("")}</div>`}
+function mirar(){
+  const enCarro=new Set(carro.map(c=>c.s)), cats=[...new Set(items().map(x=>x.p.cat))];
+  const todas=[...new Set(P.filter(x=>x.precio).map(x=>x.cat))].sort((a,b)=>(cats.includes(b)-cats.includes(a))||ORDEN.indexOf(a)-ORDEN.indexOf(b));
+  const cat=mirarCat||todas[0];
+  const L=P.filter(x=>x.cat===cat&&x.precio&&!enCarro.has(x.slug)&&!/camiseta/i.test(x.nombre)).slice(0,12);
+  return `<div class="mirar"><div class="chips2">${todas.filter(c=>!/camiseta|personaliz/i.test(c)).map(c=>`<button class="${c===cat?"sel":""}" data-mcat="${esc(c)}">${esc(c)}</button>`).join("")}</div>
+    <div class="fila-prod">${L.map(x=>`<div class="prod">${img(x)}<b>${esc(x.nombre)}</b>${clp(x.precio)}<button data-madd="${x.slug}">+ Agregar</button></div>`).join("")}
+    <div class="prod todo" onclick="location.hash=''">Ver todo el catálogo →</div></div></div>`;
+}
 function siguiente(){const S=pasos();paso=Math.min(paso+1,S.length-1);vistaPedido()}
 
 function vistaPedido(){
@@ -426,7 +448,7 @@ function vistaPedido(){
   if(etapa==="pedido"){
     html=`<div class="panel"><h3>Lo que llevas</h3>${I.map(x=>`<div class="item">${img(x.p)}<div class="n">${esc(x.p.nombre)}<small>${clp(x.p.precio)} c/u</small></div>
       <div class="cant"><button data-q="${x.s}" data-d="-1">−</button><span>${x.c}</span><button data-q="${x.s}" data-d="1">+</button></div></div>`).join("")}
-      <button class="op" style="margin-top:8px" onclick="location.hash=''">+ Seguir mirando</button></div>${barra(T.base)}`;
+      <button class="op" style="margin-top:8px" data-mirar>${mirando?"Cerrar":"+ Seguir mirando"}</button>${mirando?mirar():""}</div>${barra(T.base)}`;
     pie=`<button class="btn-grande" data-sig>Continuar · ${clp(T.base)}</button>`;
   }
 
@@ -474,6 +496,7 @@ function vistaPedido(){
     <div class="fila"><label class="campo" style="flex:1">Región<select id="fReg">${REGIONES.map(r=>`<option>${r}</option>`).join("")}</select></label>
       <label class="campo" style="flex:1">Comuna<input id="fCom"></label></div>
     <div class="opciones"><button class="op${datos.mod!=="Punto Bluexpress"?" sel":""}" data-mod="Domicilio"><b>A domicilio</b></button><button class="op${datos.mod==="Punto Bluexpress"?" sel":""}" data-mod="Punto Bluexpress"><b>Punto Bluexpress</b></button></div>
+    ${datos.mod==="Punto Bluexpress"?`<a class="blue" href="https://www.blue.cl/lockers-puntos/encuentra-tu-punto" target="_blank" rel="noopener"><span style="font-size:22px">📍</span><span><b>Busca tu Punto Blue más cercano</b>Se abre el mapa de Blue Express. Copia la dirección del punto y pégala aquí abajo.</span></a>`:""}
     <label class="campo" id="lDir">Dirección (calle, número, depto)<input id="fDir" autocomplete="street-address"></label>
     <label class="campo">¿Lo necesitas para una fecha? (opcional)<input id="fFec" placeholder="Ej: 24 de diciembre"></label>
     <label class="check"><input type="checkbox" id="fReg2" ${datos.regalo?"checked":""}> Es para regalo: lo mandamos directo</label>
@@ -500,6 +523,9 @@ function vistaPedido(){
   // Eventos comunes
   v.querySelectorAll("[data-sig]").forEach(b=>b.onclick=()=>{if(etapa==="camisetas"&&camisetas.some(c=>!c.n||c.d==="")){toast("Escribe el nombre y el número de cada camiseta");return}siguiente()});
   v.querySelectorAll("[data-nogracias]").forEach(b=>b.onclick=()=>{if(b.dataset.nogracias==="camisetas")camisetas=[];siguiente()});
+  v.querySelectorAll("[data-mirar]").forEach(b=>b.onclick=()=>{mirando=!mirando;vistaPedido()});
+  v.querySelectorAll("[data-mcat]").forEach(b=>b.onclick=()=>{mirarCat=b.dataset.mcat;const x=window.scrollY;vistaPedido();window.scrollTo(0,x)});
+  v.querySelectorAll("[data-madd]").forEach(b=>b.onclick=()=>{agregar(b.dataset.madd,1,true);const x=window.scrollY;vistaPedido();window.scrollTo(0,x)});
   v.querySelectorAll("[data-q]").forEach(b=>b.onclick=()=>{const it=carro.find(x=>x.s===b.dataset.q);it.c+=+b.dataset.d;if(it.c<1)carro=carro.filter(x=>x!==it);guardar();vistaPedido()});
   v.querySelectorAll("[data-cam]").forEach(b=>b.onclick=()=>{const k=+b.dataset.cam;camisetas=Array.from({length:k},(_,i)=>camisetas[i]||{n:"",d:""});vistaPedido()});
   v.querySelectorAll("[data-cn]").forEach(i=>i.oninput=()=>camisetas[+i.dataset.cn].n=i.value.toUpperCase());
@@ -524,7 +550,7 @@ function vistaPedido(){
     document.getElementById("envioTxt").textContent=(e.c?clp(e.c):"Gratis")+(datos.prio?" + prioritario $3.000":"");
     document.getElementById("totalTxt").textContent=clp(base+tot);return{...e,tot}};
   ponMod();calc();
-  v.querySelectorAll("[data-mod]").forEach(b=>b.onclick=()=>{datos.mod=b.dataset.mod;v.querySelectorAll("[data-mod]").forEach(x=>x.classList.toggle("sel",x===b));ponMod();calc()});
+  v.querySelectorAll("[data-mod]").forEach(b=>b.onclick=()=>{datos.mod=b.dataset.mod;const x=window.scrollY;vistaPedido();window.scrollTo(0,x)});
   v.querySelectorAll("[data-prio]").forEach(b=>b.onclick=()=>{datos.prio=b.dataset.prio==="1";v.querySelectorAll("[data-prio]").forEach(x=>x.classList.toggle("sel",x===b));calc()});
   document.getElementById("enviar").onclick=()=>{
     const g=id=>document.getElementById(id).value.trim();
