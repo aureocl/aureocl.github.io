@@ -167,6 +167,12 @@
   "producto": "everton",
   "protegida": true
  },
+ "gary-mini": {
+  "fecha": "2026-11-08T23:30:52",
+  "origen": "taller",
+  "producto": "Gary mini",
+  "protegida": true
+ },
  "gengar-mini": {
   "fecha": "2026-11-03T20:00:00",
   "origen": "taller",
