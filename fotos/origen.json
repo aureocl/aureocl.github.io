@@ -287,6 +287,12 @@
   "producto": "mickey-mago-mini",
   "protegida": true
  },
+ "noche-estrellada": {
+  "fecha": "2026-11-08T23:14:33",
+  "origen": "taller",
+  "producto": "Noche Estrellada",
+  "protegida": true
+ },
  "nublense": {
   "fecha": "2026-11-03T20:00:00",
   "origen": "taller",
