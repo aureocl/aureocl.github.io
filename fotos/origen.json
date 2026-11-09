@@ -239,6 +239,12 @@
   "producto": "iron-man-mini",
   "protegida": true
  },
+ "kuromi-mini": {
+  "fecha": "2026-11-08T23:08:04",
+  "origen": "taller",
+  "producto": "Kuromi mini",
+  "protegida": true
+ },
  "kyle-mini": {
   "fecha": "2026-11-03T20:00:00",
   "origen": "taller",
