@@ -77,6 +77,12 @@
   "producto": "boca-juniors",
   "protegida": true
  },
+ "boca-juniors-mediano": {
+  "fecha": "2026-11-11T14:58:23",
+  "origen": "taller",
+  "producto": "Boca Juniors Mediano",
+  "protegida": true
+ },
  "camiseta-personalizada-con-escudo": {
   "fecha": "2026-11-03T22:20:16",
   "origen": "laboratorio",
