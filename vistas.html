@@ -36,18 +36,18 @@
       <option value="">Catálogo (portada)</option>
       <option value="#pedido">Tu pedido (checkout)</option>
     </select>
-    <a class="btn" id="abrir" href="prototipo.html#p/colo-colo" target="_blank">Abrir sola ↗</a>
+    <a class="btn" id="abrir" href="index.html#p/colo-colo" target="_blank">Abrir sola ↗</a>
   </div>
 </header>
 <div class="vistas">
-  <div class="marco"><div class="etq">Celular · 390 px</div><div class="cel" style="--c:.82"><div><iframe id="fCel" src="prototipo.html#p/colo-colo" title="Celular"></iframe></div></div></div>
-  <div class="marco"><div class="etq pc-e">Computador · 1280 px</div><div class="pc" style="--e:.62"><iframe id="fPc" src="prototipo.html#p/colo-colo" title="Computador"></iframe></div></div>
+  <div class="marco"><div class="etq">Celular · 390 px</div><div class="cel" style="--c:.82"><div><iframe id="fCel" src="index.html#p/colo-colo" title="Celular"></iframe></div></div></div>
+  <div class="marco"><div class="etq pc-e">Computador · 1280 px</div><div class="pc" style="--e:.62"><iframe id="fPc" src="index.html#p/colo-colo" title="Computador"></iframe></div></div>
 </div>
 <script>
   document.getElementById("ir").onchange = e => {
     const h = e.target.value;
-    ["fPc","fCel"].forEach(id => { const f = document.getElementById(id); f.src = "prototipo.html" + h + (h ? "" : "#"); });
-    document.getElementById("abrir").href = "prototipo.html" + h;
+    ["fPc","fCel"].forEach(id => { const f = document.getElementById(id); f.src = "index.html" + h + (h ? "" : "#"); });
+    document.getElementById("abrir").href = "index.html" + h;
   };
 </script>
 </body>
