@@ -70,9 +70,10 @@
   "producto": "Boca Juniors Mediano"
  },
  "camiseta-personalizada-con-escudo": {
-  "fecha": "2026-11-03T22:20:16",
+  "fecha": "2026-11-13T01:17:41",
   "origen": "laboratorio",
-  "producto": "Camiseta personalizada (con escudo)"
+  "producto": "Camiseta personalizada (con escudo)",
+  "protegida": true
  },
  "camiseta-personalizada-sola": {
   "fecha": "2026-11-13T01:17:39",
