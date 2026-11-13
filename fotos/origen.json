@@ -126,6 +126,12 @@
   "origen": "laboratorio",
   "producto": "deportes-iquique"
  },
+ "deportes-iquique-clasico": {
+  "fecha": "2026-11-13T01:29:48",
+  "origen": "taller",
+  "producto": "Deportes Iquique Clásico",
+  "protegida": true
+ },
  "deportes-la-serena": {
   "fecha": "2026-11-07T00:59:23",
   "origen": "taller",
