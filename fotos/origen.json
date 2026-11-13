@@ -75,9 +75,10 @@
   "producto": "Camiseta personalizada (con escudo)"
  },
  "camiseta-personalizada-sola": {
-  "fecha": "2026-11-03T22:18:56",
+  "fecha": "2026-11-13T01:17:39",
   "origen": "laboratorio",
-  "producto": "Camiseta personalizada (sola)"
+  "producto": "Camiseta personalizada (sola)",
+  "protegida": true
  },
  "carabela-magallanes-grande": {
   "fecha": "2026-11-03T20:00:00",
