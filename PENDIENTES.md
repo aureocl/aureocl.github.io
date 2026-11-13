@@ -16,4 +16,5 @@ Formato: `hilo · qué · quién · estado` (estado: por hacer · en curso · es
 - Todos · Pasar este repo a privado y dejar aureocl.github.io redirigiendo al dominio nuevo · espera a Áureo
 
 ## Listo
+- Común · Aviso de Navidad al 10 de diciembre · Áureo · 13-nov-2026
 - Fase 0 · Página dividida en partes (css/ y js/ por hilo), CLAUDE.md, PENDIENTES.md y CAMBIOS.md · Áureo · 13-nov-2026

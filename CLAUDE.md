@@ -42,7 +42,7 @@ clásicos (sin módulos) y comparten variables globales: no renombrar una funci�
 - **Precios y productos no se escriben aquí**: salen de la planilla «Catálogo Aureo (web)» ← PRECIOS del maestro.
   Precios cerrados, **nunca terminados en 990**.
 - Nunca decir «oficial» (licencias). No menospreciar la camiseta. El armado es entretención.
-- Fotos de producto siempre reales o a escala real (nunca agrandar la pieza). Fotos públicas con marca de agua.
+- Fotos de producto siempre reales o a escala real (nunca agrandar la pieza). Fotos públicas en alta (hasta 1200 px) y **sin marca de agua** (Áureo, 13-nov).
 - **Este repo es público**: nunca subir ventas, datos de clientes, claves, tokens ni la planilla. Las claves van en
   los secretos de Cloudflare.
 - Todo lo visible en español simple, tuteo chileno.
