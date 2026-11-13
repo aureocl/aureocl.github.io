@@ -66,6 +66,9 @@ h2.sec small{font:500 12px Montserrat,sans-serif;color:var(--suave);margin-left:
 .nombre{font-weight:600;font-size:14px;line-height:1.25}
 .tam{font-size:12px;color:var(--suave)}
 .precio{margin-top:auto;padding-top:6px;font-weight:700;font-size:16px}
+.precio s,.f-precio s{color:var(--suave);font-weight:500;margin-right:6px}
+.f-precio s{font-size:18px;margin-right:0}
+.precio .nota-lanz{display:block;font-size:11.5px;font-weight:600;color:var(--verde);margin-top:2px}
 .precio.consultar{font-size:13px;color:var(--suave);font-weight:500}
 .combo-l{margin-top:6px;font-size:11px;line-height:1.3;color:#6d5320;background:#faf3e3;border:1px solid #ecdcb6;border-radius:8px;padding:5px 7px}
 .btn-agregar{margin-top:8px;border:0;border-radius:999px;background:var(--negro);color:#fff;padding:9px 10px;font-weight:600;font-size:12.5px}
@@ -415,7 +418,7 @@ async function cargar(){
   const F=parseCSV(await r.text()).filter(f=>f.some(x=>x.trim()));
   const H=F.shift().map(norm);const col=n=>H.findIndex(h=>h.startsWith(n));
   const K={m:col("mostrar"),c:col("categoria"),n:col("producto"),t:col("tamano"),p:col("precio"),a:col("precio antes"),e:col("etiqueta"),d:col("detalle"),f:col("foto")};
-  P=F.map(f=>({mostrar:norm(f[K.m]||"si"),cat:(f[K.c]||"Otros").trim(),nombre:(f[K.n]||"").trim(),tam:(f[K.t]||"").trim(),precio:num(f[K.p]),etq:(f[K.e]||"").trim(),det:(f[K.d]||"").trim(),foto:(f[K.f]||"").trim()}))
+  P=F.map(f=>({mostrar:norm(f[K.m]||"si"),cat:(f[K.c]||"Otros").trim(),nombre:(f[K.n]||"").trim(),tam:(f[K.t]||"").trim(),precio:num(f[K.p]),antes:num(f[K.a]),etq:(f[K.e]||"").trim(),det:(f[K.d]||"").trim(),foto:(f[K.f]||"").trim()}))
     .filter(p=>p.nombre&&!["no","n","0"].includes(p.mostrar)).map(p=>({...p,slug:slug(p.nombre)}));
 }
 const esEscudo=p=>p&&p.cat==="Escudos de fútbol"&&!/a pedido/i.test(p.nombre);
@@ -452,7 +455,7 @@ function tarjeta(p){
   return `<article class="card" data-ir="${p.slug}">
     <div class="foto">${img(p)}${p.etq?`<span class="etq">${esc(p.etq)}</span>`:""}</div>
     <div class="info"><div class="nombre">${esc(p.nombre)}</div>${p.tam?`<div class="tam">${esc(p.tam)}</div>`:""}
-    ${p.precio?`<div class="precio">${clp(p.precio)}</div>`:`<div class="precio consultar">Precio a consultar</div>`}
+    ${p.precio?`<div class="precio">${p.antes>p.precio?`<s>${clp(p.antes)}</s>`:""}${clp(p.precio)}${p.antes>p.precio?`<span class="nota-lanz">Precio de lanzamiento · después ${clp(p.antes)}</span>`:""}</div>`:`<div class="precio consultar">Precio a consultar</div>`}
     ${p.precio?`<button class="btn-agregar" data-add="${p.slug}">+ Agregar</button>`:""}</div></article>`;
 }
 function vistaCatalogo(){
@@ -491,7 +494,7 @@ function vistaFicha(s){
       <h1 class="serif">${titulo}</h1>
       ${pl?`<div class="prueba-corta"><img src="${fp(pl,"cliente2")}" alt="">«${esc(pl.cita.split(",")[1]?.trim()||pl.cita)}…»</div>`:""}
       <div class="datos">${p.tam?`<span class="dato">📏 ${esc(p.tam)}</span>`:""}${h&&h[1]?`<span class="dato">🧩 +${h[1]} piezas</span>`:""}${esEscudo(p)?`<span class="dato">⏳ 2 a 3 horas</span>`:""}</div>
-      ${p.precio?`<div class="f-precio"><b>${clp(p.precio)}</b><span>${p.precio>=19000?"Envío gratis en Santiago":"Envío desde $2.000"}</span></div>`:`<div class="f-precio"><b style="font-size:20px">Precio a consultar</b></div>`}
+      ${p.precio?`<div class="f-precio">${p.antes>p.precio?`<s>${clp(p.antes)}</s>`:""}<b>${clp(p.precio)}</b><span>${p.precio>=19000?"Envío gratis en Santiago":"Envío desde $2.000"}</span></div>`:`<div class="f-precio"><b style="font-size:20px">Precio a consultar</b></div>`}
       ${p.precio?`<div class="cta-info"><div class="cant"><button data-menos>−</button><span data-cantn>1</span><button data-mas1>+</button></div><button class="btn-grande" data-cta>Agregar al pedido</button></div>`:""}
       <ul class="confianza"><li>📦 Llega en caja, con las piezas separadas por color</li><li>🧩 Garantía piezas completas</li><li>🚚 Santiago 1 a 3 días hábiles · regiones 2 a 5</li><li>💬 Confirmas y pagas por WhatsApp, con Javi y Caro</li></ul>
     </div>
