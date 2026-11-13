@@ -7,7 +7,9 @@ cada uno desde su computador. Cada cambio que se sube (push) queda en línea en 
 
 | Archivo | Qué es |
 | --- | --- |
-| `index.html` | El catálogo: portada, landing por producto (`#p/<producto>`), pedido guiado (`#pedido`) y «Pedido listo» (`#listo`) |
+| `index.html` | El catálogo: portada, landing por producto (`#p/<producto>`), pedido guiado (`#pedido`) y «Pedido listo» (`#listo`). Desde el 13-nov solo carga las partes: |
+| `css/estilos.css` · `js/*.js` | Las partes de la página, una por hilo (ver `CLAUDE.md`): `config`, `medicion`, `base`, `vitrina`, `pedido`, `app` |
+| `CLAUDE.md` · `PENDIENTES.md` · `CAMBIOS.md` | Reglas para Claude en los dos PCs · tablero común de tareas · registro de cambios |
 | `catalogo-v1.html` | Respaldo del catálogo anterior (11-nov). No se borra |
 | `prototipo.html` | Redirige a `index.html`, para que no se rompan los links que ya se compartieron |
 | `vistas.html` | El catálogo en computador y celular lado a lado, para revisar diseño |
