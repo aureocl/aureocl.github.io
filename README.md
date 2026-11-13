@@ -20,7 +20,7 @@ cada uno desde su computador. Cada cambio que se sube (push) queda en línea en 
 **Los precios y productos NO se cambian aquí:** salen de la planilla «Catálogo Aureo (web)», que toma los precios
 de la pestaña PRECIOS del maestro. Se cambian ahí y la página se actualiza sola (hasta ~5 min).
 
-En `index.html`, arriba, están los ajustes: `PROP` (ofertas: camisetas, colección, segundo escudo, mini de regalo,
+En `js/config.js` están los ajustes: `PROP` (ofertas: camisetas, colección, segundo escudo, mini de regalo,
 prioridad, empaque), `URGENCIA` (fecha de corte de Navidad), `DATOS_PAGO`, `PILOTO` (landing con material real) y
 `FINAL` (`false` muestra las marcas de prueba y los espacios por llenar).
 
