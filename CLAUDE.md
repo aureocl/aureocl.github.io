@@ -10,7 +10,7 @@ en vivo para los clientes en ~1 minuto.
 3. Anotar en `PENDIENTES.md` la tarea que se toma: hilo · qué · quién (Áureo o Caro) · «en curso». Commit + push de
    ese cambio **antes** de empezar, para que el otro PC lo vea.
 
-## Los 4 hilos (sección «🌐 Página web» en cada PC) y sus archivos
+## Los 4 hilos (sección «{AUREO} PÁGINA WEB» en cada PC; para armarla en un PC nuevo ver `ARMAR-HILOS.md`) y sus archivos
 Cada hilo **solo toca sus archivos**. Si necesita cambiar un archivo de otro hilo o uno común, lo anota en
 `PENDIENTES.md` y lo deja para ese hilo (o avisa por WhatsApp).
 
