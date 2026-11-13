@@ -363,6 +363,12 @@
   "origen": "laboratorio",
   "producto": "union-espanola"
  },
+ "universidad-de-concepcion": {
+  "fecha": "2026-11-13T09:11:24",
+  "origen": "taller",
+  "producto": "Universidad de Concepción",
+  "protegida": true
+ },
  "universitario-de-deportes": {
   "fecha": "2026-11-08T20:26:45",
   "origen": "taller",
