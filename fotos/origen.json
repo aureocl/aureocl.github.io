@@ -152,6 +152,12 @@
   "origen": "taller",
   "producto": "everton"
  },
+ "fernandez-vial": {
+  "fecha": "2026-11-13T09:11:07",
+  "origen": "taller",
+  "producto": "Fernández Vial",
+  "protegida": true
+ },
  "gary-mini": {
   "fecha": "2026-11-08T23:30:52",
   "origen": "taller",
