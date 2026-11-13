@@ -11,8 +11,8 @@ cada uno desde su computador. Cada cambio que se sube (push) queda en línea en 
 | `catalogo-v1.html` | Respaldo del catálogo anterior (11-nov). No se borra |
 | `prototipo.html` | Redirige a `index.html`, para que no se rompan los links que ya se compartieron |
 | `vistas.html` | El catálogo en computador y celular lado a lado, para revisar diseño |
-| `landing/<producto>/` | Fotos de la landing de cada producto (ya con marca de agua) |
-| `proto-camisetas/` | Camisetas de ejemplo por equipo y de clientes (con marca de agua) |
+| `landing/<producto>/` | Fotos de la landing de cada producto |
+| `proto-camisetas/` | Camisetas de ejemplo por equipo y de clientes |
 | `fotos/` | Foto de cada producto en el catálogo (las sube `catalogo.py` del repo privado) |
 
 **Los precios y productos NO se cambian aquí:** salen de la planilla «Catálogo Aureo (web)», que toma los precios
@@ -40,4 +40,4 @@ No hace falta invitar a nadie: basta con traer (pull) y subir (push) los cambios
 ## Reglas que no cambian
 
 - Nunca «oficial» en ningún texto. Precios cerrados, nunca terminados en 990.
-- Fotos públicas: 500 px con marca de agua (las pasa `catalogo.py` del repo privado).
+- Fotos públicas: 500 px, sin marca de agua desde el 13-nov (las pasa `catalogo.py` del repo privado).
