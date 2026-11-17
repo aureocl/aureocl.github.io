@@ -243,6 +243,12 @@
   "origen": "taller",
   "producto": "Los Vásquez"
  },
+ "lota-schwager": {
+  "fecha": "2026-11-17T00:00:59",
+  "origen": "taller",
+  "producto": "Lota Schwager",
+  "protegida": true
+ },
  "luffy-mini": {
   "fecha": "2026-11-03T20:00:00",
   "origen": "taller",
