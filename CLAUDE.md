@@ -29,9 +29,10 @@ clásicos (sin módulos) y comparten variables globales: no renombrar una funci�
 1. Ver el cambio en local antes de subirlo: servir esta carpeta (`python -m http.server 8792`) y abrir
    http://localhost:8792. Revisar en vista de celular y de computador, y que la consola no tenga errores.
 2. Probar el flujo completo si se tocó el pedido: agregar un escudo → pasos de ofertas → entrega → «Pedido listo».
-3. **«Súbelo»** = commit con mensaje claro + `git push`. Si el push falla, `git pull` y push otra vez. Si hay
+3. Si se tocó un `js/` o el `css/`, subir el número `?v=` de esos archivos en `index.html` (fecha del día), para que el caché no mezcle versiones.
+4. **«Súbelo»** = commit con mensaje claro + `git push`. Si el push falla, `git pull` y push otra vez. Si hay
    conflicto, resolverlo dejando los cambios de los dos y volver a probar en local.
-4. Anotar en `CAMBIOS.md` (arriba): fecha · PC · hilo · qué cambió. Mover la tarea a «listo» en `PENDIENTES.md`.
+5. Anotar en `CAMBIOS.md` (arriba): fecha · PC · hilo · qué cambió. Mover la tarea a «listo» en `PENDIENTES.md`.
 
 ## Dónde se publica
 - **GitHub Pages**: https://aureocl.github.io (link y QR que ya tienen los clientes).
