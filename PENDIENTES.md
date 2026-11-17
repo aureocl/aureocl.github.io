@@ -4,7 +4,7 @@ Tablero común de los dos PCs. Antes de tomar algo, revisar que nadie lo tenga �
 Formato: `hilo · qué · quién · estado` (estado: por hacer · en curso · espera a Áureo · listo).
 
 ## En curso
-- (nada)
+- W2 + Común · Descuento $1.000 por cada escudo (desde 2), teléfono y correo en la entrega, «esperamos tu transferencia» · Áureo · en curso
 
 ## Por hacer
 - W2 · Decidir la «camiseta de regalo desde $35.000» (¿va o se saca?) · Áureo · espera a Áureo
