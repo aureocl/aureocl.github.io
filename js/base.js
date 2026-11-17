@@ -38,8 +38,8 @@ let carro=[];try{carro=JSON.parse(localStorage.getItem("aureo-pedido")||"[]")}ca
 let camisetas=[], minis=0, series="", datos={}, bumps={}, paso=0, vistos={}, mirando=false, mirarCat="";
 function regionClub(s,reg,com){const r=REGION_CLUB[ALIAS[s]||s];if(!r)return false;const[rr,cc]=r.split("|");return rr===reg&&(!cc||norm(com)===cc)}
 function envio(reg,com,mod,base){
-  const I=items(),esc19=I.some(x=>esEscudo(x.p)&&x.p.precio>=19000);
-  if(reg==="Metropolitana"){if(base>=20000||esc19)return{c:0,porque:"Envío gratis en Santiago (pedido desde $20.000)"};return{c:mod==="Domicilio"?3000:2000,porque:"Bajo $20.000 el envío se paga"}}
+  const I=items(); /* UC y Wanderers ($19.000) pagan envío si el pedido no llega a $20.000 (Áureo, 16-nov-2026) */
+  if(reg==="Metropolitana"){if(base>=20000)return{c:0,porque:"Envío gratis en Santiago (pedido desde $20.000)"};return{c:mod==="Domicilio"?3000:2000,porque:"Bajo $20.000 el envío se paga"}}
   const club=I.find(x=>esEscudo(x.p)&&regionClub(x.p.slug,reg,com));
   if(club&&base>=20000){return mod==="Punto Bluexpress"?{c:0,porque:`Tu ${club.p.nombre} viaja gratis a punto Bluexpress en ${reg}`}:{c:3000,porque:`Gratis a punto Bluexpress en ${reg}; a domicilio $3.000`}}
   return{c:mod==="Domicilio"?3000:2000,porque:""};

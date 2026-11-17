@@ -16,7 +16,7 @@ const CAMISETAS = [["manu-30.jpg","MANU 30","Colo-Colo"],["lucho-10.jpg","LUCHO 
 const carrusel = () => { const c = CAMISETAS.map(([f,n,club])=>`<div class="cam"><img src="${CAM_BASE}${f}" alt="Camiseta ${n}" loading="lazy"><b>${n}</b><span>${club}</span></div>`).join("");
   return `<div class="carrusel"><div class="cinta">${c}${c}</div></div>`; };
 /* Propuestas para subir el ticket (D7). Cada una se apaga con false; Áureo decide cuáles quedan. */
-const PROP = { coleccionDesc:0.2, barra:true, regaloMas:10000, porPoco:true, empaque:2000, segundoDesc:3000, camRegaloDesde:35000, prioridad:3000 };
+const PROP = { coleccionDesc:0.2, barra:true, regaloMas:10000, porPoco:true, empaque:2000, descPorEscudo:1000, camRegaloDesde:35000, prioridad:3000 };
 const tag = l => FINAL ? "" : `<span class="prop">Propuesta ${l}</span><br>`;
 /* Camiseta de ejemplo por equipo (AUREO 10, del Laboratorio): lo que ve el cliente al elegir el equipo de cada camiseta. */
 const EQUIPOS_CAM = [["Colo-Colo","ej-colo-colo-local.jpg"],["Colo-Colo (visita)","ej-colo-colo-visita.jpg"],["U de Chile","ej-universidad-de-chile-local.jpg"],["Audax Italiano","ej-audax-italiano-local.jpg"],["Cobreloa","ej-cobreloa-local.jpg"],["Deportes Concepción","ej-deportes-concepcion-local.jpg"],["Deportes Iquique","ej-deportes-iquique-local.jpg"],["Deportes Temuco","ej-deportes-temuco-local.jpg"],["Huachipato","ej-huachipato-local.jpg"],["Magallanes","ej-magallanes-local.jpg"],["O'Higgins","ej-o-higgins-local.jpg"],["Rangers de Talca","ej-rangers-de-talca-local.jpg"],["River Plate","ej-river-plate-local.jpg"],["San Luis de Quillota","ej-san-luis-local.jpg"],["Santiago Wanderers","ej-santiago-wanderers-local.jpg"],["Unión Española","ej-union-espanola-local.jpg"]];

@@ -2,6 +2,11 @@
 
 Lo más nuevo arriba. Formato: `fecha · PC (Áureo/Caro) · hilo · qué cambió`.
 
+- 17-nov-2026 · Áureo · W2 + Común · Descuento por escudos: desde 2, $1.000 por cada uno (2 = $2.000, 3 = $3.000…;
+  `PROP.descPorEscudo`, antes `segundoDesc` $3.000 fijo). Entrega pide teléfono y correo (obligatorios, con revisión) y van
+  en el mensaje de WhatsApp, que cierra con «Quedo atento/a a los datos para transferir». «Pedido listo»: «Esperamos tu
+  transferencia para cerrar tu pedido». Envío en Santiago: se quitó el gratis para escudos de $19.000 (UC/Wanderers pagan
+  bajo $20.000, regla 16-nov). Probado en local: 3 escudos = −$3.000, faltan datos → aviso, mensaje completo, celular sin desborde.
 - 13-nov-2026 · Áureo · Común (`js/config.js`) · Aviso rojo de arriba: «Haz tu pedido hasta el 10 de diciembre y te llega
   antes de Navidad» (antes: pagando hasta el 15). Se esconde solo después del 10-dic. Mismo texto en «Pedido listo».
 - 13-nov-2026 · Áureo · W1 · Fotos en alta (hasta 1200 px) y sin marca de agua; precio normal tachado en lanzamientos.
