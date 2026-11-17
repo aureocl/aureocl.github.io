@@ -354,6 +354,12 @@
   "origen": "taller",
   "producto": "stitch-mini"
  },
+ "talleres": {
+  "fecha": "2026-11-17T00:01:04",
+  "origen": "taller",
+  "producto": "Talleres",
+  "protegida": true
+ },
  "u-de-chile": {
   "fecha": "2026-11-03T20:00:00",
   "origen": "taller",
