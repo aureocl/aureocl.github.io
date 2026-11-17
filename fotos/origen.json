@@ -269,6 +269,12 @@
   "origen": "taller",
   "producto": "mario-y-luigi"
  },
+ "miami-heat": {
+  "fecha": "2026-11-17T00:02:21",
+  "origen": "taller",
+  "producto": "Miami Heat",
+  "protegida": true
+ },
  "mickey-mago-mini": {
   "fecha": "2026-11-03T20:00:00",
   "origen": "taller",
