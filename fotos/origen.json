@@ -178,6 +178,12 @@
   "origen": "taller",
   "producto": "Golden State Warriors"
  },
+ "gta-vi": {
+  "fecha": "2026-11-18T16:27:07",
+  "origen": "taller",
+  "producto": "GTA VI",
+  "protegida": true
+ },
  "harry-potter-mini": {
   "fecha": "2026-11-03T20:00:00",
   "origen": "taller",
