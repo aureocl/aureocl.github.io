@@ -121,6 +121,12 @@
   "origen": "laboratorio",
   "producto": "Deportes Concepción"
  },
+ "deportes-concepcion-leon": {
+  "fecha": "2026-11-18T16:55:40",
+  "origen": "taller",
+  "producto": "Deportes Concepción (león)",
+  "protegida": true
+ },
  "deportes-iquique": {
   "fecha": "2026-11-03T20:00:00",
   "origen": "laboratorio",
