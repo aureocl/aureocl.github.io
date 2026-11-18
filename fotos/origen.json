@@ -387,6 +387,12 @@
   "origen": "laboratorio",
   "producto": "union-espanola"
  },
+ "union-la-calera": {
+  "fecha": "2026-11-18T16:31:12",
+  "origen": "taller",
+  "producto": "Unión La Calera",
+  "protegida": true
+ },
  "universidad-de-concepcion": {
   "fecha": "2026-11-13T09:11:24",
   "origen": "taller",
