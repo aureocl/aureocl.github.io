@@ -33,7 +33,8 @@ const PILOTO = {"colo-colo": {
 }};
 const fp = (pl, k) => LANDING_BASE + pl.carpeta + k + ".jpg";
 /* Datos de transferencia: los completa Áureo (no van en el repositorio). */
-const DATOS_PAGO = [["Banco","(lo completa Áureo)"],["Tipo de cuenta","(lo completa Áureo)"],["N° de cuenta","(lo completa Áureo)"],["RUT","(lo completa Áureo)"],["Nombre","(lo completa Áureo)"],["Correo","(lo completa Áureo)"]];
+/* Datos de transferencia: van por WhatsApp (Áureo, 19-nov-2026: así los copian y pegan). Vacío = la página dice «Te llegan por WhatsApp». */
+const DATOS_PAGO = [];
 /* Urgencia real (Navidad): se muestra hasta la fecha de corte. Fecha por confirmar con Áureo (15–18 dic). */
 const URGENCIA = { hasta:"2026-12-10", texto:"🎄 Haz tu pedido hasta el 10 de diciembre y te llega antes de Navidad" };
 /* Oferta única del paso 2: completar la colección del club con descuento. Lo «próximo» se muestra solo como ejemplo. */

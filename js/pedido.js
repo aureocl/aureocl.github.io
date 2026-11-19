@@ -261,7 +261,7 @@ function vistaListo(){
     <div class="listo"><div class="ok">✓</div><h2>¡Tu pedido está listo!</h2>
       <p class="nota">${u.id?`Pedido <b>${esc(u.id)}</b> · `:""}se abrió WhatsApp con todo escrito. <b>Si no alcanzaste a enviarlo</b>, ${u.link?`<a href="${u.link}" data-reabrir>ábrelo de nuevo</a>`:`<a href="#pedido">vuelve a tu pedido</a> y apriétalo otra vez`}: tu pedido sigue guardado.</p></div>
     <div class="paso-l"><div class="n">1</div><div style="flex:1"><h3>Transfiere ${u.total?clp(u.total):"el total"}</h3>
-      ${DATOS_PAGO.some(([,v])=>v.startsWith("("))?`<p class="nota" style="margin:0">Te llegan por WhatsApp los datos para transferir. <b>Esperamos tu transferencia para cerrar tu pedido.</b></p>`:DATOS_PAGO.map(([k,v])=>`<div class="dato-p"><div><span>${k}</span><br><b>${esc(v)}</b></div><button data-copiar="${esc(v)}">Copiar</button></div>`).join("")}
+      ${!DATOS_PAGO.length||DATOS_PAGO.some(([,v])=>v.startsWith("("))?`<p class="nota" style="margin:0">Te llegan por WhatsApp los datos para transferir. <b>Esperamos tu transferencia para cerrar tu pedido.</b></p>`:DATOS_PAGO.map(([k,v])=>`<div class="dato-p"><div><span>${k}</span><br><b>${esc(v)}</b></div><button data-copiar="${esc(v)}">Copiar</button></div>`).join("")}
       ${u.total?`<div class="dato-p"><div><span>Monto</span><br><b>${clp(u.total)}</b></div><button data-copiar="${u.total}">Copiar</button></div>`:""}</div></div>
     <div class="paso-l"><div class="n">2</div><div style="flex:1"><h3>Envíanos el comprobante y cerramos tu pedido</h3>
       <a class="btn-grande wa" style="display:flex;align-items:center;justify-content:center;text-decoration:none;height:46px" target="_blank" href="${comp}">Enviar comprobante por WhatsApp</a></div></div>
