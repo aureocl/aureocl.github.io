@@ -39,7 +39,7 @@ async function cargar(){
 const esEscudo=p=>p&&p.cat==="Escudos de fútbol"&&!/a pedido/i.test(p.nombre);
 const comboFila=()=>P.find(p=>/camiseta/i.test(p.nombre)&&/con escudo/i.test(p.nombre));
 const solaFila=()=>P.find(p=>/camiseta/i.test(p.nombre)&&/sola/i.test(p.nombre));
-function tramosCombo(){const c=comboFila();if(!c)return null;const n=(c.det.match(/\$[\d.]+/g)||[]).map(num);return{1:c.precio,2:n[0]||c.precio*2,3:n[1]||c.precio*3}}
+function tramosCombo(){const c=comboFila();if(!c)return null;const n=(c.det.match(/\$[\d.]+/g)||[]).map(num);return{1:c.precio,2:n[0]||c.precio*2,3:n[1]||c.precio*3,extra:n[2]||c.precio}}
 function hincha(p){const k=ALIAS[p.slug]||p.slug;return HINCHA[k]||null}
 const porSlug=s=>P.find(p=>p.slug===s);
 
