@@ -128,10 +128,8 @@ function vistaPedido(){
     <div class="fila"><label class="campo" style="flex:1">Región<select id="fReg">${REGIONES.map(r=>`<option>${r}</option>`).join("")}</select></label>
       <label class="campo" style="flex:1">Comuna<input id="fCom"></label></div>
     <div class="opciones"><button class="op${!punto?" sel":""}" data-mod="Domicilio"><b>🏠 A domicilio</b></button><button class="op${punto?" sel":""}" data-mod="Punto Bluexpress"><b>📍 Punto Blue Express</b></button></div>
-    ${punto?`<p class="nota" style="margin:8px 0 0">Estos son los Puntos Blue Express cerca de tu comuna. Elige uno y escribe su nombre o dirección abajo.</p>
-      <iframe class="mapa" id="mapa" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-      <a class="nota" style="display:block;margin-top:4px" href="https://www.blue.cl/lockers-puntos/encuentra-tu-punto" target="_blank" rel="noopener">¿No lo encuentras? Ver el buscador oficial de Blue Express →</a>`:""}
-    <label class="campo" id="lDir">${punto?"Punto Blue Express elegido (nombre o dirección)":"Dirección (calle, número, depto)"}<input id="fDir" autocomplete="${punto?"off":"street-address"}"></label>
+    ${punto?`<p class="nota" style="margin:8px 0 0">Escribe tu dirección y nosotros te buscamos el Punto Blue Express más cercano. Te lo confirmamos por WhatsApp antes de enviar.</p>`:""}
+    <label class="campo" id="lDir">${punto?"Tu dirección (calle y número), para buscarte el punto más cercano":"Dirección (calle, número, depto)"}<input id="fDir" autocomplete="street-address"></label>
     <div class="envio-linea"><span style="font-size:22px">🚚</span><span id="envioLinea"></span></div>
     <label class="campo">¿Lo necesitas para una fecha? (opcional)<input id="fFec" placeholder="Ej: 24 de diciembre"></label>
     <label class="check"><input type="checkbox" id="fReg2" ${datos.regalo?"checked":""}> Es para regalo: lo mandamos directo</label>
@@ -186,8 +184,6 @@ function vistaPedido(){
   const de=document.getElementById("dedTxt");if(de)de.oninput=()=>{datos.ded=de.value;document.getElementById("dedCuenta").textContent=de.value.length+"/50"};
   v.querySelectorAll("[data-ded]").forEach(b=>b.onclick=()=>{datos.ded=b.dataset.ded;de.value=datos.ded;document.getElementById("dedCuenta").textContent=datos.ded.length+"/50"});
   v.querySelectorAll("[data-serie]").forEach(s=>s.onchange=()=>{datos.series=datos.series||[];datos.series[+s.dataset.serie]=s.value});
-  const mapa=document.getElementById("mapa");let ultimaQ="";
-  const ponMapa=()=>{if(!mapa)return;const c=document.getElementById("fCom").value.trim(),r=document.getElementById("fReg").value;const q=`Blue Express ${c||""} ${r==="Metropolitana"?"Santiago":r} Chile`;if(q===ultimaQ)return;ultimaQ=q;mapa.src="https://www.google.com/maps?q="+encodeURIComponent(q)+"&output=embed"};
   var calc=()=>{const reg=document.getElementById("fReg").value,com=document.getElementById("fCom").value,mod=datos.mod||"Domicilio",e=envio(reg,com,mod,base);
     const stgo=reg==="Metropolitana",dias=stgo?"1 a 3 días hábiles":"2 a 5 días hábiles";
     const donde=mod==="Domicilio"?`a domicilio${com?" en "+com:""}`:`a tu Punto Blue${com?" en "+com:""}`;
@@ -207,20 +203,19 @@ function vistaPedido(){
     const ah=A.reduce((s,x)=>s+x[1],0);
     document.getElementById("ahorro").innerHTML=`<div class="fila-a"><span>Pagas</span><b>${clp(base+tot)}</b></div>${ah?`<div class="fila-a verde"><span>Ahorras en total</span><b>${clp(ah)}</b></div><ul>${A.map(([n,v])=>`<li><span>${n}</span><span>${clp(v)}</span></li>`).join("")}</ul>`:""}`;
     return{...e,tot}};
-  calc();ponMapa();
-  document.getElementById("fCom").addEventListener("change",ponMapa);document.getElementById("fReg").addEventListener("change",ponMapa);
+  calc();
   const fp=document.getElementById("fPrio");if(fp)fp.onchange=()=>{datos.prio=fp.checked;calc()};
   v.querySelectorAll("[data-mod]").forEach(b=>b.onclick=()=>{datos.mod=b.dataset.mod;const x=window.scrollY;vistaPedido();window.scrollTo(0,x)});
   document.getElementById("enviar").onclick=()=>{
     const g=id=>document.getElementById(id).value.trim();
-    const falta=[["fNom","nombre"],["fTel","teléfono"],["fMail","correo"],["fCom","comuna"],["fDir",(datos.mod||"Domicilio")==="Domicilio"?"dirección":"Punto Blue"]].filter(([id])=>!g(id)).map(([,n])=>n);
+    const falta=[["fNom","nombre"],["fTel","teléfono"],["fMail","correo"],["fCom","comuna"],["fDir","dirección"]].filter(([id])=>!g(id)).map(([,n])=>n);
     if(falta.length){toast("Falta: "+falta.join(", "));return}
     if(g("fTel").replace(/\D/g,"").length<8){toast("Revisa el teléfono: debe tener al menos 8 números");return}
     if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(g("fMail"))){toast("Revisa el correo");return}
     const d=new Date(),pad=n=>String(n).padStart(2,"0"),e=calc(),mod=datos.mod||"Domicilio";
     const id=`AU-${String(d.getFullYear()).slice(2)}${pad(d.getMonth()+1)}${pad(d.getDate())}-${Math.floor(100+Math.random()*900)}`;
     const M=["Hola! Quiero confirmar mi pedido del catalogo.","",`PEDIDO: ${id}`,`FECHA: ${pad(d.getDate())}-${pad(d.getMonth()+1)}-${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`,"",
-      `CLIENTE: ${g("fNom")}`,`TELEFONO: ${g("fTel")}`,`CORREO: ${g("fMail")}`,`ENTREGA: ${mod}`,`REGION: ${g("fReg")}`,`COMUNA: ${g("fCom")}`,`${mod==="Domicilio"?"DIRECCION":"PUNTO"}: ${g("fDir")}`];
+      `CLIENTE: ${g("fNom")}`,`TELEFONO: ${g("fTel")}`,`CORREO: ${g("fMail")}`,`ENTREGA: ${mod}`,`REGION: ${g("fReg")}`,`COMUNA: ${g("fCom")}`,`${mod==="Domicilio"?"DIRECCION":"DIRECCION (buscarle el Punto Blue mas cercano)"}: ${g("fDir")}`];
     if(g("fFec"))M.push(`LO NECESITO PARA: ${g("fFec")}`);
     M.push("","LO QUE LLEVO:",...items().map(x=>`- ${x.p.nombre} x${x.c} - ${clp(x.p.precio*x.c)}`));
     if(camisetas.length){const eqB=(EQUIPOS_CAM.find(x=>norm(x[0])===norm(escudosEn()[0].p.nombre))||[escudosEn()[0].p.nombre])[0];

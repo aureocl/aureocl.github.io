@@ -2,6 +2,11 @@
 
 Lo más nuevo arriba. Formato: `fecha · PC (Áureo/Caro) · hilo · qué cambió`.
 
+- 19-nov-2026 · Áureo · Entrega · **Punto Blue sin mapa**: se quitó el mapa de Google y el link al buscador de Blue
+  (blue.cl no se puede insertar: `x-frame-options: DENY`). Con «Punto Blue Express» el cliente escribe región, comuna y su
+  dirección; nosotros le buscamos el punto más cercano y se lo confirmamos por WhatsApp. El mensaje dice
+  «DIRECCION (buscarle el Punto Blue mas cercano): …». Sintaxis revisada; no se pudo probar en el navegador local.
+
 - 19-nov-2026 · Áureo · W2 + Común · **Regla de envío gratis** (comentario en `js/base.js`): desde $20.000, gratis en
   Santiago; escudo de club chileno de regiones, además gratis a punto Blue en su región; extranjeros y resto, fuera de
   Santiago se paga. Se sumaron a `REGION_CLUB` Iquique Clásico, U. de Concepción, Fernández Vial, Lota Schwager, Unión La
