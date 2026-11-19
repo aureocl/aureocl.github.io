@@ -4,7 +4,7 @@ Tablero común de los dos PCs. Antes de tomar algo, revisar que nadie lo tenga �
 Formato: `hilo · qué · quién · estado` (estado: por hacer · en curso · espera a Áureo · listo).
 
 ## En curso
-- (nada)
+- W1 · Precio antiguo tachado + «Oferta» en los 12 escudos que bajaron el 19-nov · Áureo · en curso
 
 ## Por hacer
 - W2 · Datos de transferencia en «Pedido listo» (hoy dicen «lo completa Áureo»): publicarlos o «te los mandamos por WhatsApp» · Áureo · espera a Áureo
