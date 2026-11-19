@@ -2,6 +2,11 @@
 
 Lo más nuevo arriba. Formato: `fecha · PC (Áureo/Caro) · hilo · qué cambió`.
 
+- 19-nov-2026 · Áureo · W1 · **Tamaños en la ficha** (`VARIANTES` en `js/config.js`): varios tamaños o versiones de un
+  producto salen como uno solo en el catálogo («· 2 tamaños»); en la ficha, «Elige el tamaño» cambia foto, medida, piezas y
+  precio (cada tamaño sigue siendo su fila en la planilla). Primer grupo: Boca Juniors Chico / Mediano. La búsqueda ahora
+  busca palabra por palabra («boca mediano»). Datos de pago: van por WhatsApp (`DATOS_PAGO = []`). Probado en local.
+
 - 19-nov-2026 · Áureo · W1 · **Precio de oferta**: si «Precio antes» es mayor y la etiqueta NO es «Lanzamiento», la tarjeta
   dice «Ahorras $X» (antes siempre decía «Precio de lanzamiento»). El precio tachado ahora va con línea roja gruesa.
   En la planilla, 12 escudos que bajaron el 19-nov tienen «Precio antes» = precio anterior y etiqueta «Oferta».

@@ -3,13 +3,18 @@
    Todos comparten las mismas variables globales (scripts clásicos, sin módulos). */
 /* ---------- Vistas ---------- */
 let cat="Todo";
+/* Tamaños/versiones (VARIANTES en config.js): solo el primero de cada grupo sale en el catálogo. */
+const grupoDe=s=>VARIANTES.find(g=>g.some(([x])=>x===s));
+const esVarSec=p=>{const g=grupoDe(p.slug);return!!(g&&g[0][0]!==p.slug&&porSlug(g[0][0]))};
+const textoVar=p=>{const g=grupoDe(p.slug);return g?g.map(([s,l])=>(porSlug(s)?.nombre||"")+" "+l).join(" "):""};
+let scrollVar=null;
 function modo(m,titulo=""){document.body.className=m+(FINAL?" final":"");document.getElementById("top").classList.toggle("en-ficha",m!=="en-catalogo");document.getElementById("titulo").textContent=titulo;document.getElementById("cab").style.display=m==="en-catalogo"?"":"none"}
 
 function tarjeta(p){
   const tc=tramosCombo();
   return `<article class="card" data-ir="${p.slug}">
     <div class="foto">${img(p)}${p.etq?`<span class="etq">${esc(p.etq)}</span>`:""}</div>
-    <div class="info"><div class="nombre">${esc(p.nombre)}</div>${p.tam?`<div class="tam">${esc(p.tam)}</div>`:""}
+    <div class="info"><div class="nombre">${esc(p.nombre)}</div>${p.tam?`<div class="tam">${esc(p.tam)}${grupoDe(p.slug)&&!esVarSec(p)?` · ${grupoDe(p.slug).filter(([s])=>porSlug(s)).length} tamaños`:""}</div>`:""}
     ${p.precio?`<div class="precio">${p.antes>p.precio?`<s>${clp(p.antes)}</s>`:""}${clp(p.precio)}${p.antes>p.precio?(/lanzamiento/i.test(p.etq)?`<span class="nota-lanz">Precio de lanzamiento · después ${clp(p.antes)}</span>`:`<span class="nota-lanz">Ahorras ${clp(p.antes-p.precio)}</span>`):""}</div>`:`<div class="precio consultar">${esc(p.det||"Precio a consultar")}</div>`}
     ${p.precio?`<button class="btn-agregar" data-add="${p.slug}">+ Agregar</button>`:""}</div></article>`;
 }
@@ -17,7 +22,7 @@ function vistaCatalogo(){
   modo("en-catalogo");
   const cats=[...new Set(P.map(p=>p.cat))].sort((a,b)=>{const i=ORDEN.indexOf(a),j=ORDEN.indexOf(b);return(i<0?99:i)-(j<0?99:j)});
   const q=norm(document.getElementById("buscar").value);
-  const L=P.filter(p=>(cat==="Todo"||p.cat===cat)&&(!q||norm(p.nombre+" "+p.cat).includes(q)));
+  const L=P.filter(p=>!esVarSec(p)&&(cat==="Todo"||p.cat===cat)&&(!q||(h=>q.split(/\s+/).every(w=>h.includes(w)))(norm(p.nombre+" "+p.cat+" "+textoVar(p)))));
   const tc=tramosCombo(),c=comboFila(),s=solaFila();
   document.getElementById("vista").innerHTML=`
   <nav class="chips">${["Todo",...cats].map(x=>`<button class="chip${x===cat?" activa":""}" data-cat="${esc(x)}">${esc(x)}</button>`).join("")}</nav>
@@ -32,11 +37,13 @@ function vistaCatalogo(){
 
 function vistaFicha(s){
   const p=porSlug(s);if(!p){location.hash="";return}
-  modo("en-ficha",p.nombre);window.scrollTo(0,0);medir("ViewContent",{content_name:p.nombre,value:p.precio,currency:"CLP"});
+  const sv=scrollVar;scrollVar=null;modo("en-ficha",p.nombre);if(sv==null)window.scrollTo(0,0);medir("ViewContent",{content_name:p.nombre,value:p.precio,currency:"CLP"});
   const h=esEscudo(p)?hincha(p):null, pl=PILOTO[p.slug]||null;
-  const nombreCorto=p.nombre.replace(/ \(.*\)$/,"");
+  const grp=grupoDe(p.slug),base=grp&&porSlug(grp[0][0])||p;
+  const pz=(grp&&(grp.find(([s])=>s===p.slug)||[])[2])||(h&&!esVarSec(p)?h[1]:null);
+  const nombreCorto=base.nombre.replace(/ \(.*\)$/,"");
   const titulo=esEscudo(p)?`Tu ${esc(nombreCorto)},<br>armado por ti.`:`${esc(nombreCorto)},<br>armado por ti.`;
-  const otros=P.filter(x=>x.cat===p.cat&&x.slug!==p.slug&&x.precio).slice(0,10);
+  const otros=P.filter(x=>x.cat===p.cat&&x.slug!==p.slug&&x.precio&&!esVarSec(x)&&!(grp&&grp.some(([s])=>s===x.slug))).slice(0,10);
   const nEsc=P.filter(esEscudo).length;
   const fotoO=(k,ph,ratio="1/1")=>pl&&pl[k]?`<img class="foto-bloque" src="${fp(pl,pl[k])}" alt="" loading="lazy">`:`<div class="placeholder" style="aspect-ratio:${ratio}">${ph}</div>`;
   let cant=1;
@@ -48,7 +55,8 @@ function vistaFicha(s){
       <div class="eyebrow">${h?`Para el ${esc(h[0])}`:esc(p.cat)}</div>
       <h1 class="serif">${titulo}</h1>
       ${pl?`<div class="prueba-corta"><img src="${fp(pl,"cliente2")}" alt="">«${esc(pl.cita.split(",")[1]?.trim()||pl.cita)}…»</div>`:""}
-      <div class="datos">${p.tam?`<span class="dato">📏 ${esc(p.tam)}</span>`:""}${h&&h[1]?`<span class="dato">🧩 +${h[1]} piezas</span>`:""}${esEscudo(p)?`<span class="dato">⏳ 2 a 3 horas</span>`:""}</div>
+      <div class="datos">${p.tam?`<span class="dato">📏 ${esc(p.tam)}</span>`:""}${pz?`<span class="dato">🧩 +${pz} piezas</span>`:""}${esEscudo(p)?`<span class="dato">⏳ 2 a 3 horas</span>`:""}</div>
+      ${grp&&grp.filter(([s])=>porSlug(s)).length>1?`<div class="variantes"><div class="v-tit">Elige el tamaño</div><div class="v-ops">${grp.map(([s,l])=>{const v=porSlug(s);return v?`<button class="v-op${s===p.slug?" sel":""}" data-var="${s}"><b>${esc(l)}</b>${v.tam?`<span>${esc(v.tam)}</span>`:""}${v.precio?`<span class="v-precio">${clp(v.precio)}</span>`:""}</button>`:""}).join("")}</div></div>`:""}
       ${p.precio?`<div class="f-precio">${p.antes>p.precio?`<s>${clp(p.antes)}</s>`:""}<b>${clp(p.precio)}</b><span>${(()=>{const r=esEscudo(p)&&REGION_CLUB[ALIAS[p.slug]||p.slug];const zona=r?(r.includes("|")?" y a punto Blue en Calama":` y a punto Blue en ${r}`):"";return p.precio>=GRATIS_DESDE?`Envío gratis en Santiago${zona}`:`Envío gratis en Santiago${zona} desde $20.000`})()}</span></div>`:`<div class="f-precio"><b style="font-size:20px">${esc(p.det||"Precio a consultar")}</b></div>`}
       ${p.precio?`<div class="cta-info"><div class="cant"><button data-menos>−</button><span data-cantn>1</span><button data-mas1>+</button></div><button class="btn-grande" data-cta>Agregar al pedido</button></div>`:""}
       <ul class="confianza"><li>📦 Llega en caja, con las piezas separadas por color</li><li>🧩 Siempre van piezas de más</li><li>🚚 Santiago 1 a 3 días hábiles · regiones 2 a 5</li><li>💬 Confirmas y pagas por WhatsApp, con Javi y Caro</li></ul>
@@ -62,7 +70,7 @@ function vistaFicha(s){
     <p>No te lo mandamos armado, y es a propósito. Lo que uno arma con sus manos lo quiere más: cada fila es tuya, y cuando lo cuelgas sabes lo que te costó dejarlo perfecto.</p>
     <p>No es un cuadro que compraste: <b>es uno que hiciste</b>.</p>
     <button class="btn-grande oro cta-medio" data-cta>Lo quiero · ${p.precio?clp(p.precio):""}</button></div></div>
-  <div class="bloque split inv"><div>${fotoO("pared","[Foto: el escudo colgado en una pared]")}</div><div><h3>Del porte de un póster</h3><p>${p.tam?`Armado mide <b>${esc(p.tam)}</b>${h&&h[1]?`, con más de ${h[1]} piezas`:""}.`:""} Se ve desde la puerta, en tu pieza, el living o la oficina.</p></div></div>
+  <div class="bloque split inv"><div>${fotoO("pared","[Foto: el escudo colgado en una pared]")}</div><div><h3>Del porte de un póster</h3><p>${p.tam?`Armado mide <b>${esc(p.tam)}</b>${pz?`, con más de ${pz} piezas`:""}.`:""} Se ve desde la puerta, en tu pieza, el living o la oficina.</p></div></div>
   <div class="bloque split"><div>${pl?`<div class="placeholder video" style="aspect-ratio:1/1">[Aquí va el timelapse del armado, 15 a 20 s, sin sonido. Ya existe en los reels de Colo-Colo]</div>`:`<div class="placeholder video">[Video corto del armado, 15 a 20 s, vertical]</div>`}</div><div><h3>Una tarde de panorama</h3><p>Son 2 a 3 horas: solo, en familia o con amigos. Vas fila por fila con el instructivo impreso y ves cómo aparece tu escudo.</p></div></div>
   <div class="bloque"><h3>¿Para quién es?</h3><div class="quien">
     <div><i>⚽</i><b>Para ti, hincha</b>Tu escudo en tu pieza, armado con tus manos.</div>
@@ -80,7 +88,7 @@ function vistaFicha(s){
       `<div class="clientes"><div class="placeholder">[Foto cliente 1]</div><div class="placeholder">[Foto cliente 2]</div><div class="placeholder">[Foto cliente 3]</div></div><p class="cita">[Frase real de un cliente, con su permiso]</p>`}</div>
   <div class="bloque obj"><h3>¿Y si…?</h3>
     <details open><summary>¿Y si no sé armarlo?</summary><p>Si sabes seguir colores, lo armas. El instructivo va fila por fila. Y si te trabas, nos escribes por WhatsApp y te ayudamos.</p></details>
-    <details><summary>¿No es caro para unas piezas?</summary><p>${h&&h[1]?`Son más de ${h[1]} piezas, `:""}2 a 3 horas de panorama y un cuadro ${p.tam?`de ${esc(p.tam)} `:""}que vas a tener colgado por años. Y lo hiciste tú.</p></details>
+    <details><summary>¿No es caro para unas piezas?</summary><p>${pz?`Son más de ${pz} piezas, `:""}2 a 3 horas de panorama y un cuadro ${p.tam?`de ${esc(p.tam)} `:""}que vas a tener colgado por años. Y lo hiciste tú.</p></details>
     <details><summary>¿Llega a tiempo?</summary><p>Santiago 1 a 3 días hábiles y regiones 2 a 5 desde que confirmamos el pago, con número de seguimiento. ¿Apurado? Al final puedes pasar tu pedido adelante en la fila de despacho.</p></details>
     <details><summary>¿Es seguro pagar por transferencia?</summary><p>Confirmas tu pedido por WhatsApp con nosotros, Javi y Caro. Te mandamos los datos y, cuando sale, el número de seguimiento.</p></details></div>
   <div class="bloque"><h3>Nuestras garantías</h3><div class="garantias">
@@ -104,6 +112,8 @@ function vistaFicha(s){
   ${p.precio?`<div class="barra-fija"><div class="cant"><button data-menos>−</button><span data-cantn>1</span><button data-mas1>+</button></div>
     <button class="btn-grande" data-cta id="agregarF">Agregar al pedido · ${clp(p.precio)}</button></div>`:
     `<div class="barra-fija"><a class="btn-grande wa" style="display:flex;align-items:center;justify-content:center;text-decoration:none" target="_blank" href="https://wa.me/${WHATSAPP}?text=${encodeURIComponent("Hola Áureo, me interesa: "+p.nombre+". ¿Me cuentas más?")}">Preguntar por WhatsApp</a></div>`}`;
+  document.querySelectorAll("[data-var]").forEach(b=>b.onclick=()=>{if(b.dataset.var!==p.slug){scrollVar=window.scrollY;location.replace("#p/"+b.dataset.var)}});
+  if(sv!=null)window.scrollTo(0,sv);
   document.querySelectorAll("[data-gal]").forEach(m=>m.onclick=()=>{document.getElementById("fotoP").src=m.dataset.gal;document.querySelectorAll("[data-gal]").forEach(x=>x.classList.toggle("sel",x===m))});
   if(p.precio){
     const upd=()=>{document.querySelectorAll("[data-cantn]").forEach(n=>n.textContent=cant);const b=document.getElementById("agregarF");if(b)b.textContent=`Agregar al pedido · ${clp(p.precio*cant)}`};
