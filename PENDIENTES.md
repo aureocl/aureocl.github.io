@@ -4,7 +4,7 @@ Tablero común de los dos PCs. Antes de tomar algo, revisar que nadie lo tenga �
 Formato: `hilo · qué · quién · estado` (estado: por hacer · en curso · espera a Áureo · listo).
 
 ## En curso
-- (nada)
+- W2 + Común · Regla de envío gratis (Santiago + punto Blue en la región del club chileno; extranjeros solo Santiago), salto directo a WhatsApp y pedido que no se pierde si no se envía · Áureo · en curso
 
 ## Por hacer
 - W2 · Datos de transferencia en «Pedido listo» (hoy dicen «lo completa Áureo»): publicarlos o «te los mandamos por WhatsApp» · Áureo · espera a Áureo
