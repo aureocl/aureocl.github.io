@@ -2,6 +2,9 @@
 
 Lo más nuevo arriba. Formato: `fecha · PC (Áureo/Caro) · hilo · qué cambió`.
 
+- 19-nov-2026 · Áureo · W1 · **Versiones**: Deportes Iquique (Actual / Clásico) y Deportes Concepción (Águila / León) juntos
+  en una ficha. Si las etiquetas no son tamaños, dice «Elige la versión» y «· 2 versiones». Probado en local.
+
 - 19-nov-2026 · Áureo · W1 · **Tamaños en la ficha** (`VARIANTES` en `js/config.js`): varios tamaños o versiones de un
   producto salen como uno solo en el catálogo («· 2 tamaños»); en la ficha, «Elige el tamaño» cambia foto, medida, piezas y
   precio (cada tamaño sigue siendo su fila en la planilla). Primer grupo: Boca Juniors Chico / Mediano. La búsqueda ahora

@@ -7,6 +7,7 @@ let cat="Todo";
 const grupoDe=s=>VARIANTES.find(g=>g.some(([x])=>x===s));
 const esVarSec=p=>{const g=grupoDe(p.slug);return!!(g&&g[0][0]!==p.slug&&porSlug(g[0][0]))};
 const textoVar=p=>{const g=grupoDe(p.slug);return g?g.map(([s,l])=>(porSlug(s)?.nombre||"")+" "+l).join(" "):""};
+const esTam=g=>g.some(([,l])=>/^(chico|mediano|grande|gigante)$/i.test(l));
 let scrollVar=null;
 function modo(m,titulo=""){document.body.className=m+(FINAL?" final":"");document.getElementById("top").classList.toggle("en-ficha",m!=="en-catalogo");document.getElementById("titulo").textContent=titulo;document.getElementById("cab").style.display=m==="en-catalogo"?"":"none"}
 
@@ -14,7 +15,7 @@ function tarjeta(p){
   const tc=tramosCombo();
   return `<article class="card" data-ir="${p.slug}">
     <div class="foto">${img(p)}${p.etq?`<span class="etq">${esc(p.etq)}</span>`:""}</div>
-    <div class="info"><div class="nombre">${esc(p.nombre)}</div>${p.tam?`<div class="tam">${esc(p.tam)}${grupoDe(p.slug)&&!esVarSec(p)?` · ${grupoDe(p.slug).filter(([s])=>porSlug(s)).length} tamaños`:""}</div>`:""}
+    <div class="info"><div class="nombre">${esc(p.nombre)}</div>${p.tam?`<div class="tam">${esc(p.tam)}${grupoDe(p.slug)&&!esVarSec(p)?` · ${grupoDe(p.slug).filter(([s])=>porSlug(s)).length} ${esTam(grupoDe(p.slug))?"tamaños":"versiones"}`:""}</div>`:""}
     ${p.precio?`<div class="precio">${p.antes>p.precio?`<s>${clp(p.antes)}</s>`:""}${clp(p.precio)}${p.antes>p.precio?(/lanzamiento/i.test(p.etq)?`<span class="nota-lanz">Precio de lanzamiento · después ${clp(p.antes)}</span>`:`<span class="nota-lanz">Ahorras ${clp(p.antes-p.precio)}</span>`):""}</div>`:`<div class="precio consultar">${esc(p.det||"Precio a consultar")}</div>`}
     ${p.precio?`<button class="btn-agregar" data-add="${p.slug}">+ Agregar</button>`:""}</div></article>`;
 }
@@ -56,7 +57,7 @@ function vistaFicha(s){
       <h1 class="serif">${titulo}</h1>
       ${pl?`<div class="prueba-corta"><img src="${fp(pl,"cliente2")}" alt="">«${esc(pl.cita.split(",")[1]?.trim()||pl.cita)}…»</div>`:""}
       <div class="datos">${p.tam?`<span class="dato">📏 ${esc(p.tam)}</span>`:""}${pz?`<span class="dato">🧩 +${pz} piezas</span>`:""}${esEscudo(p)?`<span class="dato">⏳ 2 a 3 horas</span>`:""}</div>
-      ${grp&&grp.filter(([s])=>porSlug(s)).length>1?`<div class="variantes"><div class="v-tit">Elige el tamaño</div><div class="v-ops">${grp.map(([s,l])=>{const v=porSlug(s);return v?`<button class="v-op${s===p.slug?" sel":""}" data-var="${s}"><b>${esc(l)}</b>${v.tam?`<span>${esc(v.tam)}</span>`:""}${v.precio?`<span class="v-precio">${clp(v.precio)}</span>`:""}</button>`:""}).join("")}</div></div>`:""}
+      ${grp&&grp.filter(([s])=>porSlug(s)).length>1?`<div class="variantes"><div class="v-tit">${esTam(grp)?"Elige el tamaño":"Elige la versión"}</div><div class="v-ops">${grp.map(([s,l])=>{const v=porSlug(s);return v?`<button class="v-op${s===p.slug?" sel":""}" data-var="${s}"><b>${esc(l)}</b>${v.tam?`<span>${esc(v.tam)}</span>`:""}${v.precio?`<span class="v-precio">${clp(v.precio)}</span>`:""}</button>`:""}).join("")}</div></div>`:""}
       ${p.precio?`<div class="f-precio">${p.antes>p.precio?`<s>${clp(p.antes)}</s>`:""}<b>${clp(p.precio)}</b><span>${(()=>{const r=esEscudo(p)&&REGION_CLUB[ALIAS[p.slug]||p.slug];const zona=r?(r.includes("|")?" y a punto Blue en Calama":` y a punto Blue en ${r}`):"";return p.precio>=GRATIS_DESDE?`Envío gratis en Santiago${zona}`:`Envío gratis en Santiago${zona} desde $20.000`})()}</span></div>`:`<div class="f-precio"><b style="font-size:20px">${esc(p.det||"Precio a consultar")}</b></div>`}
       ${p.precio?`<div class="cta-info"><div class="cant"><button data-menos>−</button><span data-cantn>1</span><button data-mas1>+</button></div><button class="btn-grande" data-cta>Agregar al pedido</button></div>`:""}
       <ul class="confianza"><li>📦 Llega en caja, con las piezas separadas por color</li><li>🧩 Siempre van piezas de más</li><li>🚚 Santiago 1 a 3 días hábiles · regiones 2 a 5</li><li>💬 Confirmas y pagas por WhatsApp, con Javi y Caro</li></ul>

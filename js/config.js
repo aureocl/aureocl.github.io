@@ -40,11 +40,14 @@ const URGENCIA = { hasta:"2026-12-10", texto:"🎄 Haz tu pedido hasta el 10 de 
 /* Oferta única del paso 2: completar la colección del club con descuento. Lo «próximo» se muestra solo como ejemplo. */
 const PROXIMOS = {}; /* ej. {"colo-colo":[["Copa del Cacique","Próximamente"]]} */
 const INSTAGRAM = "https://www.instagram.com/aureo.cl/";
-/* Tamaños o versiones de un mismo producto (Áureo, 19-nov-2026). Cada grupo: [slug, etiqueta, piezas redondeadas hacia abajo (opcional;
+/* Tamaños o versiones de un mismo producto (Áureo, 19-nov-2026). Si las etiquetas son Chico/Mediano/Grande dice
+   «Elige el tamaño»; si no, «Elige la versión». Cada grupo: [slug, etiqueta, piezas redondeadas hacia abajo (opcional;
    si falta, el primero usa las de HINCHA)]. El primero es el que sale
    en el catálogo; los demás se eligen dentro de su ficha (cambian foto, medida y precio). Cada uno sigue siendo su propia
    fila en la planilla. El slug es el nombre del producto en minúsculas, sin tildes y con guiones. */
 const VARIANTES = [
   [["boca-juniors","Chico"],["boca-juniors-mediano","Mediano","1.900"]],
+  [["deportes-iquique","Actual"],["deportes-iquique-clasico","Clásico","3.000"]],
+  [["deportes-concepcion","Águila"],["deportes-concepcion-leon","León","2.100"]],
 ];
 VARIANTES.forEach(g=>g.slice(1).forEach(([s])=>{if(!ALIAS[s])ALIAS[s]=ALIAS[g[0][0]]||g[0][0]}));
