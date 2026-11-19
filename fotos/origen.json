@@ -364,6 +364,12 @@
   "producto": "San Marcos de Arica",
   "protegida": true
  },
+ "san-marcos-de-arica-grande": {
+  "fecha": "2026-11-19T20:40:53",
+  "origen": "taller",
+  "producto": "San Marcos de Arica Grande",
+  "protegida": true
+ },
  "santiago-wanderers": {
   "fecha": "2026-11-03T20:00:00",
   "origen": "taller",
