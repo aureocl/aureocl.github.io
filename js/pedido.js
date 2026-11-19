@@ -7,7 +7,7 @@ const escudosEn=()=>items().filter(x=>esEscudo(x.p));
 const nEscudos=()=>escudosEn().reduce((a,x)=>a+x.c,0);
 /* Descuento por escudos (Áureo, 17-nov-2026): desde 2 escudos, $1.000 por cada uno (2 = $2.000, 3 = $3.000, 4 = $4.000…). */
 const descEscudos=n=>PROP.descPorEscudo&&n>=2?n*PROP.descPorEscudo:0;
-function solasPrecio(n){const s=solaFila();if(!s||!n)return 0;const m=(s.det.match(/\$[\d.]+/g)||[]).map(num);const T3={1:s.precio,2:m[0]||s.precio*2,3:m[1]||s.precio*3};return n<=3?T3[n]:T3[3]+(n-3)*s.precio}
+function solasPrecio(n){const s=solaFila();if(!s||!n)return 0;const m=(s.det.match(/\$[\d.]+/g)||[]).map(num);const T3={1:s.precio,2:m[0]||s.precio*2,3:m[1]||s.precio*3};return n<=3?T3[n]:T3[3]+(n-3)*(m[2]||s.precio)}
 function precioCams(n){const tc=tramosCombo();if(!n||!tc)return 0;return n<=3?tc[n]:tc[3]+(n-3)*tc[1]}
 const camRegalo=()=>PROP.camRegaloDesde&&precioCams(camisetas.length)>=PROP.camRegaloDesde;
 function totales(){
@@ -58,7 +58,7 @@ function vistaPedido(){
   }
 
   if(etapa==="camisetas"){
-    const solas=(()=>{const s=sola;if(!s)return n=>0;const m=(s.det.match(/\$[\d.]+/g)||[]).map(num);const T3={1:s.precio,2:m[0]||s.precio*2,3:m[1]||s.precio*3};return n=>n<=3?T3[n]:T3[3]+(n-3)*s.precio})();
+    const solas=(()=>{const s=sola;if(!s)return n=>0;const m=(s.det.match(/\$[\d.]+/g)||[]).map(num);const T3={1:s.precio,2:m[0]||s.precio*2,3:m[1]||s.precio*3};return n=>n<=3?T3[n]:T3[3]+(n-3)*(m[2]||s.precio)})();
     const eqBase=(EQUIPOS_CAM.find(x=>norm(x[0])===norm(e0.p.nombre))||[e0.p.nombre])[0];
     const mismas=CAMISETAS.filter(c=>norm(c[2])===norm(e0.p.nombre)), cams=[...mismas,...CAMISETAS.filter(c=>!mismas.includes(c))].slice(0,2);
     const k=camisetas.length, opsEq=eq=>[eqBase,...EQUIPOS_CAM.map(x=>x[0]).filter(x=>x!==eqBase),OTRO_EQ].map(x=>`<option${x===eq?" selected":""}>${esc(x)}</option>`).join("");
