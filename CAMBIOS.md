@@ -2,6 +2,14 @@
 
 Lo más nuevo arriba. Formato: `fecha · PC (Áureo/Caro) · hilo · qué cambió`.
 
+- 19-nov-2026 · Áureo · W2 + Común · **Regla de envío gratis** (comentario en `js/base.js`): desde $20.000, gratis en
+  Santiago; escudo de club chileno de regiones, además gratis a punto Blue en su región; extranjeros y resto, fuera de
+  Santiago se paga. Se sumaron a `REGION_CLUB` Iquique Clásico, U. de Concepción, Fernández Vial, Lota Schwager, Unión La
+  Calera y Concepción (león). La barra, la portada, la ficha y las ofertas ya no dicen «envío gratis» a secas: dicen dónde.
+  **Salto a WhatsApp**: en celular (e Instagram/Facebook) va directo, sin ventana nueva. **El pedido no se pierde**: el carro
+  ya no se vacía al enviar; «Pedido listo» sobrevive a una recarga (guarda solo número y total) y tiene «Hacer un pedido
+  nuevo». Probado en local: 6 casos de envío, envío del pedido, recarga y pedido nuevo, celular, sin errores.
+
 - 17-nov-2026 · Áureo · W2 + Común · Descuento por escudos: desde 2, $1.000 por cada uno (2 = $2.000, 3 = $3.000…;
   `PROP.descPorEscudo`, antes `segundoDesc` $3.000 fijo). Entrega pide teléfono y correo (obligatorios, con revisión) y van
   en el mensaje de WhatsApp, que cierra con «Quedo atento/a a los datos para transferir». «Pedido listo»: «Esperamos tu

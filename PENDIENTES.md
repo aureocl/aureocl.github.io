@@ -4,7 +4,7 @@ Tablero común de los dos PCs. Antes de tomar algo, revisar que nadie lo tenga �
 Formato: `hilo · qué · quién · estado` (estado: por hacer · en curso · espera a Áureo · listo).
 
 ## En curso
-- W2 + Común · Regla de envío gratis (Santiago + punto Blue en la región del club chileno; extranjeros solo Santiago), salto directo a WhatsApp y pedido que no se pierde si no se envía · Áureo · en curso
+- (nada)
 
 ## Por hacer
 - W2 · Datos de transferencia en «Pedido listo» (hoy dicen «lo completa Áureo»): publicarlos o «te los mandamos por WhatsApp» · Áureo · espera a Áureo
@@ -15,6 +15,7 @@ Formato: `hilo · qué · quién · estado` (estado: por hacer · en curso · es
 - Todos · Pasar este repo a privado y dejar aureocl.github.io redirigiendo al dominio nuevo · espera a Áureo
 
 ## Listo
+- W2 + Común · Regla de envío gratis (Santiago + punto Blue en la región del club chileno; extranjeros solo Santiago), salto directo a WhatsApp y pedido que no se pierde · Áureo · 19-nov-2026 · **falta probarlo desde Instagram en un celular real**
 - W2 · Oferta «Completa la colección» (20 %, hoy con la Pelota mini): **se deja** aunque tape la del 2.º escudo (Áureo) · 17-nov-2026
 - W2 + Común · Descuento $1.000 por cada escudo desde 2; teléfono y correo obligatorios; «esperamos tu transferencia»; UC/Wanderers pagan envío bajo $20.000 · Áureo · 17-nov-2026
 - Común · Aviso de Navidad al 10 de diciembre · Áureo · 13-nov-2026

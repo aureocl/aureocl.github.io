@@ -22,7 +22,8 @@ function pasos(){const e=escudosEn().length>0;return["pedido",...(e?["camisetas"
 let metaRegalo=0;
 const meta=()=>metaRegalo||subtotal()+PROP.regaloMas;
 function barra(base){if(!PROP.barra)return"";const meta=metaRegalo,pct=Math.min(100,base/meta*100);
-  const txt=base<20000?`Te faltan <b>${clp(20000-base)}</b> para el envío gratis 🚚`:base<meta?`¡Envío gratis listo! Te faltan <b>${clp(meta-base)}</b> para una <b>mini sorpresa de regalo</b> 🎁`:`<b>¡Ganaste una mini sorpresa de regalo!</b> 🎁`;
+  const dg=dondeGratis();
+  const txt=base<GRATIS_DESDE?`Te faltan <b>${clp(GRATIS_DESDE-base)}</b> para el envío gratis ${dg} 🚚`:base<meta?`¡Envío gratis ${dg}! Te faltan <b>${clp(meta-base)}</b> para una <b>mini sorpresa de regalo</b> 🎁`:`<b>¡Ganaste una mini sorpresa de regalo!</b> 🎁`;
   return `<div class="progreso">${txt}<div class="riel"><div style="width:${pct}%"></div></div><div class="hitos"><span>$0</span><span>🚚 $20.000</span><span>🎁 ${clp(meta)}</span></div></div>`}
 function puntos(){const S=pasos();return `<div class="puntos">${S.map((_,k)=>`<i class="${k<=paso?"ok":""}"></i>`).join("")}</div>`}
 function mirar(){
@@ -48,7 +49,8 @@ function vistaPedido(){
   let html="", pie="";
 
   if(etapa==="pedido"){
-    html=`<div class="panel"><h3>Lo que llevas</h3>${I.map(x=>`<div class="item">${img(x.p)}<div class="n">${esc(x.p.nombre)}<small>${clp(x.p.precio)} c/u</small></div>
+    const g=enviadoReciente();
+    html=`${g?`<div class="panel" style="border-color:var(--oro)"><p class="nota" style="margin:0">Ya enviaste este pedido (<b>${esc(g.id)}</b>). Si no alcanzó a llegar, continúa y mándalo de nuevo. Si quieres hacer otro, <a href="#" data-nuevo>empieza un pedido nuevo</a>.</p></div>`:""}<div class="panel"><h3>Lo que llevas</h3>${I.map(x=>`<div class="item">${img(x.p)}<div class="n">${esc(x.p.nombre)}<small>${clp(x.p.precio)} c/u</small></div>
       <div class="cant"><button data-q="${x.s}" data-d="-1">−</button><span>${x.c}</span><button data-q="${x.s}" data-d="1">+</button></div></div>`).join("")}
       ${T.desc?`<div class="res"><span>Descuento por ${nEscudos()} escudos</span><span style="color:var(--verde)">−${clp(T.desc)}</span></div>`:""}
       <button class="op" style="margin-top:8px" data-mirar>${mirando?"Cerrar":"+ Seguir mirando"}</button>${mirando?mirar():""}</div>${barra(T.base)}`;
@@ -97,7 +99,7 @@ function vistaPedido(){
     const n0=nEscudos(), desc=descEscudos(n0+1)-descEscudos(n0), otros=P.filter(x=>esEscudo(x)&&x.precio&&x.slug!==e0.s).slice(0,9);
     html=`<div class="oferta">${tag("2 de 2")}<div class="t1">Una sola vez, aquí</div>
       <h2>¿Alguien más en tu familia es hincha?</h2>
-      <p style="margin:0">Llévale el suyo: <b>por cada escudo te descontamos ${clp(PROP.descPorEscudo)}</b> (2 escudos = ${clp(descEscudos(2))} menos, 3 = ${clp(descEscudos(3))} menos, y así). Viajan juntos, con envío gratis.</p>
+      <p style="margin:0">Llévale el suyo: <b>por cada escudo te descontamos ${clp(PROP.descPorEscudo)}</b> (2 escudos = ${clp(descEscudos(2))} menos, 3 = ${clp(descEscudos(3))} menos, y así). Viajan juntos, en el mismo envío.</p>
       <button class="op" style="width:100%;margin-top:12px;display:flex;gap:10px;align-items:center" data-seg="${e0.s}">${img(e0.p)}<span style="text-align:left"><b>Otro ${esc(e0.p.nombre)}</b><s style="color:var(--suave)">${clp(e0.p.precio)}</s> <b style="display:inline">${clp(e0.p.precio-desc)}</b></span></button>
       <p class="nota" style="margin-top:12px">O elige el de otro equipo:</p>
       <div class="elige">${otros.map(x=>`<button data-seg="${x.slug}">${img(x)}<b>${esc(x.nombre)}</b><s>${clp(x.precio)}</s>${clp(x.precio-desc)}</button>`).join("")}</div></div>
@@ -108,7 +110,7 @@ function vistaPedido(){
   if(etapa==="minis"){
     const M=P.filter(x=>/3D mini/i.test(x.cat)&&x.precio&&x.precio<=7000&&!carro.some(c=>c.s===x.slug)).slice(0,9);
     html=`<div class="oferta">${tag("1 de 1")}<div class="t1">Antes de terminar</div>
-      <h2>Agrégale una mini por poco</h2><p style="margin:0">Van en el mismo envío. ${T.base<20000?`Con ${clp(20000-T.base)} más, tu envío es gratis.`:""}</p>
+      <h2>Agrégale una mini por poco</h2><p style="margin:0">Van en el mismo envío. ${T.base<GRATIS_DESDE?`Con ${clp(GRATIS_DESDE-T.base)} más, el envío es gratis ${dondeGratis()}.`:""}</p>
       <div class="elige">${M.map(x=>`<button data-mas="${x.slug}">${img(x)}<b>${esc(x.nombre)}</b>+ ${clp(x.precio)}</button>`).join("")}</div></div>
       <button class="no-gracias" data-nogracias="minis">No, gracias</button>`;
     pie=`<button class="btn-grande" data-sig>Continuar · ${clp(T.base)}</button>`;
@@ -162,6 +164,7 @@ function vistaPedido(){
   // Eventos comunes
   v.querySelectorAll("[data-sig]").forEach(b=>b.onclick=()=>{if(etapa==="camisetas"&&camisetas.length)medir("OfertaAceptada",{oferta:"pack",camisetas:camisetas.length});if(etapa==="camisetas"&&([...camisetas,...(camRegalo()?[datos.camReg||{}]:[])]).some(c=>!c.n||c.d===""||c.d===undefined)){toast("Escribe el nombre y el número de cada camiseta");return}siguiente()});
   v.querySelectorAll("[data-nogracias]").forEach(b=>b.onclick=()=>{if(b.dataset.nogracias==="camisetas")camisetas=[];siguiente()});
+  v.querySelectorAll("[data-nuevo]").forEach(a=>a.onclick=ev=>{ev.preventDefault();pedidoNuevo()});
   v.querySelectorAll("[data-mirar]").forEach(b=>b.onclick=()=>{mirando=!mirando;vistaPedido()});
   v.querySelectorAll("[data-mcat]").forEach(b=>b.onclick=()=>{mirarCat=b.dataset.mcat;const x=window.scrollY;vistaPedido();window.scrollTo(0,x)});
   v.querySelectorAll("[data-madd]").forEach(b=>b.onclick=()=>{agregar(b.dataset.madd,1,true);const x=window.scrollY;vistaPedido();window.scrollTo(0,x)});
@@ -235,20 +238,33 @@ function vistaPedido(){
     M.push("","Quedo atento/a a los datos para transferir.");
     const link=`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(sinTildes(M.join("\n")))}`;
     medir("InitiateCheckout",{value:base+e.tot,currency:"CLP",num_items:items().reduce((s,x)=>s+x.c,0)});
+    /* El carro NO se vacía aquí: si WhatsApp no se abre o la persona vuelve, el pedido sigue ahí.
+       Se vacía con «Hacer un pedido nuevo». Solo se recuerda el número y el total (nunca los datos personales). */
     ultimo={id,total:base+e.tot,link};
-    window.open(link,"_blank");
-    carro=[];guardar();camisetas=[];coleccion=new Set();bumps={};metaRegalo=0;paso=0;
+    try{localStorage.setItem("aureo-enviado",JSON.stringify({id,total:base+e.tot,t:Date.now()}))}catch(e){}
     location.hash="#listo";
+    abrirWhatsApp(link);
   };
 }
 
+/* Celular (y navegadores de Instagram/Facebook, que bloquean ventanas nuevas): salto directo a WhatsApp.
+   Computador: pestaña nueva; si el navegador la bloquea, salto directo. */
+function abrirWhatsApp(link){
+  const cel=/Android|iPhone|iPad|iPod|FBAN|FBAV|Instagram/i.test(navigator.userAgent)||matchMedia("(pointer:coarse)").matches;
+  if(!cel){const w=window.open(link,"_blank");if(w)return}
+  setTimeout(()=>{location.href=link},150);
+}
+function enviadoReciente(){try{const x=JSON.parse(localStorage.getItem("aureo-enviado")||"null");return x&&Date.now()-x.t<2*864e5?x:null}catch(e){return null}}
+function pedidoNuevo(){carro=[];guardar();camisetas=[];coleccion=new Set();bumps={};datos={};metaRegalo=0;paso=0;ultimo=null;try{localStorage.removeItem("aureo-enviado")}catch(e){}location.hash=""}
+
 function vistaListo(){
   modo("en-pedido","Pedido listo");window.scrollTo(0,0);
-  const u=ultimo||{id:"AU-xxxxxx-xxx",total:0,link:`https://wa.me/${WHATSAPP}`};
+  const g=enviadoReciente();
+  const u=ultimo||(g?{id:g.id,total:g.total,link:""}:{id:"",total:0,link:""});
   const comp=`https://wa.me/${WHATSAPP}?text=${encodeURIComponent("Hola! Te envio el comprobante del pedido "+u.id)}`;
   document.getElementById("vista").innerHTML=`<div class="wrap pedido" style="max-width:560px">
     <div class="listo"><div class="ok">✓</div><h2>¡Tu pedido está listo!</h2>
-      <p class="nota">Pedido <b>${esc(u.id)}</b> · se abrió WhatsApp con todo escrito. Si no se envió, <a href="${u.link}" target="_blank">ábrelo de nuevo</a>.</p></div>
+      <p class="nota">${u.id?`Pedido <b>${esc(u.id)}</b> · `:""}se abrió WhatsApp con todo escrito. <b>Si no alcanzaste a enviarlo</b>, ${u.link?`<a href="${u.link}" data-reabrir>ábrelo de nuevo</a>`:`<a href="#pedido">vuelve a tu pedido</a> y apriétalo otra vez`}: tu pedido sigue guardado.</p></div>
     <div class="paso-l"><div class="n">1</div><div style="flex:1"><h3>Transfiere ${u.total?clp(u.total):"el total"}</h3>
       ${DATOS_PAGO.some(([,v])=>v.startsWith("("))?`<p class="nota" style="margin:0">Te llegan por WhatsApp los datos para transferir. <b>Esperamos tu transferencia para cerrar tu pedido.</b></p>`:DATOS_PAGO.map(([k,v])=>`<div class="dato-p"><div><span>${k}</span><br><b>${esc(v)}</b></div><button data-copiar="${esc(v)}">Copiar</button></div>`).join("")}
       ${u.total?`<div class="dato-p"><div><span>Monto</span><br><b>${clp(u.total)}</b></div><button data-copiar="${u.total}">Copiar</button></div>`:""}</div></div>
@@ -257,7 +273,10 @@ function vistaListo(){
     <div class="paso-l"><div class="n">3</div><div><h3>Te confirmamos y despachamos</h3><p class="nota" style="margin:0">Javi o Caro revisan el pago, te confirman y te mandan el número de seguimiento cuando sale.</p></div></div>
     ${URGENCIA&&new Date()<=new Date(URGENCIA.hasta+"T23:59:59")?`<p class="nota" style="text-align:center;margin-top:14px"><b>${esc(URGENCIA.texto)}</b></p>`:""}
     <p style="text-align:center;margin-top:18px"><a class="avisame" target="_blank" href="${INSTAGRAM}">Síguenos en Instagram @aureo.cl</a></p>
+    <p style="text-align:center;margin-top:10px"><button class="no-gracias" data-nuevo>Hacer un pedido nuevo</button></p>
   </div>`;
+  const re=document.querySelector("[data-reabrir]");if(re)re.onclick=ev=>{ev.preventDefault();abrirWhatsApp(u.link)};
+  document.querySelector("[data-nuevo]").onclick=pedidoNuevo;
   document.querySelectorAll("[data-copiar]").forEach(b=>b.onclick=async()=>{try{await navigator.clipboard.writeText(b.dataset.copiar);b.textContent="✓ Copiado"}catch(e){b.textContent="Mantén apretado para copiar"}});
 }
 

@@ -23,7 +23,7 @@ function vistaCatalogo(){
   <nav class="chips">${["Todo",...cats].map(x=>`<button class="chip${x===cat?" activa":""}" data-cat="${esc(x)}">${esc(x)}</button>`).join("")}</nav>
   ${cat==="Todo"&&!q?`<section class="hero"><h1 class="serif">Tu equipo,<br><em>armado por ti.</em></h1>
     <p>Escudos, camisetas y figuras en mini bloques. Llegan en caja, los armas en una tarde y quedan colgados en tu pared.</p>
-    <div class="sellos"><div class="sello"><b>🚚</b>Envío gratis desde $20.000</div><div class="sello"><b>📦</b>Llega en caja, piezas por color</div><div class="sello"><b>🧩</b>Garantía piezas completas</div></div></section>`:""}
+    <div class="sellos"><div class="sello"><b>🚚</b>Envío gratis en Santiago desde $20.000</div><div class="sello"><b>📦</b>Llega en caja, piezas por color</div><div class="sello"><b>🧩</b>Garantía piezas completas</div></div></section>`:""}
   <div class="wrap">${L.length?cats.filter(x=>L.some(p=>p.cat===x)).map(x=>{const ps=L.filter(p=>p.cat===x);
     return `<section><h2 class="sec">${esc(x)}<small>${ps.length}</small></h2>
     <div class="grilla">${ps.map(tarjeta).join("")}</div></section>`}).join(""):`<div class="a-pedido"><p class="serif" style="font-size:26px;margin:0">¿No está «${esc(q)}»?</p><p>Lo diseñamos a pedido: nos mandas la imagen, te decimos si se puede y te damos el precio.</p><a class="btn-grande wa" style="display:flex;align-items:center;justify-content:center;text-decoration:none" target="_blank" href="https://wa.me/${WHATSAPP}?text=${encodeURIComponent("Hola Áureo! Quiero un escudo a pedido de: "+q)}">Pedir el mío por WhatsApp</a></div>`}</div>
@@ -49,7 +49,7 @@ function vistaFicha(s){
       <h1 class="serif">${titulo}</h1>
       ${pl?`<div class="prueba-corta"><img src="${fp(pl,"cliente2")}" alt="">«${esc(pl.cita.split(",")[1]?.trim()||pl.cita)}…»</div>`:""}
       <div class="datos">${p.tam?`<span class="dato">📏 ${esc(p.tam)}</span>`:""}${h&&h[1]?`<span class="dato">🧩 +${h[1]} piezas</span>`:""}${esEscudo(p)?`<span class="dato">⏳ 2 a 3 horas</span>`:""}</div>
-      ${p.precio?`<div class="f-precio">${p.antes>p.precio?`<s>${clp(p.antes)}</s>`:""}<b>${clp(p.precio)}</b><span>${p.precio>=19000?"Envío gratis en Santiago":"Envío desde $2.000"}</span></div>`:`<div class="f-precio"><b style="font-size:20px">Precio a consultar</b></div>`}
+      ${p.precio?`<div class="f-precio">${p.antes>p.precio?`<s>${clp(p.antes)}</s>`:""}<b>${clp(p.precio)}</b><span>${(()=>{const r=esEscudo(p)&&REGION_CLUB[ALIAS[p.slug]||p.slug];const zona=r?(r.includes("|")?" y a punto Blue en Calama":` y a punto Blue en ${r}`):"";return p.precio>=GRATIS_DESDE?`Envío gratis en Santiago${zona}`:`Envío gratis en Santiago${zona} desde $20.000`})()}</span></div>`:`<div class="f-precio"><b style="font-size:20px">Precio a consultar</b></div>`}
       ${p.precio?`<div class="cta-info"><div class="cant"><button data-menos>−</button><span data-cantn>1</span><button data-mas1>+</button></div><button class="btn-grande" data-cta>Agregar al pedido</button></div>`:""}
       <ul class="confianza"><li>📦 Llega en caja, con las piezas separadas por color</li><li>🧩 Garantía piezas completas</li><li>🚚 Santiago 1 a 3 días hábiles · regiones 2 a 5</li><li>💬 Confirmas y pagas por WhatsApp, con Javi y Caro</li></ul>
     </div>
