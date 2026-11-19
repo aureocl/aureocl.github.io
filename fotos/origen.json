@@ -292,6 +292,12 @@
   "origen": "taller",
   "producto": "mickey-mago-mini"
  },
+ "naruto-mini": {
+  "fecha": "2026-11-19T09:15:32",
+  "origen": "taller",
+  "producto": "Naruto mini",
+  "protegida": true
+ },
  "noche-estrellada": {
   "fecha": "2026-11-08T23:14:33",
   "origen": "taller",
