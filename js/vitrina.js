@@ -10,7 +10,7 @@ function tarjeta(p){
   return `<article class="card" data-ir="${p.slug}">
     <div class="foto">${img(p)}${p.etq?`<span class="etq">${esc(p.etq)}</span>`:""}</div>
     <div class="info"><div class="nombre">${esc(p.nombre)}</div>${p.tam?`<div class="tam">${esc(p.tam)}</div>`:""}
-    ${p.precio?`<div class="precio">${p.antes>p.precio?`<s>${clp(p.antes)}</s>`:""}${clp(p.precio)}${p.antes>p.precio?`<span class="nota-lanz">Precio de lanzamiento · después ${clp(p.antes)}</span>`:""}</div>`:`<div class="precio consultar">Precio a consultar</div>`}
+    ${p.precio?`<div class="precio">${p.antes>p.precio?`<s>${clp(p.antes)}</s>`:""}${clp(p.precio)}${p.antes>p.precio?(/lanzamiento/i.test(p.etq)?`<span class="nota-lanz">Precio de lanzamiento · después ${clp(p.antes)}</span>`:`<span class="nota-lanz">Ahorras ${clp(p.antes-p.precio)}</span>`):""}</div>`:`<div class="precio consultar">Precio a consultar</div>`}
     ${p.precio?`<button class="btn-agregar" data-add="${p.slug}">+ Agregar</button>`:""}</div></article>`;
 }
 function vistaCatalogo(){

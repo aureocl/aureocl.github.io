@@ -2,6 +2,11 @@
 
 Lo más nuevo arriba. Formato: `fecha · PC (Áureo/Caro) · hilo · qué cambió`.
 
+- 19-nov-2026 · Áureo · W1 · **Precio de oferta**: si «Precio antes» es mayor y la etiqueta NO es «Lanzamiento», la tarjeta
+  dice «Ahorras $X» (antes siempre decía «Precio de lanzamiento»). El precio tachado ahora va con línea roja gruesa.
+  En la planilla, 12 escudos que bajaron el 19-nov tienen «Precio antes» = precio anterior y etiqueta «Oferta».
+  Probado en local (sin errores de consola).
+
 - 19-nov-2026 · Áureo · Entrega · **Punto Blue sin mapa**: se quitó el mapa de Google y el link al buscador de Blue
   (blue.cl no se puede insertar: `x-frame-options: DENY`). Con «Punto Blue Express» el cliente escribe región, comuna y su
   dirección; nosotros le buscamos el punto más cercano y se lo confirmamos por WhatsApp. El mensaje dice
