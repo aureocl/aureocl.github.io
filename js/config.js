@@ -48,6 +48,6 @@ const INSTAGRAM = "https://www.instagram.com/aureo.cl/";
 const VARIANTES = [
   [["boca-juniors","Chico"],["boca-juniors-mediano","Mediano","1.900"]],
   [["deportes-iquique","Actual"],["deportes-iquique-clasico","Clásico","3.000"]],
-  [["deportes-concepcion","Águila"],["deportes-concepcion-leon","León","2.100"]],
+  [["deportes-concepcion","Actual"],["deportes-concepcion-leon","León","2.100"]],
 ];
 VARIANTES.forEach(g=>g.slice(1).forEach(([s])=>{if(!ALIAS[s])ALIAS[s]=ALIAS[g[0][0]]||g[0][0]}));
