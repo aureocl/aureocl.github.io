@@ -18,7 +18,10 @@ const CAMISETAS = [["manu-30.jpg","MANU 30","Colo-Colo"],["lucho-10.jpg","LUCHO 
 const carrusel = () => { const c = CAMISETAS.map(([f,n,club])=>`<div class="cam"><img src="${CAM_BASE}${f}" alt="Camiseta ${n}" loading="lazy"><b>${n}</b><span>${club}</span></div>`).join("");
   return `<div class="carrusel"><div class="cinta">${c}${c}</div></div>`; };
 /* Propuestas para subir el ticket (D7). Cada una se apaga con false; Áureo decide cuáles quedan. */
-const PROP = { coleccionDesc:0.2, barra:true, regaloMas:10000, porPoco:true, empaque:2000, descPorEscudo:1000, camRegaloDesde:35000, prioridad:3000 };
+/* regaloMinProducto (Áureo, 20-nov-2026): para la mini de regalo solo cuentan productos desde $13.000 (y el pack de camisetas);
+   las minis y figuras chicas no suman, y en «Seguir mirando» no aparecen. La meta es lo que llevaba (mínimo $13.000) + regaloMas.
+   camRegaloCada: llevando 5 camisetas del pack, la 6.ª va de regalo. */
+const PROP = { coleccionDesc:0.2, barra:true, regaloMas:10000, regaloMinProducto:13000, porPoco:true, empaque:2000, descPorEscudo:1000, camRegaloCada:5, prioridad:3000 };
 const tag = l => FINAL ? "" : `<span class="prop">Propuesta ${l}</span><br>`;
 /* Camiseta de ejemplo por equipo (AUREO 10, del Laboratorio): lo que ve el cliente al elegir el equipo de cada camiseta. */
 const EQUIPOS_CAM = [["Colo-Colo","ej-colo-colo-local.jpg"],["Colo-Colo (visita)","ej-colo-colo-visita.jpg"],["U de Chile","ej-universidad-de-chile-local.jpg"],["Audax Italiano","ej-audax-italiano-local.jpg"],["Cobreloa","ej-cobreloa-local.jpg"],["Deportes Concepción","ej-deportes-concepcion-local.jpg"],["Deportes Iquique","ej-deportes-iquique-local.jpg"],["Deportes Temuco","ej-deportes-temuco-local.jpg"],["Huachipato","ej-huachipato-local.jpg"],["Magallanes","ej-magallanes-local.jpg"],["O'Higgins","ej-o-higgins-local.jpg"],["Rangers de Talca","ej-rangers-de-talca-local.jpg"],["River Plate","ej-river-plate-local.jpg"],["San Luis de Quillota","ej-san-luis-local.jpg"],["Santiago Wanderers","ej-santiago-wanderers-local.jpg"],["Unión Española","ej-union-espanola-local.jpg"]];
@@ -34,9 +37,14 @@ const PILOTO = {"colo-colo": {
   hincha: "Desde 1925, el Cacique. En 1991, el primer equipo chileno campeón de América. Y sobre el escudo, la franja negra por David Arellano, su fundador: la vas a armar fila por fila.",
 }};
 const fp = (pl, k) => LANDING_BASE + pl.carpeta + k + ".jpg";
-/* Datos de transferencia: los completa Áureo (no van en el repositorio). */
-/* Datos de transferencia: van por WhatsApp (Áureo, 19-nov-2026: así los copian y pegan). Vacío = la página dice «Te llegan por WhatsApp». */
-const DATOS_PAGO = [];
+/* Cuentas para transferir (Áureo, 20-nov-2026): salen en la pantalla «Paga y envía» antes de WhatsApp, con botón Copiar.
+   LAS ESCRIBE ÁUREO (o Caro), no Claude. Formato de cada cuenta:
+   { quien:"Javi", datos:[["Banco","…"],["Tipo de cuenta","…"],["N° de cuenta","…"],["RUT","…"],["Nombre","…"],["Correo","…"]] }
+   Una cuenta con «datos» vacío no se muestra. Si ninguna tiene datos, la página dice «te mandamos los datos por WhatsApp». */
+const CUENTAS = [
+  { quien:"Javi", datos:[] },
+  { quien:"Caro", datos:[] },
+];
 /* Urgencia real (Navidad): se muestra hasta la fecha de corte. Fecha por confirmar con Áureo (15–18 dic). */
 const URGENCIA = { hasta:"2026-12-10", texto:"🎄 Haz tu pedido hasta el 10 de diciembre y te llega antes de Navidad" };
 /* Oferta única del paso 2: completar la colección del club con descuento. Lo «próximo» se muestra solo como ejemplo. */

@@ -9,7 +9,7 @@ const nEscudos=()=>escudosEn().reduce((a,x)=>a+x.c,0);
 const descEscudos=n=>PROP.descPorEscudo&&n>=2?n*PROP.descPorEscudo:0;
 function solasPrecio(n){const s=solaFila();if(!s||!n)return 0;const m=(s.det.match(/\$[\d.]+/g)||[]).map(num);const T3={1:s.precio,2:m[0]||s.precio*2,3:m[1]||s.precio*3};return n<=3?T3[n]:T3[3]+(n-3)*(m[2]||s.precio)}
 function precioCams(n){const tc=tramosCombo();if(!n||!tc)return 0;return n<=3?tc[n]:tc[3]+(n-3)*(tc.extra||tc[1])}
-const camRegalo=()=>PROP.camRegaloDesde&&precioCams(camisetas.length)>=PROP.camRegaloDesde;
+const camRegalo=()=>PROP.camRegaloCada&&camisetas.length>=PROP.camRegaloCada;
 function totales(){
   const tc=tramosCombo(), cam=precioCams(camisetas.length), mini=minis*5000;
   const desc=descEscudos(nEscudos()), emp=bumps.empaque?PROP.empaque:0;
@@ -18,20 +18,25 @@ function totales(){
 }
 function complementos(){const e0=escudosEn()[0];if(!e0)return[];const club=norm(e0.p.nombre);
   return P.filter(x=>x.precio&&!esEscudo(x)&&!/camiseta/i.test(x.nombre)&&(norm(x.nombre).includes(club)||/pelota|copa|bufanda/i.test(x.nombre)))}
-function pasos(){const e=escudosEn().length>0;return["pedido",...(e?["camisetas",complementos().length?"coleccion":"segundo"]:["minis"]),"entrega"]}
+function pasos(){const e=escudosEn().length>0;return["pedido",...(e?["camisetas",complementos().length?"coleccion":"segundo"]:["minis"]),"entrega","pago"]}
+/* Mini de regalo: solo suman los productos desde PROP.regaloMinProducto ($13.000) y el pack de camisetas. */
 let metaRegalo=0;
-const meta=()=>metaRegalo||subtotal()+PROP.regaloMas;
-function barra(base){if(!PROP.barra)return"";const meta=metaRegalo,pct=Math.min(100,base/meta*100);
+const sumaRegalo=p=>p&&(p.precio||0)>=PROP.regaloMinProducto;
+const baseRegalo=()=>items().filter(x=>sumaRegalo(x.p)).reduce((a,x)=>a+x.p.precio*x.c,0)+precioCams(camisetas.length);
+function fijarMeta(){if(!metaRegalo)metaRegalo=Math.max(baseRegalo(),PROP.regaloMinProducto)+PROP.regaloMas}
+const ganaRegalo=()=>!!(PROP.barra&&metaRegalo&&baseRegalo()>=metaRegalo);
+function barra(base){if(!PROP.barra)return"";const meta=metaRegalo,br=baseRegalo(),pct=Math.min(100,(base<GRATIS_DESDE?base:br)/meta*100);
   const dg=dondeGratis();
-  const txt=base<GRATIS_DESDE?`Te faltan <b>${clp(GRATIS_DESDE-base)}</b> para el envío gratis ${dg} 🚚`:base<meta?`¡Envío gratis ${dg}! Te faltan <b>${clp(meta-base)}</b> para una <b>mini sorpresa de regalo</b> 🎁`:`<b>¡Ganaste una mini sorpresa de regalo!</b> 🎁`;
+  const txt=base<GRATIS_DESDE?`Te faltan <b>${clp(GRATIS_DESDE-base)}</b> para el envío gratis ${dg} 🚚`:br<meta?`¡Envío gratis ${dg}! Te faltan <b>${clp(meta-br)}</b> para una <b>mini sorpresa de regalo</b> 🎁<small style="display:block;color:var(--suave)">Suman los productos desde ${clp(PROP.regaloMinProducto)}</small>`:`<b>¡Ganaste una mini sorpresa de regalo!</b> 🎁`;
   return `<div class="progreso">${txt}<div class="riel"><div style="width:${pct}%"></div></div><div class="hitos"><span>$0</span><span>🚚 $20.000</span><span>🎁 ${clp(meta)}</span></div></div>`}
 function puntos(){const S=pasos();return `<div class="puntos">${S.map((_,k)=>`<i class="${k<=paso?"ok":""}"></i>`).join("")}</div>`}
 function mirar(){
   const enCarro=new Set(carro.map(c=>c.s)), cats=[...new Set(items().map(x=>x.p.cat))];
-  const todas=[...new Set(P.filter(x=>x.precio).map(x=>x.cat))].sort((a,b)=>(cats.includes(b)-cats.includes(a))||ORDEN.indexOf(a)-ORDEN.indexOf(b));
+  const todas=[...new Set(P.filter(sumaRegalo).map(x=>x.cat))].sort((a,b)=>(cats.includes(b)-cats.includes(a))||ORDEN.indexOf(a)-ORDEN.indexOf(b));
   const cat=mirarCat||todas[0];
-  const L=P.filter(x=>x.cat===cat&&x.precio&&!enCarro.has(x.slug)&&!/camiseta/i.test(x.nombre)).slice(0,12);
-  return `<div class="mirar"><div class="chips2">${todas.filter(c=>!/camiseta|personaliz/i.test(c)).map(c=>`<button class="${c===cat?"sel":""}" data-mcat="${esc(c)}">${esc(c)}</button>`).join("")}</div>
+  /* Solo productos desde $13.000: con minis no se llega a la mini de regalo (Áureo, 20-nov-2026). */
+  const L=P.filter(x=>x.cat===cat&&sumaRegalo(x)&&!enCarro.has(x.slug)&&!/camiseta/i.test(x.nombre)).slice(0,12);
+  return `<div class="mirar"><div class="chips2">${todas.filter(c=>!/camiseta|personaliz/i.test(c)&&P.some(x=>x.cat===c&&sumaRegalo(x))).map(c=>`<button class="${c===cat?"sel":""}" data-mcat="${esc(c)}">${esc(c)}</button>`).join("")}</div>
     <div class="fila-prod">${L.map(x=>`<div class="prod">${img(x)}<b>${esc(x.nombre)}</b>${clp(x.precio)}<button data-madd="${x.slug}">+ Agregar</button></div>`).join("")}
     <div class="prod todo" onclick="location.hash=''">Ver todo el catálogo →</div></div></div>`;
 }
@@ -43,7 +48,7 @@ function vistaPedido(){
   if(!I.length){paso=0;metaRegalo=0;v.innerHTML=`<div class="wrap vacio-carro"><p class="serif" style="font-size:26px">Tu pedido está vacío</p><p class="nota">Elige tu escudo y vuelve aquí.</p><button class="btn-grande" style="max-width:280px;margin-top:10px" onclick="location.hash=''">Ver catálogo</button></div>`;return}
   if(!escudosEn().length)camisetas=[];
   if(paso>=S.length)paso=S.length-1;
-  if(!metaRegalo)metaRegalo=subtotal()+PROP.regaloMas;
+  fijarMeta();
   const etapa=S[paso], T=totales(), tc=tramosCombo(), sola=solaFila();
   const e0=escudosEn()[0], h=e0?hincha(e0.p):null, apodo=h?h[0]:"hincha";
   let html="", pie="";
@@ -65,16 +70,17 @@ function vistaPedido(){
     const fila=(c,i,reg)=>`<div class="cam-fila${reg?" regalo":""}"><img src="${fotoEq(c.eq||eqBase)}" alt="" data-fimg="${reg?"r":i}">
       <div><div class="et">${reg?"🎁 DE REGALO":"Camiseta "+(i+1)}</div><select data-ceq="${reg?"r":i}">${opsEq(c.eq||eqBase)}</select>
       <div class="nn"><input maxlength="5" placeholder="Nombre (máx. 5)" value="${esc(c.n)}" data-cn="${reg?"r":i}"><input class="num" inputmode="numeric" maxlength="2" placeholder="N°" value="${esc(c.d)}" data-cd="${reg?"r":i}"></div></div></div>`;
-    const falta=PROP.camRegaloDesde&&k?PROP.camRegaloDesde-precioCams(k):0;
+    const falta=PROP.camRegaloCada&&k?PROP.camRegaloCada-k:0, R=PROP.camRegaloCada;
     html=`<div class="oferta">${tag("1 de 2")}<div class="t1">Solo por llevar tu escudo</div>
       <h2>El pack del ${esc(apodo)}</h2>
       <p style="margin:0">Tu ${esc(e0.p.nombre)} + una camiseta con el nombre y el número de cada uno. ¿En tu casa hay de otro equipo? Cada camiseta puede ser de un club distinto.</p>
       <div class="montaje">${img(e0.p)}<span class="mas">+</span><div class="cams">${cams.map(([f])=>`<img src="${CAM_BASE}${f}" alt="">`).join("")}</div></div>
       ${carrusel()}
-      <div class="opciones">${[1,2,3,4,5].map(n=>`<button class="op${k===n?" sel":""}" data-cam="${n}"><b>${n}</b><s style="color:var(--suave)">${clp(solas(n))}</s> ${clp(precioCams(n))}</button>`).join("")}</div>
+      <div class="opciones">${[1,2,3,4,5].map(n=>`<button class="op${k===n?" sel":""}" data-cam="${n}"><b>${n===R?`${n} + 1 🎁`:n}</b><s style="color:var(--suave)">${clp(solas(n))}</s> ${clp(precioCams(n))}</button>`).join("")}</div>
+      ${R&&!k?`<p class="nota" style="margin:8px 0 0;text-align:center">🎁 <b>Si llevas ${R}, te regalamos la ${R+1}.ª</b></p>`:""}
       ${k?`<div class="precios"><s>${clp(e0.p.precio+solas(k))}</s><b>${clp(e0.p.precio+precioCams(k))}</b><span>Ahorras ${clp(solas(k)-precioCams(k))}</span></div>
         ${camisetas.map((c,i)=>fila(c,i,false)).join("")}
-        ${camRegalo()?fila(datos.camReg||{},0,true):`<div class="meta-cam">${tag("G")}Con ${clp(PROP.camRegaloDesde)} en camisetas te regalamos una más. ${falta>0?`Te faltan ${clp(falta)}.`:""}</div>`}`:""}
+        ${camRegalo()?fila(datos.camReg||{},0,true):`<div class="meta-cam">${tag("G")}🎁 Si llevas ${R}, te regalamos la ${R+1}.ª. ${falta>0?`Te ${falta===1?"falta 1":`faltan ${falta}`}.`:""}</div>`}`:""}
       </div>`;
     pie=k?`<button class="btn-grande oro" data-sig>Sí, agregar el pack</button>`:`<button class="btn-grande oro" data-cam="2">Quiero el pack</button>`;
     html+=`<button class="no-gracias" data-nogracias="camisetas">No, gracias, solo el escudo</button>`;
@@ -131,13 +137,12 @@ function vistaPedido(){
     ${punto?`<p class="nota" style="margin:8px 0 0">Escribe tu dirección y nosotros te buscamos el Punto Blue Express más cercano. Te lo confirmamos por WhatsApp antes de enviar.</p>`:""}
     <label class="campo" id="lDir">${punto?"Tu dirección (calle y número), para buscarte el punto más cercano":"Dirección (calle, número, depto)"}<input id="fDir" autocomplete="street-address"></label>
     <div class="envio-linea"><span style="font-size:22px">🚚</span><span id="envioLinea"></span></div>
-    <label class="campo">¿Lo necesitas para una fecha? (opcional)<input id="fFec" placeholder="Ej: 24 de diciembre"></label>
     <label class="check"><input type="checkbox" id="fReg2" ${datos.regalo?"checked":""}> Es para regalo: lo mandamos directo</label>
     ${datos.regalo&&PROP.empaque?`<label class="bump"><input type="checkbox" data-bump="empaque" ${bumps.empaque?"checked":""}><span>${tag("D")}<b>Empaque de regalo + tarjeta escrita a mano · ${clp(PROP.empaque)}</b>Llega listo para entregar.</span></label>
       ${bumps.empaque?`<div style="margin-top:8px"><input id="dedTxt" maxlength="50" placeholder="Tu dedicatoria (máx. 50 caracteres)" value="${esc(datos.ded||"")}" style="width:100%;padding:10px;border:1px solid var(--linea);border-radius:10px;font:inherit"><div class="cuenta" id="dedCuenta">${(datos.ded||"").length}/50</div>
         <div class="chips-ded">${dedOps.map(d=>`<button type="button" data-ded="${esc(d)}">“${esc(d)}”</button>`).join("")}</div></div>`:""}`:""}
     </div>
-    ${PROP.barra&&T.base>=metaRegalo?`<div class="mini-regalo">${tag("B")}<b>🎁 Ganaste una minifigura sorpresa de regalo</b>
+    ${ganaRegalo()?`<div class="mini-regalo">${tag("B")}<b>🎁 Ganaste una minifigura sorpresa de regalo</b>
       <p class="nota" style="margin:4px 0 0">Una figura 3D en mini bloques, como estas. Elige 4 series que te gusten y nosotros elegimos cuál te llega.</p>
       <div class="fotos">${minisFoto.map(x=>img(x)).join("")}</div>
       <div class="series">${[0,1,2,3].map(sel).join("")}</div></div>`:""}
@@ -148,13 +153,30 @@ function vistaPedido(){
     ${T.desc?`<div class="res"><span>Descuento por ${nEscudos()} escudos</span><span style="color:var(--verde)">−${clp(T.desc)}</span></div>`:""}
     ${T.mini?`<div class="res"><span>Mini sorpresa × ${minis}</span><span>${clp(T.mini)}</span></div>`:""}
     ${T.emp?`<div class="res"><span>Empaque de regalo</span><span>${clp(T.emp)}</span></div>`:""}
-    ${PROP.barra&&T.base>=metaRegalo?`<div class="res"><span>🎁 Minifigura sorpresa</span><span style="color:var(--verde)">$0</span></div>`:""}
+    ${ganaRegalo()?`<div class="res"><span>🎁 Minifigura sorpresa</span><span style="color:var(--verde)">$0</span></div>`:""}
     <div class="res"><span id="envioRes"></span><span id="envioTxt"></span></div>
     ${PROP.prioridad?`<label class="prio"><input type="checkbox" id="fPrio" ${datos.prio?"checked":""}><span><b>⚡ Prioridad en el despacho +${clp(PROP.prioridad)}</b><span id="prioTxt"></span></span></label>`:""}
     <div class="res total"><span>Total</span><span id="totalTxt"></span></div>
     <div class="ahorro" id="ahorro"></div>
-    <p class="nota">Pagas por transferencia: al enviar tu pedido te mandamos los datos por WhatsApp. Tus datos los usamos solo para preparar y enviar tu pedido.</p></div>`;
-    pie=`<button class="btn-grande wa" id="enviar">Enviar pedido por WhatsApp</button>`;
+    <p class="nota">Tus datos los usamos solo para preparar y enviar tu pedido.</p></div>`;
+    pie=`<button class="btn-grande" id="alPago">Continuar al pago</button>`;
+  }
+
+  /* Paga y envía (Áureo, 20-nov-2026): las cuentas de Javi y Caro con «Copiar» ANTES de abrir WhatsApp. */
+  if(etapa==="pago"){
+    const F=totalFinal(), C=cuentasListas(), sel=C.find(c=>c.quien===datos.cuenta)||C[0];
+    const fila=(k,v)=>`<div class="dato-p"><div><span>${esc(k)}</span><br><b>${esc(v)}</b></div><button data-copiar="${esc(v)}">Copiar</button></div>`;
+    html=`<div class="panel"><h3>Paga por transferencia</h3>
+      ${fila("Total a transferir",String(F.total)).replace(`<b>${F.total}</b>`,`<b>${clp(F.total)}</b>`)}
+      ${C.length?`<p class="nota" style="margin:12px 0 6px">Transfiere a <b>una</b> de estas cuentas:</p>
+        ${C.length>1?`<div class="opciones">${C.map(c=>`<button class="op${c===sel?" sel":""}" data-cuenta="${esc(c.quien)}"><b>Cuenta de ${esc(c.quien)}</b></button>`).join("")}</div>`:""}
+        ${sel.datos.map(([k,v])=>fila(k,v)).join("")}
+        <p class="nota" style="margin:10px 0 0">Después de transferir, envíanos el pedido por WhatsApp y el comprobante. Con eso lo dejamos listo.</p>`
+      :`<p class="nota" style="margin:12px 0 0">Envíanos el pedido por WhatsApp y te mandamos ahí los datos para transferir.</p>`}
+      </div>
+      <div class="panel"><h3>Tu pedido</h3>${resumenCorto(F).map(l=>`<div class="res"><span>${esc(l)}</span></div>`).join("")}<div class="res total"><span>Total</span><span>${clp(F.total)}</span></div></div>
+      ${C.length?`<button class="no-gracias" data-enviar="despues">Enviar el pedido ahora y transferir después</button>`:""}`;
+    pie=C.length?`<button class="btn-grande wa" data-enviar="pagado">Ya transferí · Enviar por WhatsApp</button>`:`<button class="btn-grande wa" data-enviar="despues">Enviar pedido por WhatsApp</button>`;
   }
 
   v.innerHTML=`<div class="wrap pedido">${puntos()}${html}</div><div class="barra-fija">${pie}</div>`;
@@ -175,10 +197,16 @@ function vistaPedido(){
   v.querySelectorAll("[data-col]").forEach(b=>b.onclick=()=>{const s=b.dataset.col;if(carro.some(c=>c.s===s)){carro=carro.filter(c=>c.s!==s);coleccion.delete(s);guardar()}else{agregar(s,1,true);coleccion.add(s);medir("OfertaAceptada",{oferta:"coleccion",item:s})}const x=window.scrollY;vistaPedido();window.scrollTo(0,x)});
   v.querySelectorAll("[data-seg]").forEach(b=>b.onclick=()=>{agregar(b.dataset.seg,1,true);toast(`Descuento por ${nEscudos()} escudos: −${clp(descEscudos(nEscudos()))}`);siguiente()});
   v.querySelectorAll("[data-mas]").forEach(b=>b.onclick=()=>{agregar(b.dataset.mas,1);vistaPedido()});
+  v.querySelectorAll("[data-copiar]").forEach(b=>b.onclick=async()=>{try{await navigator.clipboard.writeText(b.dataset.copiar);b.textContent="✓ Copiado"}catch(e){b.textContent="Mantén apretado para copiar"}});
+  if(etapa==="pago"){
+    v.querySelectorAll("[data-cuenta]").forEach(b=>b.onclick=()=>{datos.cuenta=b.dataset.cuenta;const x=window.scrollY;vistaPedido();window.scrollTo(0,x)});
+    v.querySelectorAll("[data-enviar]").forEach(b=>b.onclick=()=>enviarPedido(b.dataset.enviar==="pagado"));
+    return;
+  }
   if(etapa!=="entrega")return;
 
   const base=T.base;
-  [["fNom","nom"],["fTel","tel"],["fMail","mail"],["fReg","reg"],["fCom","com"],["fDir","dir"],["fFec","fec"]].forEach(([id,k])=>{const el=document.getElementById(id);if(datos[k])el.value=datos[k];el.addEventListener("input",()=>{datos[k]=el.value;calc()});el.addEventListener("change",()=>{datos[k]=el.value;calc()})});
+  [["fNom","nom"],["fTel","tel"],["fMail","mail"],["fReg","reg"],["fCom","com"],["fDir","dir"]].forEach(([id,k])=>{const el=document.getElementById(id);if(datos[k])el.value=datos[k];el.addEventListener("input",()=>{datos[k]=el.value;calc()});el.addEventListener("change",()=>{datos[k]=el.value;calc()})});
   const fr=document.getElementById("fReg2");fr.onchange=()=>{datos.regalo=fr.checked;if(!fr.checked)bumps.empaque=false;const x=window.scrollY;vistaPedido();window.scrollTo(0,x)};
   v.querySelectorAll("[data-bump]").forEach(b=>b.onchange=()=>{bumps[b.dataset.bump]=b.checked;const x=window.scrollY;vistaPedido();window.scrollTo(0,x)});
   const de=document.getElementById("dedTxt");if(de)de.oninput=()=>{datos.ded=de.value;document.getElementById("dedCuenta").textContent=de.value.length+"/50"};
@@ -198,7 +226,7 @@ function vistaPedido(){
     if(camRegalo())A.push(["Camiseta de regalo",solaFila()?solaFila().precio:0]);
     if(T.desc)A.push([`Descuento por ${nEscudos()} escudos`,T.desc]);
     if(T.descCol)A.push(["Oferta de la colección",T.descCol]);
-    if(PROP.barra&&base>=metaRegalo)A.push(["Minifigura sorpresa de regalo",5000]);
+    if(ganaRegalo())A.push(["Minifigura sorpresa de regalo",5000]);
     if(!e.c)A.push(["Envío gratis",mod==="Domicilio"?3000:2000]);
     const ah=A.reduce((s,x)=>s+x[1],0);
     document.getElementById("ahorro").innerHTML=`<div class="fila-a"><span>Pagas</span><b>${clp(base+tot)}</b></div>${ah?`<div class="fila-a verde"><span>Ahorras en total</span><b>${clp(ah)}</b></div><ul>${A.map(([n,v])=>`<li><span>${n}</span><span>${clp(v)}</span></li>`).join("")}</ul>`:""}`;
@@ -206,58 +234,69 @@ function vistaPedido(){
   calc();
   const fp=document.getElementById("fPrio");if(fp)fp.onchange=()=>{datos.prio=fp.checked;calc()};
   v.querySelectorAll("[data-mod]").forEach(b=>b.onclick=()=>{datos.mod=b.dataset.mod;const x=window.scrollY;vistaPedido();window.scrollTo(0,x)});
-  document.getElementById("enviar").onclick=()=>{
+  document.getElementById("alPago").onclick=()=>{
     const g=id=>document.getElementById(id).value.trim();
     const falta=[["fNom","nombre"],["fTel","teléfono"],["fMail","correo"],["fCom","comuna"],["fDir","dirección"]].filter(([id])=>!g(id)).map(([,n])=>n);
     if(falta.length){toast("Falta: "+falta.join(", "));return}
     if(g("fTel").replace(/\D/g,"").length<8){toast("Revisa el teléfono: debe tener al menos 8 números");return}
     if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(g("fMail"))){toast("Revisa el correo");return}
-    const d=new Date(),pad=n=>String(n).padStart(2,"0"),e=calc(),mod=datos.mod||"Domicilio";
-    const id=`AU-${String(d.getFullYear()).slice(2)}${pad(d.getMonth()+1)}${pad(d.getDate())}-${Math.floor(100+Math.random()*900)}`;
-    const M=["Hola! Quiero confirmar mi pedido del catalogo.","",`PEDIDO: ${id}`,`FECHA: ${pad(d.getDate())}-${pad(d.getMonth()+1)}-${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`,"",
-      `CLIENTE: ${g("fNom")}`,`TELEFONO: ${g("fTel")}`,`CORREO: ${g("fMail")}`,`ENTREGA: ${mod}`,`REGION: ${g("fReg")}`,`COMUNA: ${g("fCom")}`,`${mod==="Domicilio"?"DIRECCION":"DIRECCION (buscarle el Punto Blue mas cercano)"}: ${g("fDir")}`];
-    if(g("fFec"))M.push(`LO NECESITO PARA: ${g("fFec")}`);
-    M.push("","LO QUE LLEVO:",...items().map(x=>`- ${x.p.nombre} x${x.c} - ${clp(x.p.precio*x.c)}`));
-    if(camisetas.length){const eqB=(EQUIPOS_CAM.find(x=>norm(x[0])===norm(escudosEn()[0].p.nombre))||[escudosEn()[0].p.nombre])[0];
-      M.push(`- Camiseta con escudo x${camisetas.length} - ${clp(T.cam)}`);camisetas.forEach((c,k)=>M.push(`  ${k+1}) ${c.n} ${c.d} - ${c.eq||eqB}`));
-      if(camRegalo()){const r=datos.camReg||{};M.push(`  + 1 de REGALO: ${r.n||"?"} ${r.d||"?"} - ${r.eq||eqB}`)}}
-    if(T.desc)M.push(`- Descuento por ${nEscudos()} escudos: -${clp(T.desc)}`);
-    if(T.descCol)M.push(`- Oferta coleccion (${Math.round(PROP.coleccionDesc*100)}%): -${clp(T.descCol)}`);
-    if(T.mini)M.push(`- Mini sorpresa x${minis} - ${clp(T.mini)}`);
-    if(T.emp)M.push(`- Empaque de regalo - ${clp(T.emp)}`+(datos.ded?`\n  Dedicatoria: ${datos.ded}`:""));
-    if(PROP.barra&&base>=metaRegalo)M.push(`- Minifigura sorpresa de REGALO - $0`,`  Series: ${(datos.series||[]).filter(Boolean).join(", ")||"(elige por WhatsApp)"}`);
-    M.push("",`ENVIO: ${e.c?clp(e.c):"gratis"}${e.porque?` (${e.porque})`:""}`);
-    if(datos.prio)M.push(`PRIORIDAD EN EL DESPACHO: si (+${clp(PROP.prioridad)})`);
-    M.push(`TOTAL: ${clp(base+e.tot)}`);
-    if(datos.regalo)M.push("","ES REGALO: si");
-    M.push("","Quedo atento/a a los datos para transferir.");
-    const link=`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(sinTildes(M.join("\n")))}`;
-    guardarPedido({id,e,mod,base,g});
-    medir("InitiateCheckout",{value:base+e.tot,currency:"CLP",num_items:items().reduce((s,x)=>s+x.c,0)});
-    /* El carro NO se vacía aquí: si WhatsApp no se abre o la persona vuelve, el pedido sigue ahí.
-       Se vacía con «Hacer un pedido nuevo». Solo se recuerda el número y el total (nunca los datos personales). */
-    ultimo={id,total:base+e.tot,link};
-    try{localStorage.setItem("aureo-enviado",JSON.stringify({id,total:base+e.tot,t:Date.now()}))}catch(e){}
-    location.hash="#listo";
-    abrirWhatsApp(link);
+    Object.assign(datos,{nom:g("fNom"),tel:g("fTel"),mail:g("fMail"),reg:g("fReg"),com:g("fCom"),dir:g("fDir"),mod:datos.mod||"Domicilio"});
+    siguiente();
   };
+}
+
+/* ---------- Pago y envío por WhatsApp ---------- */
+function cuentasListas(){return (typeof CUENTAS==="undefined"?[]:CUENTAS).filter(c=>c&&c.datos&&c.datos.length&&c.datos.every(([,v])=>v&&!String(v).startsWith("(")))}
+function totalFinal(){const T=totales(),mod=datos.mod||"Domicilio",e=envio(datos.reg||"Metropolitana",datos.com||"",mod,T.base),tot=e.c+(datos.prio?PROP.prioridad:0);return{T,e,mod,tot,total:T.base+tot}}
+const eqBase=()=>{const e=escudosEn()[0];return e?(EQUIPOS_CAM.find(x=>norm(x[0])===norm(e.p.nombre))||[e.p.nombre])[0]:""};
+/* Líneas cortas del pedido: las usa la pantalla de pago y el mensaje de WhatsApp. */
+function resumenCorto(F){
+  const L=items().map(x=>`${x.p.nombre}${x.c>1?` x${x.c}`:""}`);
+  if(camisetas.length)L.push(`${camisetas.length} camiseta${camisetas.length>1?"s":""}${camRegalo()?" + 1 de regalo":""}: ${[...camisetas,...(camRegalo()?[datos.camReg||{}]:[])].map(c=>`${c.n} ${c.d}${(c.eq||eqBase())!==eqBase()?` (${c.eq})`:""}`).join(", ")}`);
+  if(F.T.mini)L.push(`Mini sorpresa x${minis}`);
+  if(ganaRegalo())L.push(`Mini de regalo${(datos.series||[]).filter(Boolean).length?` (${datos.series.filter(Boolean).join(", ")})`:""}`);
+  if(F.T.emp)L.push(`Empaque de regalo${datos.ded?`: "${datos.ded}"`:""}`);
+  if(datos.prio)L.push("Prioridad en el despacho");
+  L.push(`Envío ${F.mod==="Domicilio"?"a domicilio":"a punto Blue"}: ${F.e.c?clp(F.e.c):"gratis"}`);
+  return L;
+}
+function enviarPedido(pagado){
+  const F=totalFinal(),d=new Date(),pad=n=>String(n).padStart(2,"0");
+  const id=`AU-${String(d.getFullYear()).slice(2)}${pad(d.getMonth()+1)}${pad(d.getDate())}-${Math.floor(100+Math.random()*900)}`;
+  const cta=pagado&&cuentasListas().length?(cuentasListas().find(c=>c.quien===datos.cuenta)||cuentasListas()[0]).quien:"";
+  /* Mensaje corto (Áureo, 20-nov-2026): el detalle completo (correo, teléfono, descuentos) queda en la bandeja de pedidos. */
+  const M=[`Hola! Hice el pedido ${id} en la web`,"",...resumenCorto(F).map(l=>"- "+l),"",
+    `Total: ${clp(F.total)}`,
+    `Para: ${datos.nom}, ${datos.dir}, ${datos.com}${datos.reg&&datos.reg!=="Metropolitana"?`, ${datos.reg}`:""}${F.mod!=="Domicilio"?" (buscarme el punto Blue mas cercano)":""}`,
+    ...(datos.regalo?["Es para regalo"]:[]),"",
+    cta?`Ya transferi a la cuenta de ${cta}. Te envio el comprobante.`:"Quedo atento/a para transferir."];
+  const link=`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(sinTildes(M.join("\n")))}`;
+  const g=k=>({fNom:datos.nom,fTel:datos.tel,fMail:datos.mail,fReg:datos.reg,fCom:datos.com,fDir:datos.dir}[k]||"");
+  guardarPedido({id,e:{...F.e,tot:F.tot},mod:F.mod,base:F.T.base,g,pagoA:cta});
+  medir("InitiateCheckout",{value:F.total,currency:"CLP",num_items:items().reduce((s,x)=>s+x.c,0)});
+  /* El carro NO se vacía aquí: si WhatsApp no se abre o la persona vuelve, el pedido sigue ahí.
+     Se vacía con «Hacer un pedido nuevo». Solo se recuerda el número y el total (nunca los datos personales). */
+  ultimo={id,total:F.total,link,pagado:!!cta};
+  try{localStorage.setItem("aureo-enviado",JSON.stringify({id,total:F.total,pagado:!!cta,t:Date.now()}))}catch(e){}
+  location.hash="#listo";
+  abrirWhatsApp(link);
 }
 
 /* Copia del pedido a la bandeja de Áureo y Caro (pestaña «PEDIDOS WEB» del maestro, vía Apps Script).
    Va en segundo plano: si falla, el pedido igual sale por WhatsApp. Ahí marcan «Pagó a Javi/Caro» y pasa a VENTAS. */
-function guardarPedido({id,e,mod,base,g}){
+function guardarPedido({id,e,mod,base,g,pagoA}){
   if(!PEDIDOS_URL)return;
   try{
     const T=totales(),eqB=camisetas.length?(EQUIPOS_CAM.find(x=>norm(x[0])===norm(escudosEn()[0].p.nombre))||[escudosEn()[0].p.nombre])[0]:"";
     const r=camRegalo()?(datos.camReg||{}):null;
     const p={tipo:"pedido",id,
-      cliente:{nombre:g("fNom"),tel:g("fTel"),mail:g("fMail"),entrega:mod,region:g("fReg"),comuna:g("fCom"),dir:g("fDir"),necesita:g("fFec")},
+      cliente:{nombre:g("fNom"),tel:g("fTel"),mail:g("fMail"),entrega:mod,region:g("fReg"),comuna:g("fCom"),dir:g("fDir"),necesita:""},
       items:items().map(x=>({n:x.p.nombre,c:x.c,pu:x.p.precio||0,escudo:esEscudo(x.p),col:coleccion.has(x.s)})),
       camisetas:camisetas.length?{c:camisetas.length,total:T.cam,detalle:camisetas.map(c=>`${c.n} ${c.d} - ${c.eq||eqB}`),regalo:r?`${r.n||"?"} ${r.d||"?"} - ${r.eq||eqB}`:""}:null,
       mini:T.mini?{c:minis,total:T.mini}:null,
-      regaloMini:!!(PROP.barra&&base>=metaRegalo),series:(datos.series||[]).filter(Boolean).join(", "),
+      regaloMini:ganaRegalo(),series:(datos.series||[]).filter(Boolean).join(", "),
       empaque:T.emp||0,dedicatoria:datos.ded||"",descEscudos:T.desc||0,descCol:T.descCol||0,
-      envio:e.c||0,prioridad:datos.prio?PROP.prioridad:0,total:base+e.tot,esRegalo:!!datos.regalo};
+      envio:e.c||0,prioridad:datos.prio?PROP.prioridad:0,total:base+e.tot,esRegalo:!!datos.regalo,pagoDeclarado:pagoA||""};
     fetch(PEDIDOS_URL,{method:"POST",mode:"no-cors",keepalive:true,headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(p)}).catch(()=>{});
   }catch(err){}
 }
@@ -275,14 +314,15 @@ function pedidoNuevo(){carro=[];guardar();camisetas=[];coleccion=new Set();bumps
 function vistaListo(){
   modo("en-pedido","Pedido listo");window.scrollTo(0,0);
   const g=enviadoReciente();
-  const u=ultimo||(g?{id:g.id,total:g.total,link:""}:{id:"",total:0,link:""});
+  const u=ultimo||(g?{id:g.id,total:g.total,link:"",pagado:g.pagado}:{id:"",total:0,link:""});
   const comp=`https://wa.me/${WHATSAPP}?text=${encodeURIComponent("Hola! Te envio el comprobante del pedido "+u.id)}`;
+  const C=cuentasListas(), sel=C.find(c=>c.quien===datos.cuenta)||C[0];
   document.getElementById("vista").innerHTML=`<div class="wrap pedido" style="max-width:560px">
     <div class="listo"><div class="ok">✓</div><h2>¡Tu pedido está listo!</h2>
       <p class="nota">${u.id?`Pedido <b>${esc(u.id)}</b> · `:""}se abrió WhatsApp con todo escrito. <b>Si no alcanzaste a enviarlo</b>, ${u.link?`<a href="${u.link}" data-reabrir>ábrelo de nuevo</a>`:`<a href="#pedido">vuelve a tu pedido</a> y apriétalo otra vez`}: tu pedido sigue guardado.</p></div>
-    <div class="paso-l"><div class="n">1</div><div style="flex:1"><h3>Transfiere ${u.total?clp(u.total):"el total"}</h3>
-      ${!DATOS_PAGO.length||DATOS_PAGO.some(([,v])=>v.startsWith("("))?`<p class="nota" style="margin:0">Te llegan por WhatsApp los datos para transferir. <b>Esperamos tu transferencia para cerrar tu pedido.</b></p>`:DATOS_PAGO.map(([k,v])=>`<div class="dato-p"><div><span>${k}</span><br><b>${esc(v)}</b></div><button data-copiar="${esc(v)}">Copiar</button></div>`).join("")}
-      ${u.total?`<div class="dato-p"><div><span>Monto</span><br><b>${clp(u.total)}</b></div><button data-copiar="${u.total}">Copiar</button></div>`:""}</div></div>
+    <div class="paso-l"><div class="n">1</div><div style="flex:1"><h3>${u.pagado?"Transferencia hecha ✓":`Transfiere ${u.total?clp(u.total):"el total"}`}</h3>
+      ${u.pagado?`<p class="nota" style="margin:0">Solo falta el comprobante.</p>`:!C.length?`<p class="nota" style="margin:0">Te llegan por WhatsApp los datos para transferir. <b>Esperamos tu transferencia para cerrar tu pedido.</b></p>`:`<p class="nota" style="margin:0 0 6px">Cuenta de ${esc(sel.quien)}:</p>`+sel.datos.map(([k,v])=>`<div class="dato-p"><div><span>${esc(k)}</span><br><b>${esc(v)}</b></div><button data-copiar="${esc(v)}">Copiar</button></div>`).join("")}
+      ${u.total&&!u.pagado?`<div class="dato-p"><div><span>Monto</span><br><b>${clp(u.total)}</b></div><button data-copiar="${u.total}">Copiar</button></div>`:""}</div></div>
     <div class="paso-l"><div class="n">2</div><div style="flex:1"><h3>Envíanos el comprobante y cerramos tu pedido</h3>
       <a class="btn-grande wa" style="display:flex;align-items:center;justify-content:center;text-decoration:none;height:46px" target="_blank" href="${comp}">Enviar comprobante por WhatsApp</a></div></div>
     <div class="paso-l"><div class="n">3</div><div><h3>Te confirmamos y despachamos</h3><p class="nota" style="margin:0">Javi o Caro revisan el pago, te confirman y te mandan el número de seguimiento cuando sale.</p></div></div>

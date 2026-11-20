@@ -123,6 +123,6 @@ function vistaFicha(s){
     const upd=()=>{document.querySelectorAll("[data-cantn]").forEach(n=>n.textContent=cant);const b=document.getElementById("agregarF");if(b)b.textContent=`Agregar al pedido · ${clp(p.precio*cant)}`};
     document.querySelectorAll("[data-menos]").forEach(x=>x.onclick=()=>{if(cant>1){cant--;upd()}});
     document.querySelectorAll("[data-mas1]").forEach(x=>x.onclick=()=>{cant++;upd()});
-    document.querySelectorAll("[data-cta]").forEach(x=>x.onclick=()=>{agregar(p.slug,cant,true);if(!metaRegalo)metaRegalo=subtotal()+PROP.regaloMas;paso=0;location.hash="#pedido"});
+    document.querySelectorAll("[data-cta]").forEach(x=>x.onclick=()=>{agregar(p.slug,cant,true);fijarMeta();paso=0;location.hash="#pedido"});
   }
 }

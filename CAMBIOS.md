@@ -2,6 +2,16 @@
 
 Lo más nuevo arriba. Formato: `fecha · PC (Áureo/Caro) · hilo · qué cambió`.
 
+- 20-nov-2026 · Áureo · W2 + Común · **Checkout**: (1) Mini de regalo: solo suman los productos desde $13.000 y el pack de
+  camisetas (`PROP.regaloMinProducto`); la meta es lo que llevaba (mínimo $13.000) + $10.000; «Seguir mirando» ya no muestra
+  productos bajo $13.000. (2) Camisetas: llevando 5, la 6.ª de regalo (`PROP.camRegaloCada`, antes $35.000 en camisetas).
+  (3) Se quitó «¿Lo necesitas para una fecha?». (4) Paso nuevo **«Paga por transferencia»** después de la entrega: total y
+  cuentas de Javi y Caro con «Copiar» (`CUENTAS` en `js/config.js`, vacías hasta que Áureo las escriba), botón «Ya transferí ·
+  Enviar por WhatsApp» y «Enviar ahora y transferir después». (5) Mensaje de WhatsApp corto: número, productos, total, a quién
+  y dónde, y si ya transfirió (a quién). El detalle completo sigue yendo a la bandeja (campo nuevo `pagoDeclarado`).
+  Probado en local: regalo con minis no se gana, con 2.º escudo sí; 5 camisetas = regalo; validación, pago con y sin cuentas,
+  mensaje y «Pedido listo»; celular; sin errores.
+
 - 20-nov-2026 · Áureo · W2 + W3 · **Bandeja de pedidos**: al apretar «Enviar pedido por WhatsApp» se manda además una copia del
   pedido (en segundo plano, `guardarPedido()` en `js/pedido.js`) al Apps Script «Aureo · Pedidos web» (`PEDIDOS_URL` en
   `js/config.js`), que lo anota como «Pendiente» en la pestaña PEDIDOS WEB del maestro. Si falla, el pedido sale igual por WhatsApp.
