@@ -9,11 +9,10 @@ Formato: `hilo · qué · quién · estado` (estado: por hacer · en curso · es
 ## Por hacer
 - W4 · Comprar dominio (aureocl.cl o tiendaaureo.cl) y conectarlo a Cloudflare · Áureo · espera a Áureo
 - W4 · Píxel «Aureo web» en Meta + verificar dominio + aviso de cookies · por hacer
-- W3 · Guardar cada pedido web en Cloudflare D1 con su número AU-… · por hacer
-- W3 · Panel `/admin` con login (solo Áureo y Caro) para ver pedidos y su estado · por hacer
 - Todos · Pasar este repo a privado y dejar aureocl.github.io redirigiendo al dominio nuevo · espera a Áureo
 
 ## Listo
+- W2 + W3 · Cada pedido web queda guardado con su AU-… y hay bandeja para Áureo y Caro (Pagó a Javi/Caro → VENTAS). Va con Apps Script + el maestro en vez de Cloudflare D1 y `/admin` · Áureo · 20-nov-2026
 - W1 · Sección «Los más vendidos» en oferta (Colo-Colo, U de Chile, UC, Wanderers) · Áureo · 20-nov-2026
 - W2 · Datos de transferencia: van por WhatsApp (DATOS_PAGO vacío; así los copian y pegan) · Áureo · 19-nov-2026
 - W1 · Precio antiguo tachado en rojo + etiqueta «Oferta» + «Ahorras $X» (12 escudos que bajaron el 19-nov) · Áureo · 19-nov-2026

@@ -2,6 +2,12 @@
 
 Lo más nuevo arriba. Formato: `fecha · PC (Áureo/Caro) · hilo · qué cambió`.
 
+- 20-nov-2026 · Áureo · W2 + W3 · **Bandeja de pedidos**: al apretar «Enviar pedido por WhatsApp» se manda además una copia del
+  pedido (en segundo plano, `guardarPedido()` en `js/pedido.js`) al Apps Script «Aureo · Pedidos web» (`PEDIDOS_URL` en
+  `js/config.js`), que lo anota como «Pendiente» en la pestaña PEDIDOS WEB del maestro. Si falla, el pedido sale igual por WhatsApp.
+  La nota de privacidad del pedido ahora dice «Tus datos los usamos solo para preparar y enviar tu pedido». Código del script y de
+  la bandeja en el repo `Aureo`, `clientes-pedidos/pedidos-web/`. Probado en local: el pedido llegó a la bandeja.
+
 - 20-nov-2026 · Áureo · W1 · **«🔥 Los más vendidos»** arriba en la portada (Todo, sin búsqueda): Colo-Colo, U de Chile, UC y
   Wanderers (`MAS_VENDIDOS` en `js/config.js`). En la planilla los cuatro quedan en «Oferta» con sus precios fijos (23/21/19/19) y
   tachado: Colo-Colo $29.000, U de Chile $28.000 (regla), UC y Wanderers $24.000 (la regla daba menos: +$5.000). Probado en local.

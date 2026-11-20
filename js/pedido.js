@@ -153,7 +153,7 @@ function vistaPedido(){
     ${PROP.prioridad?`<label class="prio"><input type="checkbox" id="fPrio" ${datos.prio?"checked":""}><span><b>⚡ Prioridad en el despacho +${clp(PROP.prioridad)}</b><span id="prioTxt"></span></span></label>`:""}
     <div class="res total"><span>Total</span><span id="totalTxt"></span></div>
     <div class="ahorro" id="ahorro"></div>
-    <p class="nota">Pagas por transferencia: al enviar tu pedido te mandamos los datos por WhatsApp. Tus datos no se guardan en esta página: viajan solo en tu mensaje.</p></div>`;
+    <p class="nota">Pagas por transferencia: al enviar tu pedido te mandamos los datos por WhatsApp. Tus datos los usamos solo para preparar y enviar tu pedido.</p></div>`;
     pie=`<button class="btn-grande wa" id="enviar">Enviar pedido por WhatsApp</button>`;
   }
 
@@ -232,6 +232,7 @@ function vistaPedido(){
     if(datos.regalo)M.push("","ES REGALO: si");
     M.push("","Quedo atento/a a los datos para transferir.");
     const link=`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(sinTildes(M.join("\n")))}`;
+    guardarPedido({id,e,mod,base,g});
     medir("InitiateCheckout",{value:base+e.tot,currency:"CLP",num_items:items().reduce((s,x)=>s+x.c,0)});
     /* El carro NO se vacía aquí: si WhatsApp no se abre o la persona vuelve, el pedido sigue ahí.
        Se vacía con «Hacer un pedido nuevo». Solo se recuerda el número y el total (nunca los datos personales). */
@@ -240,6 +241,25 @@ function vistaPedido(){
     location.hash="#listo";
     abrirWhatsApp(link);
   };
+}
+
+/* Copia del pedido a la bandeja de Áureo y Caro (pestaña «PEDIDOS WEB» del maestro, vía Apps Script).
+   Va en segundo plano: si falla, el pedido igual sale por WhatsApp. Ahí marcan «Pagó a Javi/Caro» y pasa a VENTAS. */
+function guardarPedido({id,e,mod,base,g}){
+  if(!PEDIDOS_URL)return;
+  try{
+    const T=totales(),eqB=camisetas.length?(EQUIPOS_CAM.find(x=>norm(x[0])===norm(escudosEn()[0].p.nombre))||[escudosEn()[0].p.nombre])[0]:"";
+    const r=camRegalo()?(datos.camReg||{}):null;
+    const p={tipo:"pedido",id,
+      cliente:{nombre:g("fNom"),tel:g("fTel"),mail:g("fMail"),entrega:mod,region:g("fReg"),comuna:g("fCom"),dir:g("fDir"),necesita:g("fFec")},
+      items:items().map(x=>({n:x.p.nombre,c:x.c,pu:x.p.precio||0,escudo:esEscudo(x.p),col:coleccion.has(x.s)})),
+      camisetas:camisetas.length?{c:camisetas.length,total:T.cam,detalle:camisetas.map(c=>`${c.n} ${c.d} - ${c.eq||eqB}`),regalo:r?`${r.n||"?"} ${r.d||"?"} - ${r.eq||eqB}`:""}:null,
+      mini:T.mini?{c:minis,total:T.mini}:null,
+      regaloMini:!!(PROP.barra&&base>=metaRegalo),series:(datos.series||[]).filter(Boolean).join(", "),
+      empaque:T.emp||0,dedicatoria:datos.ded||"",descEscudos:T.desc||0,descCol:T.descCol||0,
+      envio:e.c||0,prioridad:datos.prio?PROP.prioridad:0,total:base+e.tot,esRegalo:!!datos.regalo};
+    fetch(PEDIDOS_URL,{method:"POST",mode:"no-cors",keepalive:true,headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(p)}).catch(()=>{});
+  }catch(err){}
 }
 
 /* Celular (y navegadores de Instagram/Facebook, que bloquean ventanas nuevas): salto directo a WhatsApp.
