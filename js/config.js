@@ -10,7 +10,7 @@
   const PEDIDOS_URL = "https://script.google.com/macros/s/AKfycbyJwpVPwnc0EVQPGTlspepBK-zva0MWBjMAvwbXVlOlazQt22XV7UJyCg_qh-M9lYxu/exec";
 /* ---------- Datos ---------- */
 const HINCHA = {"colo-colo":["Albo","2.500"],"universidad-de-chile":["Bullanguero","2.300"],"universidad-catolica":["Cruzado","1.000"],"santiago-wanderers":["Caturro","1.000"],"everton":["Ruletero","2.800"],"san-luis-de-quillota":["Canario","1.400"],"o-higgins":["Celeste","1.600"],"cobreloa":["Loíno","1.500"],"coquimbo-unido":["Pirata","2.500"],"deportes-iquique":["Dragón Celeste","2.800"],"nublense":["Diablo Rojo","1.200"],"huachipato":["Acerero","2.400"],"deportes-concepcion":["Lila","2.400"],"rangers-de-talca":["Rojinegro","2.300"],"curico-unido":["Tortero","2.800"],"deportes-temuco":["Pije","2.500"],"palestino":["Tino-Tino","1.500"],"union-espanola":["Hispano","2.300"],"audax-italiano":["Itálico","2.300"],"magallanes":["Carabelero","2.800"],"deportes-la-serena":["Papayero","2.100"],"deportes-puerto-montt":["Delfín","2.700"],"boca-juniors":["Xeneize","1.600"],"river-plate":["Millonario","2.300"],"barcelona":["Barcelonista",""],"real-madrid":["Merengue",""],"san-marcos-de-arica":["Bravo del Morro","2.700"]};
-const ALIAS = {"u-de-chile":"universidad-de-chile","uc":"universidad-catolica"};
+const ALIAS = {"u-de-chile":"universidad-de-chile","uc":"universidad-catolica","barcelona-borde-amarillo":"barcelona"};
 const ORDEN = ["Escudos de fútbol","Camisetas personalizadas","Figuras 3D mini","Figuras 3D grandes","Figuras 2D","Música","Personalizados"];
 /* Camisetas reales hechas para clientes (Laboratorio). En la versión publicada van con marca de agua. */
 const CAM_BASE = "proto-camisetas/";
@@ -63,6 +63,6 @@ const VARIANTES = [
   [["deportes-iquique","Actual"],["deportes-iquique-clasico","Clásico","3.000"]],
   [["deportes-concepcion","Actual"],["deportes-concepcion-leon","León","2.100"]],
   [["san-marcos-de-arica","Mediano","2.700"],["san-marcos-de-arica-grande","Grande","4.700"]],
-  [["barcelona","Borde café"],["barcelona-borde-amarillo","Borde amarillo","2.400"]],
+  [["barcelona-borde-amarillo","Borde amarillo","2.400"],["barcelona","Borde café","2.400"]],
 ];
 VARIANTES.forEach(g=>g.slice(1).forEach(([s])=>{if(!ALIAS[s])ALIAS[s]=ALIAS[g[0][0]]||g[0][0]}));
