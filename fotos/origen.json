@@ -231,9 +231,10 @@
   "protegida": true
  },
  "hello-kitty-mini-rosada": {
-  "fecha": "2026-11-03T20:00:00",
+  "fecha": "2026-11-20T11:55:16",
   "origen": "taller",
-  "producto": "hello-kitty-mini-rosada"
+  "producto": "hello-kitty-mini-rosada",
+  "protegida": true
  },
  "homero-mini": {
   "fecha": "2026-11-03T20:00:00",
