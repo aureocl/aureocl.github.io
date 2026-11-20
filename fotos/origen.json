@@ -404,9 +404,10 @@
   "protegida": true
  },
  "stan-mini": {
-  "fecha": "2026-11-03T20:00:00",
+  "fecha": "2026-11-20T11:57:24",
   "origen": "taller",
-  "producto": "stan-mini"
+  "producto": "stan-mini",
+  "protegida": true
  },
  "stitch-mini": {
   "fecha": "2026-11-03T20:00:00",
