@@ -10,9 +10,10 @@
   "producto": "67 Six Seven Rosado"
  },
  "arcade-mega-man": {
-  "fecha": "2026-11-03T20:00:00",
+  "fecha": "2026-11-20T11:53:57",
   "origen": "taller",
-  "producto": "arcade-mega-man"
+  "producto": "arcade-mega-man",
+  "protegida": true
  },
  "arctic-monkeys-am": {
   "fecha": "2026-11-04T00:34:05",
