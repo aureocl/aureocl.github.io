@@ -63,5 +63,6 @@ const VARIANTES = [
   [["deportes-iquique","Actual"],["deportes-iquique-clasico","Clásico","3.000"]],
   [["deportes-concepcion","Actual"],["deportes-concepcion-leon","León","2.100"]],
   [["san-marcos-de-arica","Mediano","2.700"],["san-marcos-de-arica-grande","Grande","4.700"]],
+  [["barcelona","Borde café"],["barcelona-borde-amarillo","Borde amarillo","2.400"]],
 ];
 VARIANTES.forEach(g=>g.slice(1).forEach(([s])=>{if(!ALIAS[s])ALIAS[s]=ALIAS[g[0][0]]||g[0][0]}));

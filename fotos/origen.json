@@ -50,6 +50,12 @@
   "origen": "taller",
   "producto": "barcelona"
  },
+ "barcelona-borde-amarillo": {
+  "fecha": "2026-11-20T17:27:58",
+  "origen": "taller",
+  "producto": "Barcelona borde amarillo",
+  "protegida": true
+ },
  "blastoise-mini": {
   "fecha": "2026-11-20T11:54:06",
   "origen": "taller",
