@@ -2,6 +2,7 @@
 
 Lo más nuevo arriba. Formato: `fecha · PC (Áureo/Caro) · hilo · qué cambió`.
 
+- 20-nov-2026 · Áureo · W1 · **`/armar` en pantallas**: portada corta (logo, Aurito, 2D, 3D, colgar, trucos) + botón dorado «¡Gana premios! Tu misión Áureo»; cada parte se abre sola con «Volver al inicio» arriba y abajo; textos más cortos; misión con niveles en tarjetas y el aviso «Tenemos muchos clientes…» destacado.
 - 20-nov-2026 · Áureo · W1 · Página nueva **`/armar`** (carpeta `armar/`, no toca el catálogo): destino del QR de la tarjeta de regalo con Aurito. Armar 2D, armar 3D, trucos, colgar (ganchito arriba primero, después gancho invisible) y Tu misión Áureo con botón a WhatsApp. Dibujos generados con `packaging/tarjeta-regalo/pagina.py` del repo Aureo. Probada en vista de celular.
 - 20-nov-2026 · Áureo · W2 + Común · **Checkout**: (1) Mini de regalo: solo suman los productos desde $13.000 y el pack de
   camisetas (`PROP.regaloMinProducto`); la meta es lo que llevaba (mínimo $13.000) + $10.000; «Seguir mirando» ya no muestra
