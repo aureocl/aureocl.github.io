@@ -19,6 +19,7 @@ function tarjeta(p){
     ${p.precio?`<div class="precio">${p.antes>p.precio?`<s>${clp(p.antes)}</s>`:""}${clp(p.precio)}${p.antes>p.precio?(/lanzamiento/i.test(p.etq)?`<span class="nota-lanz">Precio de lanzamiento · después ${clp(p.antes)}</span>`:`<span class="nota-lanz">Ahorras ${clp(p.antes-p.precio)}</span>`):""}</div>`:`<div class="precio consultar">${esc(p.det||"Precio a consultar")}</div>`}
     ${p.precio?`<button class="btn-agregar" data-add="${p.slug}">+ Agregar</button>`:""}</div></article>`;
 }
+const masVendidos=()=>(typeof MAS_VENDIDOS!=="undefined"?MAS_VENDIDOS:[]).map(porSlug).filter(p=>p&&p.precio);
 function vistaCatalogo(){
   modo("en-catalogo");
   const cats=[...new Set(P.map(p=>p.cat))].sort((a,b)=>{const i=ORDEN.indexOf(a),j=ORDEN.indexOf(b);return(i<0?99:i)-(j<0?99:j)});
@@ -30,6 +31,8 @@ function vistaCatalogo(){
   ${cat==="Todo"&&!q?`<section class="hero"><h1 class="serif">Tu equipo,<br><em>armado por ti.</em></h1>
     <p>Escudos, camisetas y figuras en mini bloques. Llegan en caja, los armas en una tarde y quedan colgados en tu pared.</p>
     <div class="sellos"><div class="sello"><b>🚚</b>Envío gratis en Santiago desde $20.000</div><div class="sello"><b>📦</b>Llega en caja, piezas por color</div><div class="sello"><b>🧩</b>Siempre van piezas de más</div></div></section>`:""}
+  ${cat==="Todo"&&!q&&masVendidos().length?`<div class="wrap"><section class="mas-vendidos"><h2 class="sec">🔥 Los más vendidos<small>en oferta</small></h2>
+    <div class="grilla">${masVendidos().map(tarjeta).join("")}</div></section></div>`:""}
   <div class="wrap">${L.length?cats.filter(x=>L.some(p=>p.cat===x)).map(x=>{const ps=L.filter(p=>p.cat===x);
     return `<section><h2 class="sec">${esc(x)}<small>${ps.length}</small></h2>
     <div class="grilla">${ps.map(tarjeta).join("")}</div></section>`}).join(""):`<div class="a-pedido"><p class="serif" style="font-size:26px;margin:0">¿No está «${esc(q)}»?</p><p>Lo diseñamos a pedido: nos mandas la imagen, te decimos si se puede y te damos el precio.</p><a class="btn-grande wa" style="display:flex;align-items:center;justify-content:center;text-decoration:none" target="_blank" href="https://wa.me/${WHATSAPP}?text=${encodeURIComponent("Hola Áureo! Quiero un escudo a pedido de: "+q)}">Pedir el mío por WhatsApp</a></div>`}</div>

@@ -2,6 +2,10 @@
 
 Lo más nuevo arriba. Formato: `fecha · PC (Áureo/Caro) · hilo · qué cambió`.
 
+- 20-nov-2026 · Áureo · W1 · **«🔥 Los más vendidos»** arriba en la portada (Todo, sin búsqueda): Colo-Colo, U de Chile, UC y
+  Wanderers (`MAS_VENDIDOS` en `js/config.js`). En la planilla los cuatro quedan en «Oferta» con sus precios fijos (23/21/19/19) y
+  tachado: Colo-Colo $29.000, U de Chile $28.000 (regla), UC y Wanderers $24.000 (la regla daba menos: +$5.000). Probado en local.
+
 - 19-nov-2026 · Áureo · W1 · **Versiones**: Deportes Iquique (Actual / Clásico) y Deportes Concepción (Águila / León) juntos
   en una ficha. Si las etiquetas no son tamaños, dice «Elige la versión» y «· 2 versiones». Probado en local.
 

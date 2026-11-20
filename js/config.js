@@ -39,6 +39,9 @@ const DATOS_PAGO = [];
 const URGENCIA = { hasta:"2026-12-10", texto:"🎄 Haz tu pedido hasta el 10 de diciembre y te llega antes de Navidad" };
 /* Oferta única del paso 2: completar la colección del club con descuento. Lo «próximo» se muestra solo como ejemplo. */
 const PROXIMOS = {}; /* ej. {"colo-colo":[["Copa del Cacique","Próximamente"]]} */
+/* «Los más vendidos» (Áureo, 20-nov-2026): sale arriba en la portada (Todo, sin búsqueda), en este orden.
+   Slug = nombre del producto en la planilla, en minúsculas, sin tildes y con guiones. Vacío = no sale la sección. */
+const MAS_VENDIDOS = ["colo-colo","u-de-chile","uc","santiago-wanderers"];
 const INSTAGRAM = "https://www.instagram.com/aureo.cl/";
 /* Tamaños o versiones de un mismo producto (Áureo, 19-nov-2026). Si las etiquetas son Chico/Mediano/Grande dice
    «Elige el tamaño»; si no, «Elige la versión». Cada grupo: [slug, etiqueta, piezas redondeadas hacia abajo (opcional;
