@@ -170,9 +170,10 @@
   "protegida": true
  },
  "gary-mini": {
-  "fecha": "2026-11-08T23:30:52",
+  "fecha": "2026-11-20T11:54:34",
   "origen": "taller",
-  "producto": "Gary mini"
+  "producto": "Gary mini",
+  "protegida": true
  },
  "gengar-mini": {
   "fecha": "2026-11-03T20:00:00",
