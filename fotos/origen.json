@@ -254,9 +254,10 @@
   "protegida": true
  },
  "kuromi-mini": {
-  "fecha": "2026-11-08T23:08:04",
+  "fecha": "2026-11-20T11:55:41",
   "origen": "taller",
-  "producto": "Kuromi mini"
+  "producto": "Kuromi mini",
+  "protegida": true
  },
  "kyle-mini": {
   "fecha": "2026-11-03T20:00:00",
