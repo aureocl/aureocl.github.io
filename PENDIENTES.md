@@ -4,7 +4,7 @@ Tablero común de los dos PCs. Antes de tomar algo, revisar que nadie lo tenga �
 Formato: `hilo · qué · quién · estado` (estado: por hacer · en curso · espera a Áureo · listo).
 
 ## En curso
-- (nada)
+- W2 · Checkout: mini de regalo solo con productos desde $13.000, 5 camisetas = 1 de regalo, sin campo de fecha, mensaje más corto, pantalla de pago con datos de Javi y Caro antes de WhatsApp · Áureo · en curso
 
 ## Por hacer
 - W4 · Comprar dominio (aureocl.cl o tiendaaureo.cl) y conectarlo a Cloudflare · Áureo · espera a Áureo
