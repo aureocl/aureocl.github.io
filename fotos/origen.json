@@ -260,9 +260,10 @@
   "protegida": true
  },
  "kyle-mini": {
-  "fecha": "2026-11-03T20:00:00",
+  "fecha": "2026-11-20T11:55:50",
   "origen": "taller",
-  "producto": "kyle-mini"
+  "producto": "kyle-mini",
+  "protegida": true
  },
  "los-vasquez": {
   "fecha": "2026-11-06T23:35:43",
