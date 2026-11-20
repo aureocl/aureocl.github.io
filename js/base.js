@@ -44,6 +44,10 @@ function hincha(p){const k=ALIAS[p.slug]||p.slug;return HINCHA[k]||null}
 const porSlug=s=>P.find(p=>p.slug===s);
 
 /* ---------- Pedido (solo productos se recuerdan; los datos personales nunca) ---------- */
+/* Modo equipo (Áureo, 20-nov-2026): Javi o Caro abren aureocl.github.io/?equipo=javi (o caro) en su celular e ingresan el
+   pedido con los datos del cliente. El pedido va directo a la bandeja, sin abrir WhatsApp. Queda recordado en ese navegador;
+   ?equipo=salir lo apaga. No da ningún permiso: solo cambia el último paso. */
+let EQUIPO="";try{const q=(new URLSearchParams(location.search).get("equipo")||"").toLowerCase();if(q==="salir")localStorage.removeItem("aureo-equipo");else if(q==="javi"||q==="caro")localStorage.setItem("aureo-equipo",q==="javi"?"Javi":"Caro");EQUIPO=localStorage.getItem("aureo-equipo")||""}catch(e){}
 let carro=[];try{carro=JSON.parse(localStorage.getItem("aureo-pedido")||"[]")}catch(e){}
 let camisetas=[], minis=0, series="", datos={}, bumps={}, paso=0, vistos={}, mirando=false, mirarCat="";
 function regionClub(s,reg,com){const r=REGION_CLUB[ALIAS[s]||s];if(!r)return false;const[rr,cc]=r.split("|");return rr===reg&&(!cc||norm(com)===cc)}

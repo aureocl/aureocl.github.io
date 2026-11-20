@@ -179,6 +179,12 @@ function vistaPedido(){
     pie=C.length?`<button class="btn-grande wa" data-enviar="pagado">Ya transferí · Enviar por WhatsApp</button>`:`<button class="btn-grande wa" data-enviar="despues">Enviar pedido por WhatsApp</button>`;
   }
 
+  if(etapa==="pago"&&EQUIPO){
+    const F=totalFinal();
+    html=`<div class="panel"><h3>Modo equipo · ${esc(EQUIPO)}</h3><p class="nota" style="margin:0">El pedido se guarda en la <b>bandeja</b> como «Pendiente», con los datos del cliente. No se abre WhatsApp. Cuando el cliente pague, márcalo en la bandeja.</p></div>
+      <div class="panel"><h3>Pedido de ${esc(datos.nom||"")}</h3>${resumenCorto(F).map(l=>`<div class="res"><span>${esc(l)}</span></div>`).join("")}<div class="res total"><span>Total</span><span>${clp(F.total)}</span></div></div>`;
+    pie=`<button class="btn-grande" id="guardarEq">Guardar en la bandeja</button>`;
+  }
   v.innerHTML=`<div class="wrap pedido">${puntos()}${html}</div><div class="barra-fija">${pie}</div>`;
 
   // Eventos comunes
@@ -198,6 +204,7 @@ function vistaPedido(){
   v.querySelectorAll("[data-seg]").forEach(b=>b.onclick=()=>{agregar(b.dataset.seg,1,true);toast(`Descuento por ${nEscudos()} escudos: −${clp(descEscudos(nEscudos()))}`);siguiente()});
   v.querySelectorAll("[data-mas]").forEach(b=>b.onclick=()=>{agregar(b.dataset.mas,1);vistaPedido()});
   v.querySelectorAll("[data-copiar]").forEach(b=>b.onclick=async()=>{try{await navigator.clipboard.writeText(b.dataset.copiar);b.textContent="✓ Copiado"}catch(e){b.textContent="Mantén apretado para copiar"}});
+  if(etapa==="pago"&&EQUIPO){document.getElementById("guardarEq").onclick=ev=>guardarEquipo(ev.currentTarget);return}
   if(etapa==="pago"){
     v.querySelectorAll("[data-cuenta]").forEach(b=>b.onclick=()=>{datos.cuenta=b.dataset.cuenta;const x=window.scrollY;vistaPedido();window.scrollTo(0,x)});
     v.querySelectorAll("[data-enviar]").forEach(b=>b.onclick=()=>enviarPedido(b.dataset.enviar==="pagado"));
@@ -236,10 +243,10 @@ function vistaPedido(){
   v.querySelectorAll("[data-mod]").forEach(b=>b.onclick=()=>{datos.mod=b.dataset.mod;const x=window.scrollY;vistaPedido();window.scrollTo(0,x)});
   document.getElementById("alPago").onclick=()=>{
     const g=id=>document.getElementById(id).value.trim();
-    const falta=[["fNom","nombre"],["fTel","teléfono"],["fMail","correo"],["fCom","comuna"],["fDir","dirección"]].filter(([id])=>!g(id)).map(([,n])=>n);
+    const falta=[["fNom","nombre"],["fTel","teléfono"],...(EQUIPO?[]:[["fMail","correo"]]),["fCom","comuna"],["fDir","dirección"]].filter(([id])=>!g(id)).map(([,n])=>n);
     if(falta.length){toast("Falta: "+falta.join(", "));return}
     if(g("fTel").replace(/\D/g,"").length<8){toast("Revisa el teléfono: debe tener al menos 8 números");return}
-    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(g("fMail"))){toast("Revisa el correo");return}
+    if((!EQUIPO||g("fMail"))&&!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(g("fMail"))){toast("Revisa el correo");return}
     Object.assign(datos,{nom:g("fNom"),tel:g("fTel"),mail:g("fMail"),reg:g("fReg"),com:g("fCom"),dir:g("fDir"),mod:datos.mod||"Domicilio"});
     siguiente();
   };
@@ -260,9 +267,18 @@ function resumenCorto(F){
   L.push(`Envío ${F.mod==="Domicilio"?"a domicilio":"a punto Blue"}: ${F.e.c?clp(F.e.c):"gratis"}`);
   return L;
 }
+function nuevoId(){const d=new Date(),pad=n=>String(n).padStart(2,"0");return`AU-${String(d.getFullYear()).slice(2)}${pad(d.getMonth()+1)}${pad(d.getDate())}-${Math.floor(100+Math.random()*900)}`}
+/* Modo equipo: espera la respuesta de la bandeja para decir si quedó guardado. El número se mantiene al reintentar (no duplica). */
+function guardarEquipo(b){
+  const F=totalFinal();datos.idEq=datos.idEq||nuevoId();const id=datos.idEq;
+  const g=k=>({fNom:datos.nom,fTel:datos.tel,fMail:datos.mail,fReg:datos.reg,fCom:datos.com,fDir:datos.dir}[k]||"");
+  b.disabled=true;b.textContent="Guardando…";
+  guardarPedido({id,e:{...F.e,tot:F.tot},mod:F.mod,base:F.T.base,g,pagoA:""},true)
+    .then(r=>{if(!r||!r.ok)throw new Error((r&&r.error)||"");ultimo={id,total:F.total,link:"",equipo:true};location.hash="#listo"})
+    .catch(()=>{b.disabled=false;b.textContent="No se pudo guardar · Reintentar";toast("No se guardó. Revisa la señal y aprieta de nuevo.")});
+}
 function enviarPedido(pagado){
-  const F=totalFinal(),d=new Date(),pad=n=>String(n).padStart(2,"0");
-  const id=`AU-${String(d.getFullYear()).slice(2)}${pad(d.getMonth()+1)}${pad(d.getDate())}-${Math.floor(100+Math.random()*900)}`;
+  const F=totalFinal(),id=nuevoId();
   const cta=pagado&&cuentasListas().length?(cuentasListas().find(c=>c.quien===datos.cuenta)||cuentasListas()[0]).quien:"";
   /* Mensaje corto (Áureo, 20-nov-2026): el detalle completo (correo, teléfono, descuentos) queda en la bandeja de pedidos. */
   const M=[`Hola! Hice el pedido ${id} en la web`,"",...resumenCorto(F).map(l=>"- "+l),"",
@@ -284,8 +300,8 @@ function enviarPedido(pagado){
 
 /* Copia del pedido a la bandeja de Áureo y Caro (pestaña «PEDIDOS WEB» del maestro, vía Apps Script).
    Va en segundo plano: si falla, el pedido igual sale por WhatsApp. Ahí marcan «Pagó a Javi/Caro» y pasa a VENTAS. */
-function guardarPedido({id,e,mod,base,g,pagoA}){
-  if(!PEDIDOS_URL)return;
+function guardarPedido({id,e,mod,base,g,pagoA},esperar){
+  if(!PEDIDOS_URL)return esperar?Promise.reject(new Error("apagado")):undefined;
   try{
     const T=totales(),eqB=camisetas.length?(EQUIPOS_CAM.find(x=>norm(x[0])===norm(escudosEn()[0].p.nombre))||[escudosEn()[0].p.nombre])[0]:"";
     const r=camRegalo()?(datos.camReg||{}):null;
@@ -296,9 +312,10 @@ function guardarPedido({id,e,mod,base,g,pagoA}){
       mini:T.mini?{c:minis,total:T.mini}:null,
       regaloMini:ganaRegalo(),series:(datos.series||[]).filter(Boolean).join(", "),
       empaque:T.emp||0,dedicatoria:datos.ded||"",descEscudos:T.desc||0,descCol:T.descCol||0,
-      envio:e.c||0,prioridad:datos.prio?PROP.prioridad:0,total:base+e.tot,esRegalo:!!datos.regalo,pagoDeclarado:pagoA||""};
+      envio:e.c||0,prioridad:datos.prio?PROP.prioridad:0,total:base+e.tot,esRegalo:!!datos.regalo,pagoDeclarado:pagoA||"",ingresadoPor:EQUIPO||""};
+    if(esperar)return fetch(PEDIDOS_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(p)}).then(r=>r.json());
     fetch(PEDIDOS_URL,{method:"POST",mode:"no-cors",keepalive:true,headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(p)}).catch(()=>{});
-  }catch(err){}
+  }catch(err){if(esperar)return Promise.reject(err)}
 }
 
 /* Celular (y navegadores de Instagram/Facebook, que bloquean ventanas nuevas): salto directo a WhatsApp.
@@ -316,6 +333,12 @@ function vistaListo(){
   const g=enviadoReciente();
   const u=ultimo||(g?{id:g.id,total:g.total,link:"",pagado:g.pagado}:{id:"",total:0,link:""});
   const comp=`https://wa.me/${WHATSAPP}?text=${encodeURIComponent("Hola! Te envio el comprobante del pedido "+u.id)}`;
+  if(u.equipo){
+    document.getElementById("vista").innerHTML=`<div class="wrap pedido" style="max-width:560px"><div class="listo"><div class="ok">✓</div><h2>Guardado en la bandeja</h2>
+      <p class="nota">Pedido <b>${esc(u.id)}</b> · ${clp(u.total)} · quedó «Pendiente». Cuando el cliente pague, márcalo en la bandeja.</p></div>
+      <p style="text-align:center;margin-top:18px"><button class="btn-grande" data-nuevo>Ingresar otro pedido</button></p></div>`;
+    document.querySelector("[data-nuevo]").onclick=pedidoNuevo;return;
+  }
   const C=cuentasListas(), sel=C.find(c=>c.quien===datos.cuenta)||C[0];
   document.getElementById("vista").innerHTML=`<div class="wrap pedido" style="max-width:560px">
     <div class="listo"><div class="ok">✓</div><h2>¡Tu pedido está listo!</h2>
