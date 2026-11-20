@@ -4,7 +4,7 @@ Tablero común de los dos PCs. Antes de tomar algo, revisar que nadie lo tenga �
 Formato: `hilo · qué · quién · estado` (estado: por hacer · en curso · espera a Áureo · listo).
 
 ## En curso
-- W1 · Página `/armar` del QR de la tarjeta de regalo (armar 2D, 3D, colgar y Tu misión Áureo); carpeta nueva `armar/`, no toca el catálogo · Áureo · en curso
+- (nada)
 
 ## Por hacer
 - W2 · Escribir las cuentas de Javi y Caro en `CUENTAS` (`js/config.js`): mientras estén vacías, la pantalla de pago dice «te mandamos los datos por WhatsApp» · Áureo/Caro · espera a Áureo
@@ -16,6 +16,7 @@ Formato: `hilo · qué · quién · estado` (estado: por hacer · en curso · es
 - Todos · Pasar este repo a privado y dejar aureocl.github.io redirigiendo al dominio nuevo · espera a Áureo
 
 ## Listo
+- W1 · Página `/armar` del QR de la tarjeta de regalo: armar 2D, 3D, trucos, colgar y Tu misión Áureo (plazo de la misión: 1 mes desde que llega el pedido, por confirmar) · Áureo · 20-nov-2026
 - W2 · Checkout: mini de regalo solo con productos desde $13.000, 5 camisetas = la 6.ª de regalo, sin campo de fecha, mensaje corto, pantalla «Paga por transferencia» con las cuentas de Javi y Caro antes de WhatsApp · Áureo · 20-nov-2026
 - W2 + W3 · Cada pedido web queda guardado con su AU-… y hay bandeja para Áureo y Caro (Pagó a Javi/Caro → VENTAS). Va con Apps Script + el maestro en vez de Cloudflare D1 y `/admin` · Áureo · 20-nov-2026
 - W1 · Sección «Los más vendidos» en oferta (Colo-Colo, U de Chile, UC, Wanderers) · Áureo · 20-nov-2026

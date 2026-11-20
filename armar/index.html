@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>¿Cómo lo armo? · Áureo</title>
+<meta name="description" content="Cómo armar tu diseño 2D o tu figura 3D, cómo colgarlo y tu Misión Áureo.">
+<link rel="icon" href="../isotipo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--oro:#B8924A;--tinta:#191919;--gris:#6E695F;--suave:#F5F1E9;--pared:#E2DBCF;--borde:#E4DED2}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:#fff;color:var(--tinta);font:400 16px/1.55 Montserrat,system-ui,sans-serif}
+main{max-width:620px;margin:0 auto;padding:0 16px 40px}
+h1,h2,h3{font-family:"Cormorant Garamond",Georgia,serif;font-weight:600;line-height:1.1;margin:0}
+h1{font-size:38px}h2{font-size:34px;margin-bottom:4px}h3{font-size:26px;margin:26px 0 4px}
+.cab{text-align:center;padding:22px 0 8px}
+.cab .logo{height:44px;width:auto}
+.hola{display:flex;align-items:center;gap:12px;margin:14px 0 6px}
+.hola img{width:110px;flex-shrink:0}
+.hola p{margin:6px 0 0;color:var(--gris)}
+.menu{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0 8px}
+.menu a{display:flex;flex-direction:column;justify-content:center;min-height:96px;padding:14px;border-radius:16px;background:var(--suave);color:var(--tinta);text-decoration:none;font-weight:600;line-height:1.25}
+.menu a small{font-weight:400;color:var(--gris);margin-top:4px;font-size:13px}
+.menu a b{font-family:Montserrat;color:var(--oro);font-size:22px;line-height:1}
+.menu a.mision{grid-column:1/-1;background:#fff;border:2px solid var(--oro)}
+section{padding-top:34px;scroll-margin-top:8px}
+section>.sub{color:var(--gris);margin:0 0 14px}
+.sello{display:inline-block;font-family:Montserrat,sans-serif;background:var(--oro);color:#fff;font-weight:600;border-radius:8px;padding:2px 10px;font-size:15px;vertical-align:middle;margin-left:6px}
+.paso{background:var(--suave);border-radius:16px;margin:12px 0;overflow:hidden}
+.paso.blanco{background:#fff;border:1px solid var(--borde)}
+.paso.pared{background:var(--pared)}
+.paso img{display:block;width:100%;height:auto}
+.paso p{margin:0;padding:4px 16px 16px;display:flex;gap:12px;align-items:flex-start}
+.n{flex-shrink:0;width:30px;height:30px;border-radius:50%;background:var(--oro);color:#fff;font-weight:600;display:flex;align-items:center;justify-content:center;font-size:15px;margin-top:-2px}
+.fila3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.fila3 .paso{margin:12px 0 0}
+.fila3 .paso p{flex-direction:column;align-items:center;text-align:center;gap:6px;padding:4px 8px 12px;font-size:14px;line-height:1.35}
+.consejos{border:2px solid var(--oro);border-radius:16px;padding:6px 16px;margin:16px 0}
+.consejos p{margin:10px 0}
+.nota{color:var(--gris);font-size:14px;text-align:center;margin:12px 0}
+.nivel{background:var(--suave);border-radius:16px;padding:16px;margin:12px 0}
+.nivel.top{background:#fff;border:2px solid var(--oro)}
+.nivel h4{margin:0 0 8px;font-size:18px}
+.nivel ul{margin:0 0 10px;padding-left:20px}
+.premio{font-weight:600;text-decoration:underline;text-decoration-color:var(--oro);text-decoration-thickness:3px;text-underline-offset:5px;line-height:1.7}
+.btn{display:block;text-align:center;background:var(--tinta);color:#fff;text-decoration:none;font-weight:600;border-radius:14px;padding:15px;margin:16px 0}
+.btn.oro{background:var(--oro)}
+ol.cobrar{padding-left:22px}ol.cobrar li{margin:6px 0}
+.chico{font-size:13px;color:var(--gris)}
+.volver{display:block;text-align:center;color:var(--oro);font-weight:600;text-decoration:none;margin:18px 0 0;font-size:14px}
+footer{text-align:center;border-top:1px solid var(--borde);margin-top:34px;padding-top:22px;color:var(--gris);font-size:14px}
+footer a{color:var(--tinta);font-weight:600}
+</style>
+</head>
+<body>
+<main>
+<header class="cab" id="inicio"><img class="logo" src="img/logo.png" alt="Áureo"></header>
+
+<div class="hola">
+  <img src="img/aurito.png" alt="Aurito saludando">
+  <div><h1>¡Hola! Soy Aurito</h1><p>Te enseño a armar tu regalo paso a paso. ¿Qué quieres ver?</p></div>
+</div>
+
+<nav class="menu">
+  <a href="#armar-2d"><b>2D</b>Armar mi diseño plano<small>Escudos y cuadros</small></a>
+  <a href="#armar-3d"><b>3D</b>Armar mi figura 3D<small>Por capas, de pie</small></a>
+  <a href="#colgar">Colgarlo en la pared<small>Dos formas, sin pegamento</small></a>
+  <a href="#trucos">Trucos para armar<small>Sin fuerza y sin enredos</small></a>
+  <a class="mision" href="#mision">Tu misión Áureo<small>Mándanos fotos o videos y gana premios</small></a>
+</nav>
+
+<section id="armar-2d">
+  <h2>Armar mi diseño <span class="sello">2D</span></h2>
+  <p class="sub">Tu diseño plano: escudo, cuadro o personaje.</p>
+  <div class="paso"><img src="img/color.png" alt="Piezas separadas por color" loading="lazy"><p><span class="n">1</span>Separa las piezas por color.</p></div>
+  <div class="paso"><img src="img/monta.png" alt="Una pieza bajando al lado de otra" loading="lazy"><p><span class="n">2</span>Pon una pieza al lado de la otra y bájala desde arriba hasta que encaje.</p></div>
+  <div class="paso"><img src="img/grilla.png" alt="Diseño armándose fila por fila" loading="lazy"><p><span class="n">3</span>Sigue tu grilla fila por fila, partiendo por una esquina.</p></div>
+  <a class="volver" href="#trucos">Mira los trucos para armar ↓</a>
+</section>
+
+<section id="armar-3d">
+  <h2>Armar mi figura <span class="sello">3D</span></h2>
+  <p class="sub">Se arma por capas, de abajo hacia arriba.</p>
+  <div class="paso"><img src="img/color.png" alt="Piezas separadas por color" loading="lazy"><p><span class="n">1</span>Separa las piezas por color.</p></div>
+  <div class="paso"><img src="img/monta.png" alt="Una pieza bajando al lado de otra" loading="lazy"><p><span class="n">2</span>Pon una pieza al lado de la otra y bájala desde arriba hasta que encaje.</p></div>
+  <div class="paso"><img src="img/capa1.png" alt="Primera capa de una figura" loading="lazy"><p><span class="n">3</span>Arma la capa 1, la base, mirando tu instructivo.</p></div>
+  <div class="paso"><img src="img/sube.png" alt="Piezas montándose encima de otras" loading="lazy"><p><span class="n">4</span>Monta la capa siguiente encima, pieza sobre pieza. Así hasta la última.</p></div>
+</section>
+
+<section id="trucos">
+  <h2>Trucos para armar</h2>
+  <div class="consejos">
+    <p><b>Sin fuerza:</b> ve despacio y tómale el ritmo. Vas a sentir cuando la pieza entra.</p>
+    <p><b>Piezas largas:</b> una de 2 o de 3 ocupa 2 o 3 cuadritos.</p>
+    <p><b>¿Te equivocaste?</b> Saca la pieza hacia arriba o hacia abajo, nunca la dobles.</p>
+    <p><b>Los colores de los dibujos son de ejemplo:</b> tú usa los de tu diseño.</p>
+  </div>
+</section>
+
+<section id="colgar">
+  <h2>¿Y ahora cómo lo cuelgo?</h2>
+  <p class="sub">Tienes dos formas. No necesitas pegamento.</p>
+
+  <h3>Opción 1 · Ganchito arriba</h3>
+  <p class="sub">La más fácil y rápida.</p>
+  <div class="fila3">
+    <div class="paso pared"><img src="img/g2_extras.png" alt="Piezas extras arriba al centro" loading="lazy"><p><span class="n">1</span>Encaja las piezas extras arriba, al centro.</p></div>
+    <div class="paso pared"><img src="img/g2_puente.png" alt="Puentecito para el clavo" loading="lazy"><p><span class="n">2</span>Queda un puentecito para el clavo.</p></div>
+    <div class="paso pared"><img src="img/g2_clavo.png" alt="Colgado del clavo" loading="lazy"><p><span class="n">3</span>Cuélgalo del clavo, ¡y listo!</p></div>
+  </div>
+
+  <h3>Opción 2 · Gancho invisible</h3>
+  <p class="sub">Efecto flotante: queda separado de la pared.</p>
+  <div class="paso blanco"><img src="img/g1_capa1.png" alt="Primera capa: marco y 2 topes" loading="lazy"><p><span class="n">1</span>Arma la primera capa: el marco y 2 topes.</p></div>
+  <div class="paso blanco"><img src="img/g1_capa2.png" alt="Segunda capa encima" loading="lazy"><p><span class="n">2</span>Pon la segunda capa encima, justo como en el dibujo.</p></div>
+  <div class="paso pared"><img src="img/g1_atras.png" alt="Gancho arriba al centro y topes abajo, por detrás" loading="lazy"><p><span class="n">3</span>Dales vuelta y encájalos atrás: el gancho arriba al centro y los topes abajo.</p></div>
+  <div class="paso blanco"><img src="img/g1_perfil.png" alt="Vista de costado con el clavo" loading="lazy"><p><span class="n">4</span>Deja el clavo asomado 1 cm y cuélgalo del hueco.</p></div>
+
+  <p class="nota">No importa el color: usa las piezas extras de tu caja.<br>Si queda chueco, corre el gancho hasta que quede derecho.</p>
+  <a class="btn oro" href="#mision">¿Ya lo colgaste? Sácale una foto y gana →</a>
+</section>
+
+<section id="mision">
+  <h2>Tu misión Áureo</h2>
+  <p class="sub">Graba tu historia y gana. Mientras más grabas, mejor el premio.</p>
+
+  <div class="nivel"><h4>Nivel 1 · La foto</h4>
+    <ul><li>Tu diseño en la pared o en tu repisa.</li></ul>
+    <div class="premio">Premio: minifigura de regalo en tu próxima compra sobre $25.000</div></div>
+  <div class="nivel"><h4>Nivel 2 · El video</h4>
+    <ul><li>Un video armándolo (¡que salgas tú!).</li><li>La foto donde lo dejaste.</li></ul>
+    <div class="premio">Premio: camiseta personalizada de regalo en tu próxima compra sobre $25.000</div></div>
+  <div class="nivel top"><h4>Nivel 3 · La historia completa</h4>
+    <ul><li>Abriendo la caja y armándolo.</li><li>Colgándolo o poniéndolo en su lugar.</li><li>Una foto tuya al lado.</li></ul>
+    <div class="premio">Premio: 3 minifiguras o 2 camisetas personalizadas, a elección, en tu próxima compra sobre $25.000</div>
+    <p class="chico">Elige entre diseño propio o de nuestro catálogo.</p></div>
+
+  <p><b>Envío gratis</b> a punto Blue Express en todo Chile, o solo $1.000 a domicilio. Vale para los 3 niveles.</p>
+
+  <h3>Cómo cobrar tu premio</h3>
+  <ol class="cobrar">
+    <li>Mándanos tus fotos y videos por WhatsApp (botón de abajo).</li>
+    <li>Tienes <b>1 mes desde que te llegó tu pedido</b> para enviarlos.</li>
+    <li>Te confirmamos tu premio. Tienes 3 meses para usarlo.</li>
+  </ol>
+  <a class="btn" href="https://wa.me/56991412645?text=%C2%A1Hola%20%C3%81ureo!%20Vengo%20a%20cumplir%20mi%20misi%C3%B3n%20%F0%9F%8E%AF">Mandar mi misión por WhatsApp</a>
+  <p class="chico">Tenemos muchos clientes y no podemos buscar cada premio: guarda el chat o un pantallazo y avísanos al comprar. Te llevas el premio del nivel más alto que completes; el premio y el envío van con tu próxima compra. Si pides un diseño propio, puede sumarse a nuestro catálogo. Al enviarnos tus fotos y videos nos autorizas a compartirlos en las redes de Áureo. Si salen menores de edad, que lo envíe su mamá, papá o tutor.</p>
+  <a class="volver" href="#inicio">Volver al inicio ↑</a>
+</section>
+
+<footer>
+  ¿Te quedó alguna duda? <a href="https://wa.me/56991412645?text=%C2%A1Hola%20%C3%81ureo!%20Tengo%20una%20duda%20con%20mi%20armado">Escríbenos por WhatsApp</a><br>
+  Síguenos en <a href="https://www.instagram.com/aureo.cl/">@aureo.cl</a> · <a href="../">Ver catálogo</a>
+  <p class="chico">Lo que amas se arma.</p>
+</footer>
+</main>
+</body>
+</html>
