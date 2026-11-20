@@ -305,9 +305,10 @@
   "protegida": true
  },
  "mickey-mago-mini": {
-  "fecha": "2026-11-03T20:00:00",
+  "fecha": "2026-11-20T11:56:17",
   "origen": "taller",
-  "producto": "mickey-mago-mini"
+  "producto": "mickey-mago-mini",
+  "protegida": true
  },
  "naruto-mini": {
   "fecha": "2026-11-19T12:00:00",
