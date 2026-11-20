@@ -370,9 +370,10 @@
   "producto": "river-plate"
  },
  "rocky-mini": {
-  "fecha": "2026-11-03T20:00:00",
+  "fecha": "2026-11-20T11:57:04",
   "origen": "taller",
-  "producto": "rocky-mini"
+  "producto": "rocky-mini",
+  "protegida": true
  },
  "san-luis-de-quillota": {
   "fecha": "2026-11-03T20:00:00",
