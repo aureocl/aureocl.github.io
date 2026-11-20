@@ -343,9 +343,10 @@
   "protegida": true
  },
  "pikachu-mini": {
-  "fecha": "2026-11-05T16:22:17",
+  "fecha": "2026-11-20T11:56:37",
   "origen": "taller",
-  "producto": "Pikachu mini"
+  "producto": "Pikachu mini",
+  "protegida": true
  },
  "pokebola-mini": {
   "fecha": "2026-11-03T20:00:00",
