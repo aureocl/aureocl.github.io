@@ -410,9 +410,10 @@
   "protegida": true
  },
  "stitch-mini": {
-  "fecha": "2026-11-03T20:00:00",
+  "fecha": "2026-11-20T11:57:34",
   "origen": "taller",
-  "producto": "stitch-mini"
+  "producto": "stitch-mini",
+  "protegida": true
  },
  "talleres": {
   "fecha": "2026-11-17T00:01:04",
