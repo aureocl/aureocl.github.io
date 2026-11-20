@@ -237,9 +237,10 @@
   "protegida": true
  },
  "homero-mini": {
-  "fecha": "2026-11-03T20:00:00",
+  "fecha": "2026-11-20T11:55:24",
   "origen": "taller",
-  "producto": "homero-mini"
+  "producto": "homero-mini",
+  "protegida": true
  },
  "huachipato": {
   "fecha": "2026-11-03T20:00:00",
