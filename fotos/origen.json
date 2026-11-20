@@ -176,9 +176,10 @@
   "protegida": true
  },
  "gengar-mini": {
-  "fecha": "2026-11-03T20:00:00",
+  "fecha": "2026-11-20T11:54:42",
   "origen": "taller",
-  "producto": "gengar-mini"
+  "producto": "gengar-mini",
+  "protegida": true
  },
  "goku-mini": {
   "fecha": "2026-11-03T20:07:32",
