@@ -2,6 +2,11 @@
 
 Lo más nuevo arriba. Formato: `fecha · PC (Áureo/Caro) · hilo · qué cambió`.
 
+- 20-nov-2026 · Áureo · W3 · **Bandeja en página propia** `aureocl.github.io/bandeja` (carpeta `bandeja/`, NO se edita aquí: se genera
+  desde el repo Aureo con `clientes-pedidos/pedidos-web/publicar_bandeja.py`). Habla con el Apps Script por POST (versión 6), sin el inicio de
+  sesión de Google: arregla «No se puede abrir el archivo en este momento» en celulares con varias cuentas de Google. Pide la clave una vez
+  (no va en el repo), `noindex`.
+
 - 20-nov-2026 · Áureo · W2 + Común · **Modo equipo**: `aureocl.github.io/?equipo=javi` (o `caro`) en el celular de Javi o Caro: ingresan el
   pedido con los datos del cliente (correo opcional) y el último paso es «Guardar en la bandeja» (espera la respuesta, reintenta con el mismo
   número, sin WhatsApp). Queda recordado en ese navegador; `?equipo=salir` lo apaga. El pedido lleva `ingresadoPor`. **Versión nueva sola**

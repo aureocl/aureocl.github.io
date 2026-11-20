@@ -16,6 +16,7 @@ Formato: `hilo · qué · quién · estado` (estado: por hacer · en curso · es
 - Todos · Pasar este repo a privado y dejar aureocl.github.io redirigiendo al dominio nuevo · espera a Áureo
 
 ## Listo
+- W3 · Bandeja en página propia `aureocl.github.io/bandeja` (funciona en celulares con varias cuentas de Google) · Áureo · 20-nov-2026
 - Común + W2 · Catálogo se actualiza solo con versión nueva + modo equipo (`?equipo=javi|caro`, guarda directo en la bandeja) · Áureo · 20-nov-2026
 - W1 · Página `/armar` del QR de la tarjeta de regalo: armar 2D, 3D, trucos, colgar y Tu misión Áureo (plazo de la misión: 1 mes desde que llega el pedido, por confirmar) · Áureo · 20-nov-2026
 - W2 · Checkout: mini de regalo solo con productos desde $13.000, 5 camisetas = la 6.ª de regalo, sin campo de fecha, mensaje corto, pantalla «Paga por transferencia» con las cuentas de Javi y Caro antes de WhatsApp · Áureo · 20-nov-2026

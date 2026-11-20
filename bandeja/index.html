@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<!-- NO EDITAR AQUÍ: se genera desde el repo Aureo, clientes-pedidos/pedidos-web/Panel.html con publicar_bandeja.py. La clave no va aquí: la página la pide y la recuerda. -->
+<html lang="es">
+<head>
+<base target="_top">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Pedidos web · Aureo</title>
+<style>
+  :root{--negro:#1A1A1A;--oro:#B8924A;--crema:#FAF7F0;--linea:#E6E0D4;--gris:#6B6B6B;--verde:#1E7B4A;--rojo:#B3261E;--aviso:#FFF4D6;--info:#EAF1FB;
+    --lila:#8B5CC9;--lila-suave:#F3ECFC;--celeste:#2F86C8;--celeste-suave:#E6F2FB}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--crema);color:var(--negro);font:15px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+  header{position:sticky;top:0;z-index:5;background:var(--negro);color:#fff;padding:12px 16px}
+  .fila-h{display:flex;justify-content:space-between;align-items:center;gap:10px}
+  header h1{margin:0;font-size:17px;font-weight:700;letter-spacing:.2px}
+  header h1 span{color:var(--oro)}
+  #ajustesBtn{background:none;border:1px solid #444;color:#ddd;border-radius:999px;padding:5px 11px;font-size:13px;cursor:pointer}
+  .barra{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;align-items:center}
+  .tab{border:1px solid #444;background:transparent;color:#ddd;border-radius:999px;padding:6px 12px;font-size:14px;cursor:pointer}
+  .tab.on{background:var(--oro);border-color:var(--oro);color:#111;font-weight:700}
+  .tab b{font-variant-numeric:tabular-nums}
+  #buscar{flex:1;min-width:160px;border:0;border-radius:8px;padding:7px 10px;font-size:14px}
+  #refrescar{background:none;border:0;color:#ddd;font-size:13px;cursor:pointer;text-decoration:underline}
+
+  .layout{max-width:1180px;margin:0 auto;padding:14px 16px 60px;display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:18px;align-items:start}
+  @media (max-width:980px){.layout{grid-template-columns:minmax(0,1fr)}#resumen{order:-1}}
+  #lista{min-width:0}
+  .vacio{color:var(--gris);text-align:center;padding:40px 0}
+
+  /* Resumen de lo que hay que armar (solo pedidos pagados y sin enviar) */
+  #resumen{background:#fff;border:1px solid var(--linea);border-radius:12px;padding:14px;position:sticky;top:120px}
+  @media (max-width:980px){#resumen{position:static}}
+  #resumen h2{margin:0 0 4px;font-size:16px}
+  #resumen .sub{color:var(--gris);font-size:13px;margin-bottom:10px}
+  #resumen table{width:100%;border-collapse:collapse;font-size:14px}
+  #resumen td{padding:5px 0;border-top:1px solid var(--linea);vertical-align:top}
+  #resumen td.n{text-align:right;font-weight:700;font-variant-numeric:tabular-nums;width:44px}
+  #resumen h3{font-size:13px;margin:14px 0 4px;color:var(--gris);font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+  #resumen ul{margin:0;padding-left:18px;font-size:13px}
+  #resumen li{margin:2px 0}
+  .pildoras{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+  .pil{border-radius:999px;padding:3px 10px;font-size:12px;font-weight:600}
+  .pil.paket{background:var(--lila-suave);color:var(--lila)}
+  .pil.blue{background:var(--celeste-suave);color:var(--celeste)}
+  details.res-movil>summary{font-weight:700;font-size:15px;color:var(--negro);list-style:none}
+  @media (min-width:981px){details.res-movil>summary{pointer-events:none}}
+  @media (max-width:980px){details.res-movil>summary::after{content:'  ▾ toca para ver';font-weight:400;font-size:13px;color:var(--gris)}details.res-movil[open]>summary::after{content:''}}
+
+  .card{background:#fff;border:1px solid var(--linea);border-left:6px solid var(--linea);border-radius:12px;padding:14px;margin-bottom:12px}
+  .card.paket{border-left-color:var(--lila);background:linear-gradient(90deg,var(--lila-suave),#fff 140px)}
+  .card.blue{border-left-color:var(--celeste);background:linear-gradient(90deg,var(--celeste-suave),#fff 140px)}
+  .card.descartado{opacity:.6}
+  .cab{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+  .cab .id{font-weight:700}
+  .cab .cuando{color:var(--gris);font-size:13px}
+  .badge{display:inline-block;margin-top:4px;border-radius:999px;padding:2px 9px;font-size:12px;font-weight:700}
+  .paket .badge{background:var(--lila);color:#fff}
+  .blue .badge{background:var(--celeste);color:#fff}
+  .cambiar-emp{margin:4px 0 0 6px;border:1px solid var(--borde,#ddd);background:#fff;color:inherit;border-radius:999px;padding:2px 10px;font-size:12px;font-weight:600;cursor:pointer}
+  .total{font-size:20px;font-weight:800;white-space:nowrap;font-variant-numeric:tabular-nums}
+  .cliente{margin:8px 0 4px;font-size:16px;font-weight:600}
+  .datos{color:#333;font-size:14px}
+  .datos a{color:var(--verde);font-weight:600}
+  .pidio{white-space:pre-wrap;background:var(--crema);border-radius:8px;padding:10px;margin:10px 0;font-size:14px}
+  .aviso{background:var(--aviso);border-radius:8px;padding:6px 10px;margin:6px 0;font-size:13px}
+  .info{background:var(--info);border-radius:8px;padding:6px 10px;margin:6px 0;font-size:13px}
+  details{margin:8px 0}
+  summary{cursor:pointer;color:var(--gris);font-size:13px}
+  .fl{border-top:1px solid var(--linea);padding:8px 0;display:grid;grid-template-columns:1fr 1fr 1fr 28px;gap:6px;align-items:end}
+  .fl .prod{grid-column:1/4}
+  .fl label{font-size:11px;color:var(--gris);display:block}
+  .fl input{width:100%;border:1px solid var(--linea);border-radius:6px;padding:6px 7px;font-size:14px}
+  .fl input.num{text-align:right}
+  .fl .sin{color:var(--rojo);font-size:11px;display:block;margin-top:2px}
+  .fl button{border:0;background:none;color:var(--gris);cursor:pointer;font-size:18px;grid-row:1;grid-column:4}
+  .mas{border:0;background:none;color:var(--verde);cursor:pointer;font-size:13px;padding:4px 0}
+  .acciones{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+  .acciones button,.btn{flex:1;min-width:120px;border:0;border-radius:10px;padding:11px 10px;font-size:15px;font-weight:700;cursor:pointer}
+  .javi,.caro,.enviar{background:var(--verde);color:#fff}
+  .enviar[disabled]{background:#9DBFAD;cursor:not-allowed}
+  .descartar,.suave{background:#eee;color:#333;flex:0 0 auto!important;min-width:0!important}
+  .wsp{background:#25D366;color:#fff}
+  .estado{margin-top:10px;font-weight:600;color:var(--verde)}
+  .estado.gris{color:var(--gris)}
+  .estado button{margin-left:8px;border:1px solid var(--linea);background:#fff;border-radius:8px;padding:4px 10px;cursor:pointer}
+
+  /* Envío: datos para Paket/Blue, seguimiento y foto */
+  .envio{border-top:1px dashed var(--linea);margin-top:10px;padding-top:10px;display:grid;gap:10px}
+  .datos-envio{background:#fff;border:1px solid var(--linea);border-radius:10px;padding:8px 10px}
+  .dato{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:5px 0;border-bottom:1px solid var(--linea)}
+  .dato:last-of-type{border-bottom:0}
+  .dato span{font-size:11px;color:var(--gris);display:block}
+  .dato b{font-weight:600;word-break:break-word}
+  .copiar{border:1px solid var(--linea);background:#fff;border-radius:8px;padding:4px 10px;font-size:13px;cursor:pointer;white-space:nowrap}
+  .copiar-todo{margin-top:6px;width:100%;border:0;background:var(--negro);color:#fff;border-radius:8px;padding:8px;font-weight:600;cursor:pointer}
+  .seg{display:flex;gap:8px}
+  .seg input{flex:1;min-width:0;border:1px solid var(--linea);border-radius:8px;padding:9px 10px;font-size:15px}
+  .seg button{border:0;border-radius:8px;padding:0 14px;background:var(--negro);color:#fff;font-weight:600;cursor:pointer}
+  .lbl{font-size:12px;color:var(--gris);font-weight:600}
+  .foto{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .foto label.subir{border:1px solid var(--negro);border-radius:8px;padding:8px 12px;font-weight:600;cursor:pointer;background:#fff}
+  .foto input{display:none}
+  .foto a{color:var(--verde);font-weight:600}
+  .ok{color:var(--verde);font-weight:600}
+
+  #toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--negro);color:#fff;padding:10px 16px;border-radius:10px;font-size:14px;display:none;max-width:90%;z-index:30}
+  .cargando{opacity:.5;pointer-events:none}
+  .modal{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;padding:16px;z-index:20}
+  .modal .caja{background:#fff;border-radius:14px;padding:18px;max-width:460px;width:100%;max-height:90vh;overflow:auto}
+  #mTxt{white-space:pre-line}
+  .modal .botones{display:flex;gap:8px;margin-top:16px}
+  .modal .botones button{flex:1;border:0;border-radius:10px;padding:11px;font-size:15px;font-weight:700;cursor:pointer}
+  #mSi,#aGuardar{background:var(--verde);color:#fff}#mNo,#aCerrar{background:#eee;color:#333}
+  .vista-msj{white-space:pre-wrap;background:var(--crema);border-radius:8px;padding:10px;font-size:14px;margin-top:8px}
+  .modal label.campo{display:block;font-size:13px;color:var(--gris);margin-top:10px}
+  .modal label.campo input,.modal label.campo textarea{display:block;width:100%;margin-top:4px;border:1px solid var(--linea);border-radius:8px;padding:8px;font:inherit;color:var(--negro)}
+  .modal textarea{min-height:150px}
+  .chk{display:flex;gap:8px;align-items:center;margin-top:10px;font-size:14px}
+</style>
+</head>
+<body data-k="">
+<header>
+  <div class="fila-h"><h1>Pedidos web <span>· Aureo</span></h1><button id="ajustesBtn">⚙︎ Ajustes</button></div>
+  <div class="barra">
+    <button class="tab on" data-f="Pendiente">Pendientes <b id="nP">·</b></button>
+    <button class="tab" data-f="Pagado">Por enviar <b id="nG">·</b></button>
+    <button class="tab" data-f="Enviado">Enviados <b id="nE">·</b></button>
+    <button class="tab" data-f="Descartado">Descartados <b id="nD">·</b></button>
+    <input id="buscar" placeholder="Buscar nombre, teléfono, AU-… o seguimiento">
+    <button id="refrescar">Actualizar</button>
+  </div>
+</header>
+<div class="layout">
+  <main id="lista"><p class="vacio">Cargando pedidos…</p></main>
+  <aside id="resumen"></aside>
+</div>
+<div id="toast"></div>
+<div class="modal" id="modal"><div class="caja"><div id="mTxt"></div><div id="mExtra"></div><div class="botones"><button id="mNo">Cancelar</button><button id="mSi">Sí, confirmar</button></div></div></div>
+<div class="modal" id="ajustes"><div class="caja">
+  <b>Ajustes del aviso al cliente</b>
+  <label class="campo">Link de seguimiento de Blue Express<input id="aBlue" placeholder="Pega el link. Donde va el número escribe {n}"></label>
+  <label class="campo">Link de seguimiento de Paket<input id="aPaket" placeholder="Pega el link. Donde va el número escribe {n}"></label>
+  <label class="campo">Mensaje (correo y WhatsApp)<textarea id="aMsj"></textarea></label>
+  <p style="font-size:12px;color:var(--gris);margin:6px 0 0">Se reemplazan solos: {nombre} {empresa} {seguimiento} {link}. Si el link no tiene {n}, se manda tal cual.</p>
+  <div class="botones"><button id="aCerrar">Cerrar</button><button id="aGuardar">Guardar</button></div>
+</div></div>
+<datalist id="cat"></datalist>
+<script>
+window.onerror = (m, s, l, c) => { const e = document.getElementById("lista"); if (e) e.innerHTML = `<p class="vacio">Error en la página: ${m} (línea ${l})</p>`; };
+</script>
+<script>
+/* Ojo: Google corta lo que viene después de dos barras seguidas dentro de este código. Por eso los links se arman con 'https:\/\/'. */
+function leerClave() { try { return localStorage.getItem('aureo-bandeja') || ''; } catch (e) { return ''; } }
+function guardarClave(k) { try { localStorage.setItem('aureo-bandeja', k); } catch (e) { } }
+let K = document.body.dataset.k || leerClave();
+if (document.body.dataset.k) guardarClave(document.body.dataset.k);
+let TODOS = [], FILTRO = 'Pendiente', editando = false, AJ = { linkBlue: '', linkPaket: '', mensaje: '' }, ABIERTOS = new Set();
+const $ = s => document.querySelector(s);
+const clp = n => '$' + Math.round(Number(n) || 0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const norm = s => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+const WA = 'https:\/\/wa.me/';
+function toast(t, ms = 3500) { const e = $('#toast'); e.textContent = t; e.style.display = 'block'; clearTimeout(toast.t); toast.t = setTimeout(() => e.style.display = 'none', ms); }
+function preguntar(txt, extra) {
+  return new Promise(ok => {
+    $('#mTxt').textContent = txt; $('#mExtra').innerHTML = extra || ''; $('#modal').style.display = 'flex';
+    const fin = v => { const chk = $('#mCorreo'); $('#modal').style.display = 'none'; $('#mSi').onclick = $('#mNo').onclick = null; ok(v ? { si: true, correo: chk ? chk.checked : false } : null); };
+    $('#mSi').onclick = () => fin(true); $('#mNo').onclick = () => fin(false);
+  });
+}
+/* Dos formas de hablar con el script (Áureo, 20-nov-2026):
+   - Abierta desde Google (/exec): google.script.run, como siempre.
+   - Página propia aureocl.github.io/bandeja (API_URL lleno): pedido directo al script, sin pasar por el inicio de sesión de Google.
+     Así no importa cuántas cuentas de Google tenga abiertas el celular («No se puede abrir el archivo en este momento»). */
+const API_URL = 'https://script.google.com/macros/s/AKfycbyJwpVPwnc0EVQPGTlspepBK-zva0MWBjMAvwbXVlOlazQt22XV7UJyCg_qh-M9lYxu/exec';
+const llamarCon = (clave, fn, ...a) => API_URL
+  ? fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ api: fn, clave, args: a }) })
+      .then(r => r.json()).then(r => { if (!r.ok) throw new Error(r.error || 'Error'); return r.r; })
+  : new Promise((ok, mal) => google.script.run.withSuccessHandler(ok).withFailureHandler(mal)[fn](clave, ...a));
+const llamar = (fn, ...a) => llamarCon(K, fn, ...a);
+const telWa = t => { const d = String(t).replace(/\D/g, ''); return d.length === 9 ? '56' + d : d; };
+
+async function cargar() {
+  try {
+    const r = await llamar('listar');
+    TODOS = r.pedidos; AJ = r.ajustes || AJ;
+    $('#cat').innerHTML = r.catalogo.map(c => `<option value="${esc(c)}">`).join('');
+    pintar();
+  } catch (e) {
+    if (/Clave incorrecta/.test(e.message)) { guardarClave(''); K = ''; pedirClave(true); return; }
+    $('#lista').innerHTML = `<p class="vacio">No pude leer los pedidos: ${esc(e.message)}</p>`;
+  }
+}
+
+function pintar() {
+  const cuenta = s => TODOS.filter(p => p.estado === s).length;
+  $('#nP').textContent = cuenta('Pendiente'); $('#nG').textContent = cuenta('Pagado'); $('#nE').textContent = cuenta('Enviado'); $('#nD').textContent = cuenta('Descartado');
+  const q = norm($('#buscar').value);
+  const L = TODOS.filter(p => p.estado === FILTRO && (!q || norm([p.id, p.cliente, p.tel, p.mail, p.comuna, p.seguimiento, p.numero].join(' ')).includes(q)));
+  const vacios = { Pendiente: 'No hay pedidos esperando pago.', Pagado: 'No hay pedidos pagados por enviar.', Enviado: 'Todavía no hay pedidos enviados.', Descartado: 'Nada por aquí.' };
+  $('#lista').innerHTML = L.length ? L.map(tarjeta).join('') : `<p class="vacio">${vacios[FILTRO]}</p>`;
+  pintarResumen();
+  editando = false;
+}
+
+/* ---------- Resumen: lo que hay que armar (solo pagados sin enviar) ---------- */
+function pintarResumen() {
+  const P = TODOS.filter(p => p.estado === 'Pagado');
+  const paket = P.filter(p => p.empresa === 'Paket').length, blue = P.length - paket;
+  const tot = {}, camisetas = [], regalos = [], empaques = [];
+  P.forEach(p => (p.armar || []).forEach(x => {
+    if (x.n === 'Camiseta con escudo') { camisetas.push(`${x.det} · ${p.cliente.split(' ')[0]}`); }
+    else if (x.n === 'Minifigura sorpresa de regalo') { regalos.push(p.cliente.split(' ')[0] + (x.det ? ` (${x.det})` : '')); }
+    else if (x.n === 'Empaque de regalo') { empaques.push(p.cliente.split(' ')[0] + (x.det ? ` ${x.det}` : '')); }
+    tot[x.n] = (tot[x.n] || 0) + Number(x.c || 0);
+  }));
+  const filas = Object.entries(tot).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+  const cuerpo = !P.length ? '<p class="sub" style="margin:0">Cuando marquen «Pagó a Javi/Caro», lo que hay que armar aparece aquí.</p>' : `
+    <div class="pildoras"><span class="pil paket">Santiago · Paket: ${paket}</span><span class="pil blue">Regiones · Blue: ${blue}</span></div>
+    <table>${filas.map(([n, c]) => `<tr><td>${esc(n)}</td><td class="n">${c}</td></tr>`).join('')}</table>
+    ${camisetas.length ? `<h3>Camisetas (${camisetas.length})</h3><ul>${camisetas.map(c => `<li>${esc(c)}</li>`).join('')}</ul>` : ''}
+    ${regalos.length ? `<h3>Mini sorpresa de regalo (${regalos.length})</h3><ul>${regalos.map(c => `<li>${esc(c)}</li>`).join('')}</ul>` : ''}
+    ${empaques.length ? `<h3>Empaque de regalo (${empaques.length})</h3><ul>${empaques.map(c => `<li>${esc(c)}</li>`).join('')}</ul>` : ''}`;
+  const abierto = matchMedia('(min-width:981px)').matches || $('#resumen details') && $('#resumen details').open;
+  $('#resumen').innerHTML = `<details class="res-movil" ${abierto ? 'open' : ''}><summary><h2 style="display:inline">📋 Por armar</h2> · ${P.length} pedido${P.length === 1 ? '' : 's'} pagado${P.length === 1 ? '' : 's'}</summary>
+    <div class="sub">Solo pedidos pagados que todavía no se envían.</div>${cuerpo}</details>`;
+}
+
+/* ---------- Tarjetas ---------- */
+const empresaTxt = p => p.empresa === 'Paket' ? 'Santiago · Paket' : p.entrega !== 'Domicilio' ? 'Punto Blue · Blue Express' : (p.cambiable ? 'Santiago · Blue Express' : 'Regiones · Blue Express');
+/* Santiago a domicilio: se puede mandar por Blue (llega antes) o por Paket. Solo antes de enviarlo. */
+const btnEmpresa = p => p.cambiable && (p.estado === 'Pendiente' || p.estado === 'Pagado')
+  ? `<button class="cambiar-emp" data-empresa="${p.empresa === 'Paket' ? 'Bluexpress' : 'Paket'}">⇄ Mandar por ${p.empresa === 'Paket' ? 'Blue' : 'Paket'}</button>` : '';
+const claseEmp = p => p.empresa === 'Paket' ? 'paket' : 'blue';
+
+function tarjeta(p) {
+  const tel = String(p.tel).replace(/\D/g, '');
+  const wa = tel ? WA + telWa(tel) : '';
+  const entrega = p.entrega === 'Domicilio' ? 'A domicilio' : 'Punto Blue (buscarle el más cercano)';
+  let h = `<div class="card ${p.estado.toLowerCase()} ${claseEmp(p)}" data-id="${esc(p.id)}">
+    <div class="cab"><div><div class="id">${esc(p.id)}</div><div class="cuando">${esc(p.recibido)}</div><span class="badge">${esc(empresaTxt(p))}${p.cambiada ? ' · cambiado' : ''}</span>${btnEmpresa(p)}</div><div class="total">${clp(p.total)}</div></div>
+    <div class="cliente">${esc(p.cliente)}</div>
+    <div class="datos">${wa ? `<a href="${wa}" target="_blank">${esc(p.tel)}</a>` : esc(p.tel)}${p.mail ? ' · ' + esc(p.mail) : ''}<br>
+      ${esc(entrega)} · ${esc(p.comuna)}, ${esc(p.region)}<br>${esc(p.dir)}
+      ${p.necesita ? `<br><b>Lo necesita para: ${esc(p.necesita)}</b>` : ''}${p.esRegalo ? '<br><b>🎁 Es regalo</b>' : ''}</div>
+    <div class="pidio">${esc(p.resumen)}\nEnvío: ${p.envio ? clp(p.envio) : 'gratis'}</div>`;
+  if (p.previo) h += `<div class="info">↺ ${esc(p.previo)}</div>`;
+  if (p.estado === 'Pendiente') {
+    (p.avisos || []).forEach(a => h += `<div class="aviso">⚠ ${esc(a)}</div>`);
+    const sin = p.filas.some(f => !f.enCatalogo);
+    h += `<details ${sin ? 'open' : ''}><summary>Cómo queda en el maestro (VENTAS)${sin ? ' · hay productos sin costo en CATALOGO' : ''}</summary>
+      <div class="filas">${p.filas.map((f, i) => fila(f, i)).join('')}</div>
+      <button class="mas" data-mas>+ agregar fila</button></details>
+    <div class="acciones"><button class="javi" data-pago="Javi">Pagó a Javi</button><button class="caro" data-pago="Caro">Pagó a Caro</button><button class="descartar" data-descartar>Descartar</button></div>`;
+  } else if (p.estado === 'Pagado') {
+    h += `<div class="estado">✓ Pagó a ${esc(p.cuenta)}${p.pagadoEl ? ' · ' + esc(p.pagadoEl.replace(/^'/, '')) : ''} · por enviar</div>
+    <div class="envio">
+      <details ${ABIERTOS.has(p.id) ? 'open' : ''} data-datos><summary style="font-weight:700;color:var(--negro);font-size:14px">📋 Datos para ${p.empresa === 'Paket' ? 'Paket' : 'Blue Express'}</summary>${datosEnvio(p)}</details>
+      <div><div class="lbl">N° de seguimiento</div><div class="seg"><input data-seg value="${esc(p.seguimiento)}" placeholder="Pega aquí el número de ${p.empresa === 'Paket' ? 'Paket' : 'Blue'}" inputmode="text"><button data-guardar-seg>Guardar</button></div>
+        ${p.seguimiento ? `<div class="ok" style="font-size:13px;margin-top:4px">✓ Guardado: ${esc(p.seguimiento)}</div>` : ''}</div>
+      <div><div class="lbl">Foto del paquete</div><div class="foto">
+        <label class="subir">📷 ${p.foto ? 'Cambiar foto' : 'Subir foto'}<input type="file" accept="image/*" data-foto></label>
+        ${p.foto ? `<a href="${esc(p.foto)}" target="_blank">✓ Ver foto</a>` : '<span style="color:var(--gris);font-size:13px">Opcional: va en el correo al cliente</span>'}</div></div>
+    </div>
+    <div class="acciones"><button class="enviar" data-enviado ${p.seguimiento ? '' : 'disabled title="Primero guarda el N° de seguimiento"'}>✓ Marcar como enviado</button><button class="suave" data-volver>Volver a pendiente</button></div>`;
+  } else if (p.estado === 'Enviado') {
+    h += `<div class="estado">✓ Enviado ${esc(p.enviadoEl.replace(/^'/, ''))} · pedido ${esc(p.numero)} en el maestro · pagó a ${esc(p.cuenta)}</div>
+      <div class="datos" style="margin-top:6px">N° de seguimiento: <b>${esc(p.seguimiento)}</b>${p.foto ? ` · <a href="${esc(p.foto)}" target="_blank">ver foto</a>` : ''}<br>${esc(p.aviso)}</div>
+      <div class="acciones"><a class="btn wsp" style="text-align:center;text-decoration:none" target="_blank" href="${wa ? wa + '?text=' + encodeURIComponent(mensaje(p)) : '#'}">💬 Avisar por WhatsApp</a>${p.mail ? '<button class="suave" data-reenviar>✉️ Reenviar correo</button>' : ''}</div>`;
+  } else {
+    h += `<div class="estado gris">Descartado <button data-reabrir>Volver a pendientes</button></div>`;
+  }
+  return h + '</div>';
+}
+
+function datosEnvio(p) {
+  const D = [['Nombre', p.cliente], ['Teléfono', p.tel]];
+  if (p.empresa !== 'Paket') D.push(['Correo', p.mail]);
+  D.push([p.entrega === 'Domicilio' ? 'Dirección' : 'Dirección (buscarle el Punto Blue más cercano)', p.dir], ['Comuna', p.comuna]);
+  if (p.empresa !== 'Paket') D.push(['Región', p.region]);
+  const todo = D.map(([k, v]) => `${k}: ${v || ''}`).join('\n');
+  return `<div class="datos-envio">${D.map(([k, v]) => `<div class="dato"><div><span>${esc(k)}</span><b>${esc(v || '—')}</b></div><button class="copiar" data-copiar="${esc(v || '')}">Copiar</button></div>`).join('')}
+    <button class="copiar-todo" data-copiar="${esc(todo)}">Copiar todo</button></div>`;
+}
+
+/* Mismo mensaje que arma el servidor (correo): para el botón de WhatsApp. */
+function linkSeg(p) {
+  const base = p.empresa === 'Paket' ? AJ.linkPaket : AJ.linkBlue;
+  if (!base) return '';
+  return base.includes('{n}') ? base.replace('{n}', encodeURIComponent(p.seguimiento)) : base;
+}
+function mensaje(p) {
+  const link = linkSeg(p), nombre = String(p.cliente || '').trim().split(/\s+/)[0] || '';
+  return String(AJ.mensaje || '').replace(/\{nombre\}/g, nombre).replace(/\{empresa\}/g, p.empresa === 'Paket' ? 'Paket' : 'Blue Express')
+    .replace(/\{seguimiento\}/g, p.seguimiento).replace(/\{link\}/g, link ? 'Síguelo aquí: ' + link : '').replace(/\n{3,}/g, '\n\n').trim();
+}
+
+const envioInput = v => `<div class="env"><label>Envío cobrado</label><input class="num" data-k="Envio Cobrado" inputmode="numeric" value="${esc(v)}"></div>`;
+function fila(f, i) {
+  return `<div class="fl"><div class="prod"><label>Producto</label><input list="cat" data-k="Producto" value="${esc(f.Producto)}">${f.enCatalogo === false ? '<span class="sin">No está en CATALOGO: entra sin costo</span>' : ''}</div>
+    <button data-quitar title="Quitar fila">×</button>
+    <div><label>Cantidad</label><input class="num" data-k="Cantidad" inputmode="numeric" value="${esc(f.Cantidad)}"></div>
+    <div><label>Precio unit.</label><input class="num" data-k="Precio Unit." inputmode="numeric" value="${esc(f['Precio Unit.'])}"></div>
+    ${i === 0 ? envioInput(f['Envio Cobrado']) : '<div></div>'}</div>`;
+}
+
+function leerFilas(card) {
+  return [...card.querySelectorAll('.fl')].map((tr, i) => {
+    const o = {};
+    tr.querySelectorAll('input').forEach(x => o[x.dataset.k] = x.dataset.k === 'Producto' ? x.value.trim() : Number(String(x.value).replace(/\D/g, '') || 0));
+    if (i === 0 && !('Envio Cobrado' in o)) o['Envio Cobrado'] = 0;
+    return o;
+  }).filter(o => o.Producto && o.Cantidad > 0);
+}
+
+/* Foto del celular: se achica a 1600 px antes de subirla (más rápida y liviana). */
+function achicar(file) {
+  return new Promise((ok, mal) => {
+    const img = new Image(), url = URL.createObjectURL(file);
+    img.onload = () => {
+      const max = 1600, r = Math.min(1, max / Math.max(img.width, img.height));
+      const c = document.createElement('canvas'); c.width = Math.round(img.width * r); c.height = Math.round(img.height * r);
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height); URL.revokeObjectURL(url);
+      ok(c.toDataURL('image/jpeg', 0.82));
+    };
+    img.onerror = () => mal(new Error('No pude leer la foto'));
+    img.src = url;
+  });
+}
+
+async function accion(card, fn, ...a) {
+  card.classList.add('cargando');
+  try { const r = await llamar(fn, ...a); await cargar(); return r; }
+  catch (e) { card.classList.remove('cargando'); toast('No se pudo: ' + e.message, 6000); return null; }
+}
+
+document.addEventListener('click', async ev => {
+  const b = ev.target.closest('button'); if (!b || b.closest('.modal')) return;
+  if (b.classList.contains('tab')) { document.querySelectorAll('.tab').forEach(t => t.classList.toggle('on', t === b)); FILTRO = b.dataset.f; pintar(); return; }
+  if (b.id === 'refrescar') { toast('Actualizando…', 1200); cargar(); return; }
+  if (b.id === 'ajustesBtn') { $('#aBlue').value = AJ.linkBlue; $('#aPaket').value = AJ.linkPaket; $('#aMsj').value = AJ.mensaje; $('#ajustes').style.display = 'flex'; return; }
+  if ('copiar' in b.dataset) { try { await navigator.clipboard.writeText(b.dataset.copiar); b.textContent = '✓ Copiado'; } catch (e) { toast('Mantén apretado el texto para copiarlo'); } setTimeout(() => { b.textContent = b.classList.contains('copiar-todo') ? 'Copiar todo' : 'Copiar'; }, 1500); return; }
+  const card = b.closest('.card'); if (!card) return;
+  const id = card.dataset.id, p = TODOS.find(x => x.id === id);
+  if ('quitar' in b.dataset) {
+    const fs = card.querySelector('.filas'), x = b.closest('.fl'), env = x.querySelector('.env');
+    x.remove();
+    const primera = fs.querySelector('.fl');
+    if (env && primera) primera.lastElementChild.outerHTML = env.outerHTML;
+    editando = true; return;
+  }
+  if ('mas' in b.dataset) { const fs = card.querySelector('.filas'); fs.insertAdjacentHTML('beforeend', fila({ Producto: '', Cantidad: 1, 'Precio Unit.': 0, 'Envio Cobrado': 0 }, fs.children.length)); editando = true; return; }
+  if (b.dataset.pago) {
+    const filas = leerFilas(card);
+    if (!filas.length) { toast('No quedó ningún producto'); return; }
+    const suma = filas.reduce((s, f) => s + f.Cantidad * f['Precio Unit.'], 0) + (filas[0]['Envio Cobrado'] || 0);
+    const dif = suma !== p.total ? `\n\nOjo: las filas suman ${clp(suma)} y el pedido dice ${clp(p.total)}.` : '';
+    if (!await preguntar(`¿${p.cliente} pagó ${clp(p.total)} a ${b.dataset.pago}?\n\nQueda «Por enviar» y entra al resumen de lo que hay que armar. Al maestro pasa cuando lo marquen como enviado.${dif}`)) return;
+    const r = await accion(card, 'confirmar', id, b.dataset.pago, filas);
+    if (r) toast('✓ Pagado: quedó en «Por enviar»');
+    return;
+  }
+  if (b.dataset.empresa) {
+    const a = b.dataset.empresa === 'Paket' ? 'Paket' : 'Blue Express';
+    if (!await preguntar(`¿Mandar el pedido de ${p.cliente} por ${a}?\n\nCambia los datos para copiar, el link de seguimiento y lo que queda en el maestro.${p.seguimiento ? '\n\nOjo: ya tiene un N° de seguimiento guardado; revisa que sea de ' + a + '.' : ''}`)) return;
+    const r = await accion(card, 'cambiarEmpresa', id, b.dataset.empresa);
+    if (r) toast('✓ Ahora va por ' + a);
+    return;
+  }
+  if ('guardarSeg' in b.dataset) {
+    const v = card.querySelector('[data-seg]').value.trim();
+    const r = await accion(card, 'guardarSeguimiento', id, v);
+    if (r) toast(v ? '✓ N° de seguimiento guardado' : 'N° de seguimiento borrado');
+    return;
+  }
+  if ('enviado' in b.dataset) {
+    const msj = mensaje(p);
+    const extra = `<div class="vista-msj">${esc(msj)}</div>
+      ${p.mail ? `<label class="chk"><input type="checkbox" id="mCorreo" checked> Mandar este mensaje por correo a ${esc(p.mail)}${p.foto ? ' (con la foto)' : ''}</label>` : '<p style="font-size:13px;color:var(--gris)">Este cliente no dejó correo: avísale por WhatsApp.</p>'}
+      ${linkSeg(p) ? '' : `<p class="aviso">Falta cargar el link de seguimiento de ${p.empresa === 'Paket' ? 'Paket' : 'Blue Express'} en ⚙︎ Ajustes: el mensaje va sin link.</p>`}
+      ${p.foto ? '' : '<p style="font-size:13px;color:var(--gris)">No tiene foto del paquete.</p>'}`;
+    const r = await preguntar(`¿Marcar como enviado el pedido de ${p.cliente}?\n\nSe anota en el maestro (VENTAS) con el siguiente N° de pedido y el seguimiento ${p.seguimiento}.`, extra);
+    if (!r) return;
+    const x = await accion(card, 'marcarEnviado', id, r.correo);
+    if (x) toast(`✓ Enviado: pedido ${x.numero} en el maestro · ${x.aviso}`, 6000);
+    return;
+  }
+  if ('volver' in b.dataset) {
+    if (!await preguntar(`¿Volver el pedido de ${p.cliente} a pendiente? (sale del resumen; el maestro no se toca)`)) return;
+    await accion(card, 'volverPendiente', id);
+    return;
+  }
+  if ('descartar' in b.dataset) {
+    if (!await preguntar(`¿Descartar el pedido de ${p.cliente}? (no pagó). Se puede volver a pendientes después.`)) return;
+    await accion(card, 'descartar', id);
+    return;
+  }
+  if ('reenviar' in b.dataset) {
+    if (!await preguntar(`¿Mandar otra vez el correo a ${p.mail}?`, `<div class="vista-msj">${esc(mensaje(p))}</div>`)) return;
+    const x = await accion(card, 'reenviarCorreo', id);
+    if (x) toast('✓ ' + x.aviso);
+    return;
+  }
+  if ('reabrir' in b.dataset) await accion(card, 'reabrir', id);
+});
+
+document.addEventListener('change', async ev => {
+  const inp = ev.target;
+  if (!inp.matches('[data-foto]') || !inp.files || !inp.files[0]) return;
+  const card = inp.closest('.card');
+  toast('Subiendo foto…', 20000);
+  try {
+    const data = await achicar(inp.files[0]);
+    const r = await accion(card, 'subirFoto', card.dataset.id, data);
+    if (r) toast('✓ Foto subida');
+  } catch (e) { toast('No se pudo: ' + e.message, 6000); }
+});
+document.addEventListener('toggle', ev => { const d = ev.target; if (d.matches && d.matches('[data-datos]')) { const id = d.closest('.card').dataset.id; d.open ? ABIERTOS.add(id) : ABIERTOS.delete(id); } }, true);
+document.addEventListener('input', ev => { if (ev.target.closest('.card')) editando = true; if (ev.target.id === 'buscar') pintar(); });
+
+$('#aCerrar').onclick = () => { $('#ajustes').style.display = 'none'; };
+$('#aGuardar').onclick = async () => {
+  try { AJ = await llamar('guardarAjustes', { linkBlue: $('#aBlue').value.trim(), linkPaket: $('#aPaket').value.trim(), mensaje: $('#aMsj').value }); $('#ajustes').style.display = 'none'; toast('✓ Ajustes guardados'); pintar(); }
+  catch (e) { toast('No se pudo: ' + e.message, 6000); }
+};
+
+/* Se actualiza sola cada minuto (salvo que estén escribiendo o con una ventana abierta). */
+setInterval(() => {
+  const ocupado = editando || document.hidden || $('#modal').style.display === 'flex' || $('#ajustes').style.display === 'flex' || (document.activeElement && document.activeElement.matches('input,textarea'));
+  if (K && !ocupado) cargar();
+}, 60000);
+function pedirClave(error) {
+  $('#lista').innerHTML = `<div class="card" style="max-width:420px;margin:30px auto">
+    <div class="cliente" style="margin-top:0">Escribe la clave de la bandeja</div>
+    <p class="datos">Se pide una sola vez en este navegador. La tiene Áureo.</p>
+    ${error ? '<div class="aviso">Esa clave no sirve. Revísala.</div>' : ''}
+    <div class="fl" style="grid-template-columns:1fr;border:0"><input id="clave" type="password" autocomplete="off" placeholder="Clave"></div>
+    <div class="acciones"><button class="javi" id="entrar">Entrar</button></div></div>`;
+  const ir = async () => {
+    const k = $('#clave').value.trim(); if (!k) return;
+    try { await llamarCon(k, 'probarClave'); K = k; guardarClave(k); cargar(); }
+    catch (e) { pedirClave(true); }
+  };
+  $('#entrar').onclick = ir; $('#clave').onkeydown = ev => { if (ev.key === 'Enter') ir(); };
+}
+if (K) cargar(); else pedirClave(false);
+</script>
+</body>
+</html>
