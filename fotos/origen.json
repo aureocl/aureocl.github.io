@@ -349,9 +349,10 @@
   "protegida": true
  },
  "pokebola-mini": {
-  "fecha": "2026-11-03T20:00:00",
+  "fecha": "2026-11-20T11:56:50",
   "origen": "taller",
-  "producto": "pokebola-mini"
+  "producto": "pokebola-mini",
+  "protegida": true
  },
  "rangers-de-talca": {
   "fecha": "2026-11-03T20:00:00",
