@@ -277,9 +277,10 @@
   "protegida": true
  },
  "luffy-mini": {
-  "fecha": "2026-11-03T20:00:00",
+  "fecha": "2026-11-20T11:55:58",
   "origen": "taller",
-  "producto": "luffy-mini"
+  "producto": "luffy-mini",
+  "protegida": true
  },
  "magallanes": {
   "fecha": "2026-11-03T20:00:00",
