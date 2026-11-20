@@ -51,9 +51,10 @@
   "producto": "barcelona"
  },
  "blastoise-mini": {
-  "fecha": "2026-11-03T20:00:00",
+  "fecha": "2026-11-20T11:54:06",
   "origen": "taller",
-  "producto": "blastoise-mini"
+  "producto": "blastoise-mini",
+  "protegida": true
  },
  "bob-esponja-mini": {
   "fecha": "2026-11-08T23:30:48",
