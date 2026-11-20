@@ -57,9 +57,10 @@
   "protegida": true
  },
  "bob-esponja-mini": {
-  "fecha": "2026-11-08T23:30:48",
+  "fecha": "2026-11-20T11:54:15",
   "origen": "taller",
-  "producto": "Bob Esponja mini"
+  "producto": "Bob Esponja mini",
+  "protegida": true
  },
  "boca-juniors": {
   "fecha": "2026-11-03T20:00:00",
