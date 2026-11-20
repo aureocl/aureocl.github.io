@@ -90,9 +90,10 @@
   "producto": "carabela-magallanes-grande"
  },
  "celeste": {
-  "fecha": "2026-11-03T20:00:00",
+  "fecha": "2026-11-20T11:54:25",
   "origen": "taller",
-  "producto": "celeste"
+  "producto": "celeste",
+  "protegida": true
  },
  "charmander-mini": {
   "fecha": "2026-11-20T11:53:38",
