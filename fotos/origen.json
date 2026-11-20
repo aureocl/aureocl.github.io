@@ -225,9 +225,10 @@
   "producto": "Harry Styles · Kiss All the Time"
  },
  "hello-kitty-mini-azul": {
-  "fecha": "2026-11-03T20:00:00",
+  "fecha": "2026-11-20T11:55:08",
   "origen": "taller",
-  "producto": "hello-kitty-mini-azul"
+  "producto": "hello-kitty-mini-azul",
+  "protegida": true
  },
  "hello-kitty-mini-rosada": {
   "fecha": "2026-11-03T20:00:00",
