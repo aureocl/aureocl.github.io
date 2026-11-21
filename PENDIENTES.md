@@ -16,6 +16,7 @@ Formato: `hilo · qué · quién · estado` (estado: por hacer · en curso · es
 - Todos · Pasar este repo a privado y dejar aureocl.github.io redirigiendo al dominio nuevo · espera a Áureo
 
 ## Listo
+- W2 · Mini de regalo con confirmación (no automática) + Ingreso rápido interno con descuentos (`#rapido`) · Áureo · 21-nov-2026
 - W1/W2 · Oferta especial en rojo en la ficha de cada escudo: escudo + 2 camisetas DEL MISMO EQUIPO (PAPA 1 / HIJO 10), botón «Lo quiero con camisetas»; el paso del pack ya no muestra camisetas de otro club · Áureo · 21-nov-2026
 - W3 · Bandeja en página propia `aureocl.github.io/bandeja` (funciona en celulares con varias cuentas de Google) · Áureo · 20-nov-2026
 - Común + W2 · Catálogo se actualiza solo con versión nueva + modo equipo (`?equipo=javi|caro`, guarda directo en la bandeja) · Áureo · 20-nov-2026

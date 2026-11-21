@@ -17,12 +17,12 @@ Cada hilo **solo toca sus archivos**. Si necesita cambiar un archivo de otro hil
 | Hilo | Parte de la cadena | Archivos |
 | --- | --- | --- |
 | **W1 · Vitrina** | Portada, catálogo, landing/ficha de cada producto, diseño y animaciones | `js/vitrina.js`, `landing/`, `proto-camisetas/`, `css/estilos.css` (secciones de vitrina) |
-| **W2 · Embudo y pedido** | Carrito, ofertas (camisetas, colección, mini de regalo, prioridad), entrega, «Pedido listo», salto a WhatsApp | `js/pedido.js`, `css/estilos.css` (secciones de pedido) |
+| **W2 · Embudo y pedido** | Carrito, ofertas (camisetas, colección, mini de regalo, prioridad), entrega, «Pedido listo», salto a WhatsApp | `js/pedido.js`, `js/interno.js` (ingreso rápido del equipo), `css/estilos.css` (secciones de pedido) |
 | **W3 · Backend y panel** | Guardar pedidos (Cloudflare D1), panel `/admin`, Workers, seguridad | `api/`, `admin/` (por crear) |
 | **W4 · Tráfico y medición** | Dominio, píxel y conversiones de Meta, velocidad, Google, retargeting | `js/medicion.js`, configuración de dominio |
 | **Comunes** (con cuidado, avisar) | Ajustes y datos fijos, utilidades, arranque | `js/config.js`, `js/base.js`, `js/app.js`, `index.html` |
 
-`index.html` carga los scripts en este orden: `config → medicion → base → vitrina → pedido → app`. Son scripts
+`index.html` carga los scripts en este orden: `config → medicion → base → vitrina → pedido → interno → app`. Son scripts
 clásicos (sin módulos) y comparten variables globales: no renombrar una función o variable sin buscar dónde se usa.
 
 ## Cómo se trabaja un cambio

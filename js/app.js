@@ -4,7 +4,7 @@
 /* ---------- Navegación ---------- */
 (()=>{const u=document.getElementById("urgencia");if(URGENCIA&&new Date()<=new Date(URGENCIA.hasta+"T23:59:59")){u.textContent=URGENCIA.texto;u.style.display=""}})();
 if(FINAL)document.body.classList.add("final");else document.getElementById("avisoProto").style.display="";
-function ruta(){document.getElementById("toast").classList.remove("ver");const h=location.hash;if(h==="#listo"){vistaListo();return}if(h.startsWith("#p/"))vistaFicha(h.slice(3));else if(h==="#pedido")vistaPedido();else vistaCatalogo()}
+function ruta(){document.getElementById("toast").classList.remove("ver");const h=location.hash;if(h==="#listo"){vistaListo();return}if(h==="#rapido"&&EQUIPO){vistaRapido();return}if(h.startsWith("#p/"))vistaFicha(h.slice(3));else if(h==="#pedido")vistaPedido();else vistaCatalogo()}
 document.addEventListener("click",e=>{
   const a=e.target.closest("[data-add]");if(a){e.stopPropagation();agregar(a.dataset.add);return}
   const c=e.target.closest("[data-cat]");if(c){cat=c.dataset.cat;vistaCatalogo();return}
@@ -15,7 +15,7 @@ document.getElementById("volver").onclick=()=>{if(location.hash==="#pedido"&&pas
 document.getElementById("carroFlot").onclick=()=>{paso=0;location.hash="#pedido"};
 document.getElementById("toastVer").onclick=()=>{document.getElementById("toast").classList.remove("ver");paso=0;location.hash="#pedido"};
 window.addEventListener("hashchange",()=>{if(hayNueva&&seguro()&&recargar())return;ruta();if(location.hash==="#pedido")revisarVersion()});
-if(EQUIPO){const d=document.createElement("div");d.style.cssText="background:#2b2540;color:#fff;font:600 13px/1.3 system-ui;padding:8px 16px;text-align:center";d.innerHTML=`Modo equipo · ${esc(EQUIPO)}: los pedidos van a la bandeja · <a href="?equipo=salir" style="color:#e8d9ff">Salir</a>`;document.body.prepend(d)}
+if(EQUIPO){const d=document.createElement("div");d.style.cssText="background:#2b2540;color:#fff;font:600 13px/1.3 system-ui;padding:8px 16px;text-align:center";d.innerHTML=`Modo equipo · ${esc(EQUIPO)}: los pedidos van a la bandeja · <a href="#rapido" style="color:#ffd76a">⚡ Ingreso rápido</a> · <a href="?equipo=salir" style="color:#e8d9ff">Salir</a>`;document.body.prepend(d)}
 
 /* ---------- Versión nueva (Áureo, 20-nov-2026) ----------
    Una pestaña abierta desde antes de una actualización sigue con el código viejo (así se perdió el pedido 714 de la bandeja).

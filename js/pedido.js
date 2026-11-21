@@ -25,6 +25,9 @@ const sumaRegalo=p=>p&&(p.precio||0)>=PROP.regaloMinProducto;
 const baseRegalo=()=>items().filter(x=>sumaRegalo(x.p)).reduce((a,x)=>a+x.p.precio*x.c,0)+precioCams(camisetas.length);
 function fijarMeta(){if(!metaRegalo)metaRegalo=Math.max(baseRegalo(),PROP.regaloMinProducto)+PROP.regaloMas}
 const ganaRegalo=()=>!!(PROP.barra&&metaRegalo&&baseRegalo()>=metaRegalo);
+/* La mini de regalo ya no se agrega sola (Áureo, 21-nov-2026): se desbloquea y la persona dice «Sí, la quiero» y elige series.
+   ganaRegalo() = la desbloqueó; llevaMini() = la aceptó (solo esa va al pedido, al resumen y a la bandeja). */
+const llevaMini=()=>ganaRegalo()&&datos.miniSi===true;
 function barra(base){if(!PROP.barra)return"";const meta=metaRegalo,br=baseRegalo(),pct=Math.min(100,(base<GRATIS_DESDE?base:br)/meta*100);
   const dg=dondeGratis();
   const txt=base<GRATIS_DESDE?`Te faltan <b>${clp(GRATIS_DESDE-base)}</b> para el envío gratis ${dg} 🚚`:br<meta?`¡Envío gratis ${dg}! Te faltan <b>${clp(meta-br)}</b> para una <b>mini sorpresa de regalo</b> 🎁<small style="display:block;color:var(--suave)">Suman los productos desde ${clp(PROP.regaloMinProducto)}</small>`:`<b>¡Ganaste una mini sorpresa de regalo!</b> 🎁`;
@@ -146,10 +149,12 @@ function vistaPedido(){
       ${bumps.empaque?`<div style="margin-top:8px"><input id="dedTxt" maxlength="50" placeholder="Tu dedicatoria (máx. 50 caracteres)" value="${esc(datos.ded||"")}" style="width:100%;padding:10px;border:1px solid var(--linea);border-radius:10px;font:inherit"><div class="cuenta" id="dedCuenta">${(datos.ded||"").length}/50</div>
         <div class="chips-ded">${dedOps.map(d=>`<button type="button" data-ded="${esc(d)}">“${esc(d)}”</button>`).join("")}</div></div>`:""}`:""}
     </div>
-    ${ganaRegalo()?`<div class="mini-regalo">${tag("B")}<b>🎁 Ganaste una minifigura sorpresa de regalo</b>
-      <p class="nota" style="margin:4px 0 0">Una figura 3D en mini bloques, como estas. Elige 4 series que te gusten y nosotros elegimos cuál te llega.</p>
+    ${ganaRegalo()?`<div class="mini-regalo">${tag("B")}<b>🎁 ¡Desbloqueaste una minifigura sorpresa de regalo!</b>
+      <p class="nota" style="margin:4px 0 0">Una figura 3D en mini bloques, como estas. ${datos.miniSi?"Elige hasta 4 series que te gusten y nosotros elegimos cuál te llega.":"¿La quieres? Va gratis en el mismo envío."}</p>
       <div class="fotos">${minisFoto.map(x=>img(x)).join("")}</div>
-      <div class="series">${[0,1,2,3].map(sel).join("")}</div></div>`:""}
+      ${datos.miniSi===true?`<div class="series">${[0,1,2,3].map(sel).join("")}</div><button class="no-gracias" style="margin-top:6px" data-mini="no">No la quiero</button>`
+        :datos.miniSi===false?`<p class="nota" style="margin:0">Elegiste no llevarla. <a href="#" data-mini="si">Cambiar: sí la quiero</a></p>`
+        :`<div class="opciones"><button class="op sel" data-mini="si"><b>🎁 Sí, la quiero</b></button><button class="op" data-mini="no"><b>No, gracias</b></button></div>`}</div>`:""}
     <div class="panel"><h3>Resumen</h3>
     ${I.map(x=>`<div class="res"><span>${esc(x.p.nombre)} × ${x.c}</span><span>${clp(x.p.precio*x.c)}</span></div>`).join("")}
     ${T.cam?`<div class="res"><span>Camisetas × ${camisetas.length}${camRegalo()?" + 1 de regalo":""} <small style="color:var(--verde)">pack</small></span><span>${clp(T.cam)}</span></div>`:""}
@@ -157,7 +162,7 @@ function vistaPedido(){
     ${T.desc?`<div class="res"><span>Descuento por ${nEscudos()} escudos</span><span style="color:var(--verde)">−${clp(T.desc)}</span></div>`:""}
     ${T.mini?`<div class="res"><span>Mini sorpresa × ${minis}</span><span>${clp(T.mini)}</span></div>`:""}
     ${T.emp?`<div class="res"><span>Empaque de regalo</span><span>${clp(T.emp)}</span></div>`:""}
-    ${ganaRegalo()?`<div class="res"><span>🎁 Minifigura sorpresa</span><span style="color:var(--verde)">$0</span></div>`:""}
+    ${llevaMini()?`<div class="res"><span>🎁 Minifigura sorpresa</span><span style="color:var(--verde)">$0</span></div>`:""}
     <div class="res"><span id="envioRes"></span><span id="envioTxt"></span></div>
     ${PROP.prioridad?`<label class="prio"><input type="checkbox" id="fPrio" ${datos.prio?"checked":""}><span><b>⚡ Prioridad en el despacho +${clp(PROP.prioridad)}</b><span id="prioTxt"></span></span></label>`:""}
     <div class="res total"><span>Total</span><span id="totalTxt"></span></div>
@@ -222,6 +227,7 @@ function vistaPedido(){
   v.querySelectorAll("[data-bump]").forEach(b=>b.onchange=()=>{bumps[b.dataset.bump]=b.checked;const x=window.scrollY;vistaPedido();window.scrollTo(0,x)});
   const de=document.getElementById("dedTxt");if(de)de.oninput=()=>{datos.ded=de.value;document.getElementById("dedCuenta").textContent=de.value.length+"/50"};
   v.querySelectorAll("[data-ded]").forEach(b=>b.onclick=()=>{datos.ded=b.dataset.ded;de.value=datos.ded;document.getElementById("dedCuenta").textContent=datos.ded.length+"/50"});
+  v.querySelectorAll("[data-mini]").forEach(b=>b.onclick=ev=>{ev.preventDefault();datos.miniSi=b.dataset.mini==="si";const x=window.scrollY;vistaPedido();window.scrollTo(0,x)});
   v.querySelectorAll("[data-serie]").forEach(s=>s.onchange=()=>{datos.series=datos.series||[];datos.series[+s.dataset.serie]=s.value});
   var calc=()=>{const reg=document.getElementById("fReg").value,com=document.getElementById("fCom").value,mod=datos.mod||"Domicilio",e=envio(reg,com,mod,base);
     const stgo=reg==="Metropolitana",dias=stgo?"1 a 3 días hábiles":"2 a 5 días hábiles";
@@ -237,7 +243,7 @@ function vistaPedido(){
     if(camRegalo())A.push(["Camiseta de regalo",solaFila()?solaFila().precio:0]);
     if(T.desc)A.push([`Descuento por ${nEscudos()} escudos`,T.desc]);
     if(T.descCol)A.push(["Oferta de la colección",T.descCol]);
-    if(ganaRegalo())A.push(["Minifigura sorpresa de regalo",5000]);
+    if(llevaMini())A.push(["Minifigura sorpresa de regalo",5000]);
     if(!e.c)A.push(["Envío gratis",mod==="Domicilio"?3000:2000]);
     const ah=A.reduce((s,x)=>s+x[1],0);
     document.getElementById("ahorro").innerHTML=`<div class="fila-a"><span>Pagas</span><b>${clp(base+tot)}</b></div>${ah?`<div class="fila-a verde"><span>Ahorras en total</span><b>${clp(ah)}</b></div><ul>${A.map(([n,v])=>`<li><span>${n}</span><span>${clp(v)}</span></li>`).join("")}</ul>`:""}`;
@@ -249,6 +255,8 @@ function vistaPedido(){
     const g=id=>document.getElementById(id).value.trim();
     const falta=[["fNom","nombre"],["fTel","teléfono"],...(EQUIPO?[]:[["fMail","correo"]]),["fCom","comuna"],["fDir","dirección"]].filter(([id])=>!g(id)).map(([,n])=>n);
     if(falta.length){toast("Falta: "+falta.join(", "));return}
+    if(ganaRegalo()&&datos.miniSi===undefined){toast("Dinos si quieres tu minifigura de regalo 🎁");document.querySelector(".mini-regalo").scrollIntoView({behavior:"smooth",block:"center"});return}
+    if(llevaMini()&&!(datos.series||[]).some(Boolean)){toast("Elige al menos una serie para tu minifigura");return}
     if(g("fTel").replace(/\D/g,"").length<8){toast("Revisa el teléfono: debe tener al menos 8 números");return}
     if((!EQUIPO||g("fMail"))&&!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(g("fMail"))){toast("Revisa el correo");return}
     Object.assign(datos,{nom:g("fNom"),tel:g("fTel"),mail:g("fMail"),reg:g("fReg"),com:g("fCom"),dir:g("fDir"),ref:document.getElementById("fRef")?g("fRef"):"",mod:datos.mod||"Domicilio"});
@@ -265,7 +273,7 @@ function resumenCorto(F){
   const L=items().map(x=>`${x.p.nombre}${x.c>1?` x${x.c}`:""}`);
   if(camisetas.length)L.push(`${camisetas.length} camiseta${camisetas.length>1?"s":""}${camRegalo()?" + 1 de regalo":""}: ${[...camisetas,...(camRegalo()?[datos.camReg||{}]:[])].map(c=>`${c.n} ${c.d}${(c.eq||eqBase())!==eqBase()?` (${c.eq})`:""}`).join(", ")}`);
   if(F.T.mini)L.push(`Mini sorpresa x${minis}`);
-  if(ganaRegalo())L.push(`Mini de regalo${(datos.series||[]).filter(Boolean).length?` (${datos.series.filter(Boolean).join(", ")})`:""}`);
+  if(llevaMini())L.push(`Mini de regalo${(datos.series||[]).filter(Boolean).length?` (${datos.series.filter(Boolean).join(", ")})`:""}`);
   if(F.T.emp)L.push(`Empaque de regalo${datos.ded?`: "${datos.ded}"`:""}`);
   if(datos.prio)L.push("Prioridad en el despacho");
   L.push(`Envío ${F.mod==="Domicilio"?"a domicilio":"a punto Blue"}: ${F.e.c?clp(F.e.c):"gratis"}`);
@@ -317,7 +325,7 @@ function guardarPedido({id,e,mod,base,g,pagoA},esperar){
       items:items().map(x=>({n:x.p.nombre,c:x.c,pu:x.p.precio||0,escudo:esEscudo(x.p),col:coleccion.has(x.s)})),
       camisetas:camisetas.length?{c:camisetas.length,total:T.cam,detalle:camisetas.map(c=>`${c.n} ${c.d} - ${c.eq||eqB}`),regalo:r?`${r.n||"?"} ${r.d||"?"} - ${r.eq||eqB}`:""}:null,
       mini:T.mini?{c:minis,total:T.mini}:null,
-      regaloMini:ganaRegalo(),series:(datos.series||[]).filter(Boolean).join(", "),
+      regaloMini:llevaMini(),series:(datos.series||[]).filter(Boolean).join(", "),
       empaque:T.emp||0,dedicatoria:datos.ded||"",descEscudos:T.desc||0,descCol:T.descCol||0,
       envio:e.c||0,prioridad:datos.prio?PROP.prioridad:0,total:base+e.tot,esRegalo:!!datos.regalo,pagoDeclarado:pagoA||"",ingresadoPor:EQUIPO||""};
     if(esperar)return fetch(PEDIDOS_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(p)}).then(r=>r.json());

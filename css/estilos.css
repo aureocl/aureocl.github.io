@@ -361,3 +361,19 @@ body.final .quienes:has(>.placeholder){display:block}
 .oc-cuantas div{display:flex;gap:6px}
 .oc-cuantas button{min-width:38px;height:36px;padding:0 8px;border:1.5px solid #e3b4b0;background:#fff;border-radius:10px;font:700 14px Montserrat,sans-serif;color:#8e1c1c;cursor:pointer}
 .oc-cuantas button.sel{background:#c62828;border-color:#c62828;color:#fff}
+
+/* Ingreso rápido (modo equipo, #rapido) · 21-nov-2026 */
+.rapido .r-buscar,.rapido .r-motivo{width:100%;padding:12px;border:1.5px solid var(--oro);border-radius:12px;font:inherit;font-size:16px;background:#fff}
+.rapido .r-motivo{border:1px solid var(--linea);margin-top:8px;font-size:15px}
+.rapido .r-res{display:flex;flex-direction:column;gap:4px;margin:8px 0}
+.rapido .r-res button{display:flex;align-items:center;gap:10px;border:1px solid var(--linea);background:#fff;border-radius:10px;padding:6px 10px;text-align:left;font-size:13.5px}
+.rapido .r-res img{width:40px;height:40px;object-fit:contain;flex:none}
+.rapido .r-res span:first-of-type{flex:1}.rapido .r-res small{display:block;color:var(--suave);font-size:11.5px}
+.rapido .r-res i{font-style:normal;font-weight:700;font-size:20px;color:var(--oro)}
+.rapido .r-pu{display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;margin-top:6px;flex-wrap:wrap}
+.rapido .r-pu input{width:96px;padding:7px 8px;border:1px solid var(--linea);border-radius:8px;font:inherit;font-size:15px}
+.rapido .r-pu small{font-weight:400;color:var(--suave)}
+.rapido .r-fila{display:flex;justify-content:space-between;align-items:center}
+.rapido .r-cam{border-top:1px solid #f0ece4;padding-top:8px;margin-top:8px}
+.rapido .r-cam select{width:100%;padding:9px;border:1px solid var(--linea);border-radius:9px;font:inherit;margin-bottom:6px;background:#fff}
+.rapido .r-cam .nn{display:flex;gap:6px}.rapido .r-cam .nn input{flex:1;min-width:0;padding:9px;border:1px solid var(--linea);border-radius:9px;font:inherit}.rapido .r-cam .nn .num{flex:0 0 64px}
