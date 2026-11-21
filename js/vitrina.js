@@ -39,18 +39,26 @@ function vistaCatalogo(){
   <footer><a class="avisame" target="_blank" href="https://wa.me/${WHATSAPP}?text=${encodeURIComponent("Hola Áureo! Quiero que me avisen cuando lancen escudos y figuras nuevas.")}">🔔 Avísame de los lanzamientos</a><br><br>Precios en pesos chilenos · Pago por transferencia, coordinado por WhatsApp.</footer>`;
 }
 
-/* Oferta especial en rojo junto al escudo (Áureo, 21-nov-2026): el escudo + 2 camisetas DEL MISMO EQUIPO (parCam en config.js).
-   «Lo quiero con camisetas» agrega el escudo y deja elegidas 2 camisetas para el paso del pack. */
-const PACK_N=2;
+/* Oferta especial en rojo junto al escudo (Áureo, 21-nov-2026): el escudo + camisetas DEL MISMO EQUIPO (parCam en config.js).
+   Parte en 2 camisetas y abajo se elige cuántas (1 a 5; con 5 va 1 de regalo, PROP.camRegaloCada). «Lo quiero con camisetas»
+   agrega el escudo y deja esa cantidad elegida para el paso del pack. */
+const PACK_N=2;let packN=PACK_N;
 function ofertaCam(p){
   if(!tramosCombo())return"";
-  const cams=parCam(p),eq=p.nombre.replace(/ \(.*\)$/,""),antes=p.precio+solasPrecio(PACK_N),ahora=p.precio+precioCams(PACK_N);
+  const n=packN,R=PROP.camRegaloCada,cams=parCam(p).slice(0,Math.min(n,2)),eq=p.nombre.replace(/ \(.*\)$/,""),antes=p.precio+solasPrecio(n),ahora=p.precio+precioCams(n);
   return `<div class="oferta-cam"><div class="oc-tag">🔥 Oferta especial</div>
     <div class="oc-montaje">${img(p)}<span class="mas">+</span>${cams.length?cams.map(s=>`<img src="${s}" alt="Camiseta de ${esc(eq)} con nombre y número" loading="lazy">`).join(""):`<div class="oc-sin">👕<small>Con los colores de tu equipo</small></div>`}</div>
-    <b class="oc-tit">Tu escudo + ${PACK_N} camisetas ${cams.length?"de tu "+esc(eq):"de tu equipo"}</b>
-    <p>Cada una con el nombre y el número que quieras. Las eliges en el paso siguiente.</p>
+    <b class="oc-tit">Tu escudo + ${n} camiseta${n>1?"s":""} ${parCam(p).length?"de tu "+esc(eq):"de tu equipo"}${R&&n>=R?" + 1 de regalo 🎁":""}</b>
+    <p>${n>1?"Cada una":"Con"} el nombre y el número que quieras. ${n>1?"Las":"La"} eliges en el paso siguiente.</p>
+    <div class="oc-cuantas"><span>¿Cuántas camisetas?</span><div>${[1,2,3,4,5].map(k=>`<button class="${k===n?"sel":""}" data-pn="${k}">${R&&k===R?`${k}+1🎁`:k}</button>`).join("")}</div></div>
     <div class="oc-precio">${antes>ahora?`<s>${clp(antes)}</s>`:""}<b>${clp(ahora)}</b>${antes>ahora?`<span>Ahorras ${clp(antes-ahora)}</span>`:""}</div>
-    <button class="btn-grande oc-btn" data-pack>Lo quiero con camisetas</button></div>`;
+    <button class="btn-grande oc-btn" data-pack>Lo quiero con ${n>1?n+" camisetas":"1 camiseta"}</button></div>`;
+}
+/* Enciende los botones de la oferta (cantidad y «Lo quiero»); al cambiar la cantidad se redibuja solo el recuadro. */
+function ofertaCamBotones(p,cant){
+  const box=document.querySelector(".oferta-cam");if(!box)return;
+  box.querySelectorAll("[data-pn]").forEach(b=>b.onclick=()=>{packN=+b.dataset.pn;box.outerHTML=ofertaCam(p);ofertaCamBotones(p,cant)});
+  box.querySelector("[data-pack]").onclick=()=>{agregar(p.slug,cant(),true);camisetas=Array.from({length:packN},(_,i)=>camisetas[i]||{n:"",d:""});medir("OfertaAceptada",{oferta:"pack-ficha",camisetas:packN});fijarMeta();paso=0;location.hash="#pedido"};
 }
 function vistaFicha(s){
   const p=porSlug(s);if(!p){location.hash="";return}
@@ -63,7 +71,7 @@ function vistaFicha(s){
   const otros=P.filter(x=>x.cat===p.cat&&x.slug!==p.slug&&x.precio&&!esVarSec(x)&&!(grp&&grp.some(([s])=>s===x.slug))).slice(0,10);
   const nEsc=P.filter(esEscudo).length;
   const fotoO=(k,ph,ratio="1/1")=>pl&&pl[k]?`<img class="foto-bloque" src="${fp(pl,pl[k])}" alt="" loading="lazy">`:`<div class="placeholder" style="aspect-ratio:${ratio}">${ph}</div>`;
-  let cant=1;
+  let cant=1;packN=PACK_N;
   document.getElementById("vista").innerHTML=`<div class="ficha">
   <div class="f-top">
     <div class="f-galeria">${pl?`<img class="principal" id="fotoP" src="${fp(pl,pl.galeria[0])}" alt="${esc(p.nombre)}">
@@ -138,6 +146,6 @@ function vistaFicha(s){
     document.querySelectorAll("[data-menos]").forEach(x=>x.onclick=()=>{if(cant>1){cant--;upd()}});
     document.querySelectorAll("[data-mas1]").forEach(x=>x.onclick=()=>{cant++;upd()});
     document.querySelectorAll("[data-cta]").forEach(x=>x.onclick=()=>{agregar(p.slug,cant,true);fijarMeta();paso=0;location.hash="#pedido"});
-    document.querySelectorAll("[data-pack]").forEach(x=>x.onclick=()=>{agregar(p.slug,cant,true);camisetas=Array.from({length:Math.max(PACK_N,camisetas.length)},(_,i)=>camisetas[i]||{n:"",d:""});medir("OfertaAceptada",{oferta:"pack-ficha",camisetas:camisetas.length});fijarMeta();paso=0;location.hash="#pedido"});
+    ofertaCamBotones(p,()=>cant);
   }
 }

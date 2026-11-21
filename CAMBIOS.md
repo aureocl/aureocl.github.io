@@ -2,6 +2,9 @@
 
 Lo más nuevo arriba. Formato: `fecha · PC (Áureo/Caro) · hilo · qué cambió`.
 
+- 21-nov-2026 · Áureo (Mac) · W1 · Oferta roja de la ficha: **«¿Cuántas camisetas?» 1 · 2 · 3 · 4 · 5+1🎁**, parte en 2. Cambia título, fotos,
+  precio y botón («Lo quiero con 1 camiseta»), y el pack queda con esa cantidad.
+
 - 21-nov-2026 · Áureo (Mac) · W1/W2 · **Camisetas para los 14 escudos que faltaban** (UC con su modelo de franja, Barcelona, Boca, Everton,
   Ñublense, Palestino, Real Madrid, Curicó, Puerto Montt, La Serena, Universitario, Lota, Talleres, La Calera; Carabela usa la de Magallanes).
   Ya todos los escudos muestran su par. `CAM_PAR` y `EQUIPOS_CAM` en config.js.

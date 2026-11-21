@@ -356,3 +356,8 @@ body.final .quienes:has(>.placeholder){display:block}
 .montaje.par .cams{flex-direction:row;width:56%}
 .montaje.par .cams img{width:50%}
 .montaje.par>img{width:38%}
+.oc-cuantas{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin:2px 0 10px}
+.oc-cuantas span{font-size:13.5px;font-weight:600;color:#8e1c1c}
+.oc-cuantas div{display:flex;gap:6px}
+.oc-cuantas button{min-width:38px;height:36px;padding:0 8px;border:1.5px solid #e3b4b0;background:#fff;border-radius:10px;font:700 14px Montserrat,sans-serif;color:#8e1c1c;cursor:pointer}
+.oc-cuantas button.sel{background:#c62828;border-color:#c62828;color:#fff}
