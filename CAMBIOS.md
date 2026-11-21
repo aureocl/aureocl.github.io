@@ -2,6 +2,9 @@
 
 Lo más nuevo arriba. Formato: `fecha · PC (Áureo/Caro) · hilo · qué cambió`.
 
+- 21-nov-2026 · Áureo (Mac) · W2 · Entrega a domicilio: «Dirección (calle y número)» + casilla nueva **«Depto, casa, condominio o referencia
+  (opcional)»**. A la bandeja y a WhatsApp va junto en la dirección («Av. Matta 1234 · Depto 504»); en punto Blue no sale.
+
 - 21-nov-2026 · Áureo (Mac) · W1 · Oferta roja de la ficha: **«¿Cuántas camisetas?» 1 · 2 · 3 · 4 · 5+1🎁**, parte en 2. Cambia título, fotos,
   precio y botón («Lo quiero con 1 camiseta»), y el pack queda con esa cantidad.
 

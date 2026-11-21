@@ -138,7 +138,8 @@ function vistaPedido(){
       <label class="campo" style="flex:1">Comuna<input id="fCom"></label></div>
     <div class="opciones"><button class="op${!punto?" sel":""}" data-mod="Domicilio"><b>🏠 A domicilio</b></button><button class="op${punto?" sel":""}" data-mod="Punto Bluexpress"><b>📍 Punto Blue Express</b></button></div>
     ${punto?`<p class="nota" style="margin:8px 0 0">Escribe tu dirección y nosotros te buscamos el Punto Blue Express más cercano. Te lo confirmamos por WhatsApp antes de enviar.</p>`:""}
-    <label class="campo" id="lDir">${punto?"Tu dirección (calle y número), para buscarte el punto más cercano":"Dirección (calle, número, depto)"}<input id="fDir" autocomplete="street-address"></label>
+    <label class="campo" id="lDir">${punto?"Tu dirección (calle y número), para buscarte el punto más cercano":"Dirección (calle y número)"}<input id="fDir" autocomplete="address-line1" placeholder="Ej.: Av. Matta 1234"></label>
+    ${punto?"":`<label class="campo" id="lRef">Depto, casa, condominio o referencia <small style="color:var(--suave)">(opcional)</small><input id="fRef" autocomplete="address-line2" placeholder="Ej.: Depto 504, torre B"></label>`}
     <div class="envio-linea"><span style="font-size:22px">🚚</span><span id="envioLinea"></span></div>
     <label class="check"><input type="checkbox" id="fReg2" ${datos.regalo?"checked":""}> Es para regalo: lo mandamos directo</label>
     ${datos.regalo&&PROP.empaque?`<label class="bump"><input type="checkbox" data-bump="empaque" ${bumps.empaque?"checked":""}><span>${tag("D")}<b>Empaque de regalo + tarjeta escrita a mano · ${clp(PROP.empaque)}</b>Llega listo para entregar.</span></label>
@@ -216,7 +217,7 @@ function vistaPedido(){
   if(etapa!=="entrega")return;
 
   const base=T.base;
-  [["fNom","nom"],["fTel","tel"],["fMail","mail"],["fReg","reg"],["fCom","com"],["fDir","dir"]].forEach(([id,k])=>{const el=document.getElementById(id);if(datos[k])el.value=datos[k];el.addEventListener("input",()=>{datos[k]=el.value;calc()});el.addEventListener("change",()=>{datos[k]=el.value;calc()})});
+  [["fNom","nom"],["fTel","tel"],["fMail","mail"],["fReg","reg"],["fCom","com"],["fDir","dir"],["fRef","ref"]].forEach(([id,k])=>{const el=document.getElementById(id);if(!el)return;if(datos[k])el.value=datos[k];el.addEventListener("input",()=>{datos[k]=el.value;calc()});el.addEventListener("change",()=>{datos[k]=el.value;calc()})});
   const fr=document.getElementById("fReg2");fr.onchange=()=>{datos.regalo=fr.checked;if(!fr.checked)bumps.empaque=false;const x=window.scrollY;vistaPedido();window.scrollTo(0,x)};
   v.querySelectorAll("[data-bump]").forEach(b=>b.onchange=()=>{bumps[b.dataset.bump]=b.checked;const x=window.scrollY;vistaPedido();window.scrollTo(0,x)});
   const de=document.getElementById("dedTxt");if(de)de.oninput=()=>{datos.ded=de.value;document.getElementById("dedCuenta").textContent=de.value.length+"/50"};
@@ -250,7 +251,7 @@ function vistaPedido(){
     if(falta.length){toast("Falta: "+falta.join(", "));return}
     if(g("fTel").replace(/\D/g,"").length<8){toast("Revisa el teléfono: debe tener al menos 8 números");return}
     if((!EQUIPO||g("fMail"))&&!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(g("fMail"))){toast("Revisa el correo");return}
-    Object.assign(datos,{nom:g("fNom"),tel:g("fTel"),mail:g("fMail"),reg:g("fReg"),com:g("fCom"),dir:g("fDir"),mod:datos.mod||"Domicilio"});
+    Object.assign(datos,{nom:g("fNom"),tel:g("fTel"),mail:g("fMail"),reg:g("fReg"),com:g("fCom"),dir:g("fDir"),ref:document.getElementById("fRef")?g("fRef"):"",mod:datos.mod||"Domicilio"});
     siguiente();
   };
 }
@@ -270,11 +271,14 @@ function resumenCorto(F){
   L.push(`Envío ${F.mod==="Domicilio"?"a domicilio":"a punto Blue"}: ${F.e.c?clp(F.e.c):"gratis"}`);
   return L;
 }
+/* Dirección + depto/referencia (Áureo, 21-nov-2026: casilla aparte para que en «Dirección» pongan solo calle y número).
+   A la bandeja y a WhatsApp va todo junto en «dir» («Av. Matta 1234 · Depto 504»). En punto Blue no se pide referencia. */
+const dirCompleta=()=>[datos.dir,(datos.mod||"Domicilio")==="Domicilio"?datos.ref:""].map(s=>(s||"").trim()).filter(Boolean).join(" · ");
 function nuevoId(){const d=new Date(),pad=n=>String(n).padStart(2,"0");return`AU-${String(d.getFullYear()).slice(2)}${pad(d.getMonth()+1)}${pad(d.getDate())}-${Math.floor(100+Math.random()*900)}`}
 /* Modo equipo: espera la respuesta de la bandeja para decir si quedó guardado. El número se mantiene al reintentar (no duplica). */
 function guardarEquipo(b){
   const F=totalFinal();datos.idEq=datos.idEq||nuevoId();const id=datos.idEq;
-  const g=k=>({fNom:datos.nom,fTel:datos.tel,fMail:datos.mail,fReg:datos.reg,fCom:datos.com,fDir:datos.dir}[k]||"");
+  const g=k=>({fNom:datos.nom,fTel:datos.tel,fMail:datos.mail,fReg:datos.reg,fCom:datos.com,fDir:dirCompleta()}[k]||"");
   b.disabled=true;b.textContent="Guardando…";
   guardarPedido({id,e:{...F.e,tot:F.tot},mod:F.mod,base:F.T.base,g,pagoA:""},true)
     .then(r=>{if(!r||!r.ok)throw new Error((r&&r.error)||"");ultimo={id,total:F.total,link:"",equipo:true};location.hash="#listo"})
@@ -286,11 +290,11 @@ function enviarPedido(pagado){
   /* Mensaje corto (Áureo, 20-nov-2026): el detalle completo (correo, teléfono, descuentos) queda en la bandeja de pedidos. */
   const M=[`Hola! Hice el pedido ${id} en la web`,"",...resumenCorto(F).map(l=>"- "+l),"",
     `Total: ${clp(F.total)}`,
-    `Para: ${datos.nom}, ${datos.dir}, ${datos.com}${datos.reg&&datos.reg!=="Metropolitana"?`, ${datos.reg}`:""}${F.mod!=="Domicilio"?" (buscarme el punto Blue mas cercano)":""}`,
+    `Para: ${datos.nom}, ${dirCompleta()}, ${datos.com}${datos.reg&&datos.reg!=="Metropolitana"?`, ${datos.reg}`:""}${F.mod!=="Domicilio"?" (buscarme el punto Blue mas cercano)":""}`,
     ...(datos.regalo?["Es para regalo"]:[]),"",
     cta?`Ya transferi a la cuenta de ${cta}. Te envio el comprobante.`:"Quedo atento/a para transferir."];
   const link=`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(sinTildes(M.join("\n")))}`;
-  const g=k=>({fNom:datos.nom,fTel:datos.tel,fMail:datos.mail,fReg:datos.reg,fCom:datos.com,fDir:datos.dir}[k]||"");
+  const g=k=>({fNom:datos.nom,fTel:datos.tel,fMail:datos.mail,fReg:datos.reg,fCom:datos.com,fDir:dirCompleta()}[k]||"");
   guardarPedido({id,e:{...F.e,tot:F.tot},mod:F.mod,base:F.T.base,g,pagoA:cta});
   medir("InitiateCheckout",{value:F.total,currency:"CLP",num_items:items().reduce((s,x)=>s+x.c,0)});
   /* El carro NO se vacía aquí: si WhatsApp no se abre o la persona vuelve, el pedido sigue ahí.
