@@ -2,6 +2,10 @@
 
 Lo más nuevo arriba. Formato: `fecha · PC (Áureo/Caro) · hilo · qué cambió`.
 
+- 21-nov-2026 · Áureo (Mac) · W1/W2 · **Camisetas para los 14 escudos que faltaban** (UC con su modelo de franja, Barcelona, Boca, Everton,
+  Ñublense, Palestino, Real Madrid, Curicó, Puerto Montt, La Serena, Universitario, Lota, Talleres, La Calera; Carabela usa la de Magallanes).
+  Ya todos los escudos muestran su par. `CAM_PAR` y `EQUIPOS_CAM` en config.js.
+
 - 21-nov-2026 · Áureo (Mac) · W1/W2 · **Camisetas del mismo equipo junto al escudo**: en la ficha de cada escudo, recuadro rojo «🔥 Oferta
   especial» bajo el precio con el escudo + 2 camisetas de ese equipo (PAPA 1 / HIJO 10), precio tachado vs. sueltas y botón «Lo quiero con
   camisetas» (agrega el escudo y deja 2 elegidas en el pack). El paso del pack muestra ese par (antes a la U le salía la del Colo); el carrusel
