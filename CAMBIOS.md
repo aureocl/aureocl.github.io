@@ -78,3 +78,9 @@ Lo más nuevo arriba. Formato: `fecha · PC (Áureo/Caro) · hilo · qué cambi�
   guiado completo y «Pedido listo», sin errores.
 - 13-nov-2026 · Áureo · W4 · Cloudflare conectado a este repo (Worker `aureocl-github-io-catalogoweb`).
 - 12-nov-2026 · Áureo · W1/W2 · El prototipo v4 pasa a ser el catálogo principal; respaldo en `catalogo-v1.html`.
+
+## 2026-11-21 · Mac · W1/W2 · Camisetas del mismo equipo junto al escudo
+- Ficha de cada escudo: recuadro rojo «🔥 Oferta especial» bajo el precio con el escudo + 2 camisetas de ese equipo, precio tachado vs. sueltas y botón «Lo quiero con camisetas» (agrega el escudo y deja 2 camisetas elegidas en el pack).
+- Paso del pack: muestra el par del mismo equipo (antes, a la U le salía la del Colo); el carrusel mezclado solo sale si el equipo no tiene camisetas.
+- Primer paso del pedido: línea «👕 N camisetas del pack» para que cuadre el total.
+- Fotos nuevas `proto-camisetas/par/<modelo>/papa-1.jpg` y `hijo-10.jpg` (21 modelos), hechas por código con `Aureo/catalogo-web/camisetas_par.py`. `CAM_PAR` y `parCam` en config.js. 4 equipos más en EQUIPOS_CAM.

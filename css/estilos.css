@@ -337,3 +337,22 @@ body.final .quienes:has(>.placeholder){display:block}
 .v-op span{font-size:12.5px;color:#666}
 .v-op .v-precio{color:inherit;font-weight:600;font-size:13.5px}
 .v-op.sel{border-color:var(--oro);box-shadow:0 0 0 1.5px var(--oro);background:#fffaf0}
+
+/* Oferta especial en rojo junto al escudo: escudo + 2 camisetas del mismo equipo (ficha, 21-nov-2026) */
+.oferta-cam{position:relative;margin:18px 0 6px;border:2px solid #c62828;border-radius:16px;background:#fff5f4;padding:16px 14px 14px;box-shadow:0 6px 18px rgba(198,40,40,.12)}
+.oc-tag{position:absolute;top:-12px;left:14px;background:#c62828;color:#fff;font:700 11px Montserrat,sans-serif;letter-spacing:.12em;text-transform:uppercase;padding:4px 10px;border-radius:999px}
+.oc-montaje{display:flex;align-items:center;justify-content:center;gap:6px;background:#fff;border-radius:12px;padding:10px;margin:4px 0 10px}
+.oc-montaje img{width:34%;max-width:150px;aspect-ratio:1/1;object-fit:contain}
+.oc-montaje img+.mas+img,.oc-montaje .mas~img{width:28%;max-width:130px}
+.oc-montaje .mas{font-size:24px;font-weight:700;color:#c62828}
+.oc-sin{font-size:46px;text-align:center;line-height:1}.oc-sin small{display:block;font-size:12px;color:#666;margin-top:4px}
+.oc-tit{display:block;font-size:17px;color:#8e1c1c}
+.oferta-cam p{margin:4px 0 8px;font-size:14px;color:#444}
+.oc-precio{display:flex;align-items:baseline;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+.oc-precio s{color:#888;font-size:15px}
+.oc-precio b{font-size:24px;color:#c62828}
+.oc-precio span{background:#c62828;color:#fff;font-size:12px;font-weight:700;padding:2px 8px;border-radius:999px}
+.oc-btn{background:#c62828!important;color:#fff!important;width:100%}
+.montaje.par .cams{flex-direction:row;width:56%}
+.montaje.par .cams img{width:50%}
+.montaje.par>img{width:38%}

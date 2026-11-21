@@ -39,6 +39,19 @@ function vistaCatalogo(){
   <footer><a class="avisame" target="_blank" href="https://wa.me/${WHATSAPP}?text=${encodeURIComponent("Hola Áureo! Quiero que me avisen cuando lancen escudos y figuras nuevas.")}">🔔 Avísame de los lanzamientos</a><br><br>Precios en pesos chilenos · Pago por transferencia, coordinado por WhatsApp.</footer>`;
 }
 
+/* Oferta especial en rojo junto al escudo (Áureo, 21-nov-2026): el escudo + 2 camisetas DEL MISMO EQUIPO (parCam en config.js).
+   «Lo quiero con camisetas» agrega el escudo y deja elegidas 2 camisetas para el paso del pack. */
+const PACK_N=2;
+function ofertaCam(p){
+  if(!tramosCombo())return"";
+  const cams=parCam(p),eq=p.nombre.replace(/ \(.*\)$/,""),antes=p.precio+solasPrecio(PACK_N),ahora=p.precio+precioCams(PACK_N);
+  return `<div class="oferta-cam"><div class="oc-tag">🔥 Oferta especial</div>
+    <div class="oc-montaje">${img(p)}<span class="mas">+</span>${cams.length?cams.map(s=>`<img src="${s}" alt="Camiseta de ${esc(eq)} con nombre y número" loading="lazy">`).join(""):`<div class="oc-sin">👕<small>Con los colores de tu equipo</small></div>`}</div>
+    <b class="oc-tit">Tu escudo + ${PACK_N} camisetas ${cams.length?"de tu "+esc(eq):"de tu equipo"}</b>
+    <p>Cada una con el nombre y el número que quieras. Las eliges en el paso siguiente.</p>
+    <div class="oc-precio">${antes>ahora?`<s>${clp(antes)}</s>`:""}<b>${clp(ahora)}</b>${antes>ahora?`<span>Ahorras ${clp(antes-ahora)}</span>`:""}</div>
+    <button class="btn-grande oc-btn" data-pack>Lo quiero con camisetas</button></div>`;
+}
 function vistaFicha(s){
   const p=porSlug(s);if(!p){location.hash="";return}
   const sv=scrollVar;scrollVar=null;modo("en-ficha",p.nombre);if(sv==null)window.scrollTo(0,0);medir("ViewContent",{content_name:p.nombre,value:p.precio,currency:"CLP"});
@@ -63,6 +76,7 @@ function vistaFicha(s){
       ${grp&&grp.filter(([s])=>porSlug(s)).length>1?`<div class="variantes"><div class="v-tit">${esTam(grp)?"Elige el tamaño":"Elige la versión"}</div><div class="v-ops">${grp.map(([s,l])=>{const v=porSlug(s);return v?`<button class="v-op${s===p.slug?" sel":""}" data-var="${s}"><b>${esc(l)}</b>${v.tam?`<span>${esc(v.tam)}</span>`:""}${v.precio?`<span class="v-precio">${clp(v.precio)}</span>`:""}</button>`:""}).join("")}</div></div>`:""}
       ${p.precio?`<div class="f-precio">${p.antes>p.precio?`<s>${clp(p.antes)}</s>`:""}<b>${clp(p.precio)}</b><span>${(()=>{const r=esEscudo(p)&&REGION_CLUB[ALIAS[p.slug]||p.slug];const zona=r?(r.includes("|")?" y a punto Blue en Calama":` y a punto Blue en ${r}`):"";return p.precio>=GRATIS_DESDE?`Envío gratis en Santiago${zona}`:`Envío gratis en Santiago${zona} desde $20.000`})()}</span></div>`:`<div class="f-precio"><b style="font-size:20px">${esc(p.det||"Precio a consultar")}</b></div>`}
       ${p.precio?`<div class="cta-info"><div class="cant"><button data-menos>−</button><span data-cantn>1</span><button data-mas1>+</button></div><button class="btn-grande" data-cta>Agregar al pedido</button></div>`:""}
+      ${esEscudo(p)&&p.precio?ofertaCam(p):""}
       <ul class="confianza"><li>📦 Llega en caja, con las piezas separadas por color</li><li>🧩 Siempre van piezas de más</li><li>🚚 Santiago 1 a 3 días hábiles · regiones 2 a 5</li><li>💬 Confirmas y pagas por WhatsApp, con Javi y Caro</li></ul>
     </div>
   </div>
@@ -124,5 +138,6 @@ function vistaFicha(s){
     document.querySelectorAll("[data-menos]").forEach(x=>x.onclick=()=>{if(cant>1){cant--;upd()}});
     document.querySelectorAll("[data-mas1]").forEach(x=>x.onclick=()=>{cant++;upd()});
     document.querySelectorAll("[data-cta]").forEach(x=>x.onclick=()=>{agregar(p.slug,cant,true);fijarMeta();paso=0;location.hash="#pedido"});
+    document.querySelectorAll("[data-pack]").forEach(x=>x.onclick=()=>{agregar(p.slug,cant,true);camisetas=Array.from({length:Math.max(PACK_N,camisetas.length)},(_,i)=>camisetas[i]||{n:"",d:""});medir("OfertaAceptada",{oferta:"pack-ficha",camisetas:camisetas.length});fijarMeta();paso=0;location.hash="#pedido"});
   }
 }

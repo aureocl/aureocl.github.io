@@ -57,6 +57,7 @@ function vistaPedido(){
     const g=enviadoReciente();
     html=`${g?`<div class="panel" style="border-color:var(--oro)"><p class="nota" style="margin:0">Ya enviaste este pedido (<b>${esc(g.id)}</b>). Si no alcanzó a llegar, continúa y mándalo de nuevo. Si quieres hacer otro, <a href="#" data-nuevo>empieza un pedido nuevo</a>.</p></div>`:""}<div class="panel"><h3>Lo que llevas</h3>${I.map(x=>`<div class="item">${img(x.p)}<div class="n">${esc(x.p.nombre)}<small>${clp(x.p.precio)} c/u</small></div>
       <div class="cant"><button data-q="${x.s}" data-d="-1">−</button><span>${x.c}</span><button data-q="${x.s}" data-d="1">+</button></div></div>`).join("")}
+      ${T.cam?`<div class="res"><span>👕 ${camisetas.length} camiseta${camisetas.length>1?"s":""} del pack <small style="color:var(--suave)">nombre y número en el paso siguiente</small></span><span>${clp(T.cam)}</span></div>`:""}
       ${T.desc?`<div class="res"><span>Descuento por ${nEscudos()} escudos</span><span style="color:var(--verde)">−${clp(T.desc)}</span></div>`:""}
       <button class="op" style="margin-top:8px" data-mirar>${mirando?"Cerrar":"+ Seguir mirando"}</button>${mirando?mirar():""}</div>${barra(T.base)}`;
     pie=`<button class="btn-grande" data-sig>Continuar · ${clp(T.base)}</button>`;
@@ -65,7 +66,9 @@ function vistaPedido(){
   if(etapa==="camisetas"){
     const solas=(()=>{const s=sola;if(!s)return n=>0;const m=(s.det.match(/\$[\d.]+/g)||[]).map(num);const T3={1:s.precio,2:m[0]||s.precio*2,3:m[1]||s.precio*3};return n=>n<=3?T3[n]:T3[3]+(n-3)*(m[2]||s.precio)})();
     const eqBase=(EQUIPOS_CAM.find(x=>norm(x[0])===norm(e0.p.nombre))||[e0.p.nombre])[0];
-    const mismas=CAMISETAS.filter(c=>norm(c[2])===norm(e0.p.nombre)), cams=[...mismas,...CAMISETAS.filter(c=>!mismas.includes(c))].slice(0,2);
+    /* Solo camisetas del mismo equipo del escudo (Áureo, 21-nov-2026): el par de config.js (parCam). Si el equipo no tiene,
+       salen las de clientes de ese club; nunca las de otro equipo. El carrusel mezclado solo sale cuando no hay par. */
+    const par=parCam(e0.p), cams=par.length?par:CAMISETAS.filter(c=>norm(c[2])===norm(e0.p.nombre)).slice(0,2).map(([f])=>CAM_BASE+f);
     const k=camisetas.length, opsEq=eq=>[eqBase,...EQUIPOS_CAM.map(x=>x[0]).filter(x=>x!==eqBase),OTRO_EQ].map(x=>`<option${x===eq?" selected":""}>${esc(x)}</option>`).join("");
     const fila=(c,i,reg)=>`<div class="cam-fila${reg?" regalo":""}"><img src="${fotoEq(c.eq||eqBase)}" alt="" data-fimg="${reg?"r":i}">
       <div><div class="et">${reg?"🎁 DE REGALO":"Camiseta "+(i+1)}</div><select data-ceq="${reg?"r":i}">${opsEq(c.eq||eqBase)}</select>
@@ -74,8 +77,8 @@ function vistaPedido(){
     html=`<div class="oferta">${tag("1 de 2")}<div class="t1">Solo por llevar tu escudo</div>
       <h2>El pack del ${esc(apodo)}</h2>
       <p style="margin:0">Tu ${esc(e0.p.nombre)} + una camiseta con el nombre y el número de cada uno. ¿En tu casa hay de otro equipo? Cada camiseta puede ser de un club distinto.</p>
-      <div class="montaje">${img(e0.p)}<span class="mas">+</span><div class="cams">${cams.map(([f])=>`<img src="${CAM_BASE}${f}" alt="">`).join("")}</div></div>
-      ${carrusel()}
+      <div class="montaje${par.length?" par":""}">${img(e0.p)}${cams.length?`<span class="mas">+</span><div class="cams">${cams.map(s=>`<img src="${s}" alt="">`).join("")}</div>`:""}</div>
+      ${par.length?"":carrusel()}
       <div class="opciones">${[1,2,3,4,5].map(n=>`<button class="op${k===n?" sel":""}" data-cam="${n}"><b>${n===R?`${n} + 1 🎁`:n}</b><s style="color:var(--suave)">${clp(solas(n))}</s> ${clp(precioCams(n))}</button>`).join("")}</div>
       ${R&&!k?`<p class="nota" style="margin:8px 0 0;text-align:center">🎁 <b>Si llevas ${R}, te regalamos la ${R+1}.ª</b></p>`:""}
       ${k?`<div class="precios"><s>${clp(e0.p.precio+solas(k))}</s><b>${clp(e0.p.precio+precioCams(k))}</b><span>Ahorras ${clp(solas(k)-precioCams(k))}</span></div>

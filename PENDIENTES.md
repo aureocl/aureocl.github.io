@@ -4,7 +4,7 @@ Tablero común de los dos PCs. Antes de tomar algo, revisar que nadie lo tenga �
 Formato: `hilo · qué · quién · estado` (estado: por hacer · en curso · espera a Áureo · listo).
 
 ## En curso
-- W1/W2 · Camisetas del mismo equipo destacadas en rojo junto al escudo (ficha y paso del pack) · Áureo · en curso
+- (nada)
 
 ## Por hacer
 - W2 · Escribir las cuentas de Javi y Caro en `CUENTAS` (`js/config.js`): mientras estén vacías, la pantalla de pago dice «te mandamos los datos por WhatsApp» · Áureo/Caro · espera a Áureo
@@ -16,6 +16,7 @@ Formato: `hilo · qué · quién · estado` (estado: por hacer · en curso · es
 - Todos · Pasar este repo a privado y dejar aureocl.github.io redirigiendo al dominio nuevo · espera a Áureo
 
 ## Listo
+- W1/W2 · Oferta especial en rojo en la ficha de cada escudo: escudo + 2 camisetas DEL MISMO EQUIPO (PAPA 1 / HIJO 10), botón «Lo quiero con camisetas»; el paso del pack ya no muestra camisetas de otro club · Áureo · 21-nov-2026
 - W3 · Bandeja en página propia `aureocl.github.io/bandeja` (funciona en celulares con varias cuentas de Google) · Áureo · 20-nov-2026
 - Común + W2 · Catálogo se actualiza solo con versión nueva + modo equipo (`?equipo=javi|caro`, guarda directo en la bandeja) · Áureo · 20-nov-2026
 - W1 · Página `/armar` del QR de la tarjeta de regalo: armar 2D, 3D, trucos, colgar y Tu misión Áureo (plazo de la misión: 1 mes desde que llega el pedido, por confirmar) · Áureo · 20-nov-2026
