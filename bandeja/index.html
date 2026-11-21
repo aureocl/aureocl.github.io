@@ -58,6 +58,7 @@
   .badge{display:inline-block;margin-top:4px;border-radius:999px;padding:2px 9px;font-size:12px;font-weight:700}
   .paket .badge{background:var(--lila);color:#fff}
   .blue .badge{background:var(--celeste);color:#fff}
+  .acciones .empacar{background:#b8860b;color:#fff}
   .cambiar-emp{margin:4px 0 0 6px;border:1px solid var(--borde,#ddd);background:#fff;color:inherit;border-radius:999px;padding:2px 10px;font-size:12px;font-weight:600;cursor:pointer}
   .total{font-size:20px;font-weight:800;white-space:nowrap;font-variant-numeric:tabular-nums}
   .cliente{margin:8px 0 4px;font-size:16px;font-weight:600}
@@ -125,7 +126,8 @@
   <div class="fila-h"><h1>Pedidos web <span>· Aureo</span></h1><button id="ajustesBtn">⚙︎ Ajustes</button></div>
   <div class="barra">
     <button class="tab on" data-f="Pendiente">Pendientes <b id="nP">·</b></button>
-    <button class="tab" data-f="Pagado">Por enviar <b id="nG">·</b></button>
+    <button class="tab" data-f="Pagado">Por armar <b id="nG">·</b></button>
+    <button class="tab" data-f="Empacado">📦 Empacados <b id="nK">·</b></button>
     <button class="tab" data-f="Enviado">Enviados <b id="nE">·</b></button>
     <button class="tab" data-f="Descartado">Descartados <b id="nD">·</b></button>
     <input id="buscar" placeholder="Buscar nombre, teléfono, AU-… o seguimiento">
@@ -194,12 +196,15 @@ async function cargar() {
   }
 }
 
+/* «Empacado» no es un estado en la planilla: es un pagado con «Empacado el». Sale del resumen y espera el despacho. */
+const etapa = p => p.estado === 'Pagado' && p.empacadoEl ? 'Empacado' : p.estado;
+
 function pintar() {
-  const cuenta = s => TODOS.filter(p => p.estado === s).length;
-  $('#nP').textContent = cuenta('Pendiente'); $('#nG').textContent = cuenta('Pagado'); $('#nE').textContent = cuenta('Enviado'); $('#nD').textContent = cuenta('Descartado');
+  const cuenta = s => TODOS.filter(p => etapa(p) === s).length;
+  $('#nP').textContent = cuenta('Pendiente'); $('#nG').textContent = cuenta('Pagado'); $('#nK').textContent = cuenta('Empacado'); $('#nE').textContent = cuenta('Enviado'); $('#nD').textContent = cuenta('Descartado');
   const q = norm($('#buscar').value);
-  const L = TODOS.filter(p => p.estado === FILTRO && (!q || norm([p.id, p.cliente, p.tel, p.mail, p.comuna, p.seguimiento, p.numero].join(' ')).includes(q)));
-  const vacios = { Pendiente: 'No hay pedidos esperando pago.', Pagado: 'No hay pedidos pagados por enviar.', Enviado: 'Todavía no hay pedidos enviados.', Descartado: 'Nada por aquí.' };
+  const L = TODOS.filter(p => etapa(p) === FILTRO && (!q || norm([p.id, p.cliente, p.tel, p.mail, p.comuna, p.seguimiento, p.numero].join(' ')).includes(q)));
+  const vacios = { Pendiente: 'No hay pedidos esperando pago.', Pagado: 'No hay pedidos pagados por armar.', Empacado: 'No hay pedidos empacados esperando despacho.', Enviado: 'Todavía no hay pedidos enviados.', Descartado: 'Nada por aquí.' };
   $('#lista').innerHTML = L.length ? L.map(tarjeta).join('') : `<p class="vacio">${vacios[FILTRO]}</p>`;
   pintarResumen();
   editando = false;
@@ -207,7 +212,7 @@ function pintar() {
 
 /* ---------- Resumen: lo que hay que armar (solo pagados sin enviar) ---------- */
 function pintarResumen() {
-  const P = TODOS.filter(p => p.estado === 'Pagado');
+  const P = TODOS.filter(p => etapa(p) === 'Pagado'), K = TODOS.filter(p => etapa(p) === 'Empacado').length;
   const paket = P.filter(p => p.empresa === 'Paket').length, blue = P.length - paket;
   const tot = {}, camisetas = [], regalos = [], empaques = [];
   P.forEach(p => (p.armar || []).forEach(x => {
@@ -225,7 +230,7 @@ function pintarResumen() {
     ${empaques.length ? `<h3>Empaque de regalo (${empaques.length})</h3><ul>${empaques.map(c => `<li>${esc(c)}</li>`).join('')}</ul>` : ''}`;
   const abierto = matchMedia('(min-width:981px)').matches || $('#resumen details') && $('#resumen details').open;
   $('#resumen').innerHTML = `<details class="res-movil" ${abierto ? 'open' : ''}><summary><h2 style="display:inline">📋 Por armar</h2> · ${P.length} pedido${P.length === 1 ? '' : 's'} pagado${P.length === 1 ? '' : 's'}</summary>
-    <div class="sub">Solo pedidos pagados que todavía no se envían.</div>${cuerpo}</details>`;
+    <div class="sub">Solo pedidos pagados que todavía no se empacan.${K ? ` Empacados esperando despacho: ${K}.` : ''}</div>${cuerpo}</details>`;
 }
 
 /* ---------- Tarjetas ---------- */
@@ -255,7 +260,7 @@ function tarjeta(p) {
       <button class="mas" data-mas>+ agregar fila</button></details>
     <div class="acciones"><button class="javi" data-pago="Javi">Pagó a Javi</button><button class="caro" data-pago="Caro">Pagó a Caro</button><button class="descartar" data-descartar>Descartar</button></div>`;
   } else if (p.estado === 'Pagado') {
-    h += `<div class="estado">✓ Pagó a ${esc(p.cuenta)}${p.pagadoEl ? ' · ' + esc(p.pagadoEl.replace(/^'/, '')) : ''} · por enviar</div>
+    h += `<div class="estado">✓ Pagó a ${esc(p.cuenta)}${p.pagadoEl ? ' · ' + esc(p.pagadoEl.replace(/^'/, '')) : ''} · ${p.empacadoEl ? '📦 empacado ' + esc(p.empacadoEl.replace(/^'/, '')) + ', falta despachar' : 'por armar'}</div>
     <div class="envio">
       <details ${ABIERTOS.has(p.id) ? 'open' : ''} data-datos><summary style="font-weight:700;color:var(--negro);font-size:14px">📋 Datos para ${p.empresa === 'Paket' ? 'Paket' : 'Blue Express'}</summary>${datosEnvio(p)}</details>
       <div><div class="lbl">N° de seguimiento</div><div class="seg"><input data-seg value="${esc(p.seguimiento)}" placeholder="Pega aquí el número de ${p.empresa === 'Paket' ? 'Paket' : 'Blue'}" inputmode="text"><button data-guardar-seg>Guardar</button></div>
@@ -264,7 +269,7 @@ function tarjeta(p) {
         <label class="subir">📷 ${p.foto ? 'Cambiar foto' : 'Subir foto'}<input type="file" accept="image/*" data-foto></label>
         ${p.foto ? `<a href="${esc(p.foto)}" target="_blank">✓ Ver foto</a>` : '<span style="color:var(--gris);font-size:13px">Opcional: va en el correo al cliente</span>'}</div></div>
     </div>
-    <div class="acciones"><button class="enviar" data-enviado ${p.seguimiento ? '' : 'disabled title="Primero guarda el N° de seguimiento"'}>✓ Marcar como enviado</button><button class="suave" data-volver>Volver a pendiente</button></div>`;
+    <div class="acciones"><button class="enviar" data-enviado ${p.seguimiento ? '' : 'disabled title="Primero guarda el N° de seguimiento"'}>✓ Marcar como enviado</button>${p.empacadoEl ? '<button class="suave" data-desempacar>Volver a por armar</button>' : '<button class="empacar" data-empacar>📦 Listo, empacado</button><button class="suave" data-volver>Volver a pendiente</button>'}</div>`;
   } else if (p.estado === 'Enviado') {
     h += `<div class="estado">✓ Enviado ${esc(p.enviadoEl.replace(/^'/, ''))} · pedido ${esc(p.numero)} en el maestro · pagó a ${esc(p.cuenta)}</div>
       <div class="datos" style="margin-top:6px">N° de seguimiento: <b>${esc(p.seguimiento)}</b>${p.foto ? ` · <a href="${esc(p.foto)}" target="_blank">ver foto</a>` : ''}<br>${esc(p.aviso)}</div>
@@ -357,9 +362,9 @@ document.addEventListener('click', async ev => {
     if (!filas.length) { toast('No quedó ningún producto'); return; }
     const suma = filas.reduce((s, f) => s + f.Cantidad * f['Precio Unit.'], 0) + (filas[0]['Envio Cobrado'] || 0);
     const dif = suma !== p.total ? `\n\nOjo: las filas suman ${clp(suma)} y el pedido dice ${clp(p.total)}.` : '';
-    if (!await preguntar(`¿${p.cliente} pagó ${clp(p.total)} a ${b.dataset.pago}?\n\nQueda «Por enviar» y entra al resumen de lo que hay que armar. Al maestro pasa cuando lo marquen como enviado.${dif}`)) return;
+    if (!await preguntar(`¿${p.cliente} pagó ${clp(p.total)} a ${b.dataset.pago}?\n\nQueda «Por armar» y entra al resumen de lo que hay que armar. Al maestro pasa cuando lo marquen como enviado.${dif}`)) return;
     const r = await accion(card, 'confirmar', id, b.dataset.pago, filas);
-    if (r) toast('✓ Pagado: quedó en «Por enviar»');
+    if (r) toast('✓ Pagado: quedó en «Por armar»');
     return;
   }
   if (b.dataset.empresa) {
@@ -385,6 +390,12 @@ document.addEventListener('click', async ev => {
     if (!r) return;
     const x = await accion(card, 'marcarEnviado', id, r.correo);
     if (x) toast(`✓ Enviado: pedido ${x.numero} en el maestro · ${x.aviso}`, 6000);
+    return;
+  }
+  if ('empacar' in b.dataset || 'desempacar' in b.dataset) {
+    const si = 'empacar' in b.dataset;
+    const r = await accion(card, 'marcarEmpacado', id, si);
+    if (r) toast(si ? '✓ Empacado: salió del resumen y quedó en «📦 Empacados»' : 'Volvió a «Por armar»');
     return;
   }
   if ('volver' in b.dataset) {
