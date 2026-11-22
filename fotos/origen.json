@@ -293,6 +293,12 @@
   "origen": "taller",
   "producto": "magallanes"
  },
+ "manchester-united": {
+  "fecha": "2026-11-22T14:46:54",
+  "origen": "taller",
+  "producto": "Manchester United",
+  "protegida": true
+ },
  "marciano-mini": {
   "fecha": "2026-11-20T11:56:08",
   "origen": "taller",
