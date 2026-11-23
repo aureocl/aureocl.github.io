@@ -269,7 +269,10 @@ function tarjeta(p) {
         <label class="subir">📷 ${p.foto ? 'Cambiar foto' : 'Subir foto'}<input type="file" accept="image/*" data-foto></label>
         ${p.foto ? `<a href="${esc(p.foto)}" target="_blank">✓ Ver foto</a>` : '<span style="color:var(--gris);font-size:13px">Opcional: va en el correo al cliente</span>'}</div></div>
     </div>
-    <div class="acciones"><button class="enviar" data-enviado ${p.seguimiento ? '' : 'disabled title="Primero guarda el N° de seguimiento"'}>✓ Marcar como enviado</button>${p.empacadoEl ? '<button class="suave" data-desempacar>Volver a por armar</button>' : '<button class="empacar" data-empacar>📦 Listo, empacado</button><button class="suave" data-volver>Volver a pendiente</button>'}</div>`;
+    <div class="acciones"><button class="enviar" data-enviado ${p.seguimiento ? '' : 'disabled title="Primero guarda el N° de seguimiento"'}>✓ Marcar como enviado</button><button class="suave" data-por-fuera title="Lo llevamos nosotros, un conocido o lo retiró: sin seguimiento ni correo">🤝 Entregado por fuera</button>${p.empacadoEl ? '<button class="suave" data-desempacar>Volver a por armar</button>' : '<button class="empacar" data-empacar>📦 Listo, empacado</button><button class="suave" data-volver>Volver a pendiente</button>'}</div>`;
+  } else if (p.estado === 'Enviado' && p.porFuera) {
+    h += `<div class="estado">🤝 Entregado ${esc(p.enviadoEl.replace(/^'/, ''))} · pedido ${esc(p.numero)} en el maestro · pagó a ${esc(p.cuenta)}</div>
+      <div class="datos" style="margin-top:6px">${esc(p.aviso)}</div>`;
   } else if (p.estado === 'Enviado') {
     h += `<div class="estado">✓ Enviado ${esc(p.enviadoEl.replace(/^'/, ''))} · pedido ${esc(p.numero)} en el maestro · pagó a ${esc(p.cuenta)}</div>
       <div class="datos" style="margin-top:6px">N° de seguimiento: <b>${esc(p.seguimiento)}</b>${p.foto ? ` · <a href="${esc(p.foto)}" target="_blank">ver foto</a>` : ''}<br>${esc(p.aviso)}</div>
@@ -390,6 +393,27 @@ document.addEventListener('click', async ev => {
     if (!r) return;
     const x = await accion(card, 'marcarEnviado', id, r.correo);
     if (x) toast(`✓ Enviado: pedido ${x.numero} en el maestro · ${x.aviso}`, 6000);
+    return;
+  }
+  if ('porFuera' in b.dataset) {
+    const extra = `<label class="campo">¿Quién lo entregó?<select id="fQuien" style="display:block;width:100%;margin-top:4px;border:1px solid var(--linea);border-radius:8px;padding:8px;font:inherit">
+        <option value="">Elige…</option><option value="Javi">Lo llevó Javi</option><option value="Caro">Lo llevó Caro</option>
+        <option value="Conocido">Un conocido (le pagamos)</option><option value="Retiro">Lo retiró el cliente</option></select></label>
+      <label class="campo">¿Cuánto pagamos de envío? (0 si no pagamos nada)<input id="fCosto" type="number" min="0" step="100" inputmode="numeric" value="0"></label>
+      <label class="campo" id="fPagoL" style="display:none">¿Quién lo pagó?<select id="fPago" style="display:block;width:100%;margin-top:4px;border:1px solid var(--linea);border-radius:8px;padding:8px;font:inherit">
+        <option value="Caro">Caro</option><option value="Javi">Javi</option></select></label>
+      <p style="font-size:13px;color:var(--gris)">No se le manda correo ni seguimiento al cliente.</p>`;
+    const pedir = preguntar(`¿${p.cliente} ya tiene su pedido en la mano?\n\nSe anota en el maestro (VENTAS) como «Entregado», con el siguiente N° de pedido y lo que pagamos de envío.`, extra);
+    const ver = () => { $('#fPagoL').style.display = Number($('#fCosto').value) > 0 ? 'block' : 'none'; };
+    $('#fCosto').oninput = ver;
+    $('#fQuien').onchange = () => { if ($('#fQuien').value === 'Conocido' && !Number($('#fCosto').value)) { $('#fCosto').value = ''; $('#fCosto').focus(); } ver(); };
+    if (!await pedir) return;
+    const quien = $('#fQuien').value, costo = Number($('#fCosto').value || 0), pago = $('#fPago').value;
+    if (!quien) { toast('Elige quién lo entregó'); return; }
+    if (!(costo >= 0)) { toast('El costo del envío tiene que ser un número'); return; }
+    if (quien === 'Conocido' && !costo && !await preguntar('¿El conocido lo llevó gratis? Quedará con envío $0.')) return;
+    const x = await accion(card, 'marcarPorFuera', id, quien, costo, pago);
+    if (x) toast(`✓ Entregado: pedido ${x.numero} en el maestro`, 6000);
     return;
   }
   if ('empacar' in b.dataset || 'desempacar' in b.dataset) {
