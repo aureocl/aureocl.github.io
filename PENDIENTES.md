@@ -4,7 +4,7 @@ Tablero común de los dos PCs. Antes de tomar algo, revisar que nadie lo tenga �
 Formato: `hilo · qué · quién · estado` (estado: por hacer · en curso · espera a Áureo · listo).
 
 ## En curso
-- W1 · Portada de presentación a pantalla completa + categorías con ejemplos que avanzan solos · Áureo (Mac) · en curso
+- (nada)
 
 ## Por hacer
 - W2 · Escribir las cuentas de Javi y Caro en `CUENTAS` (`js/config.js`): mientras estén vacías, la pantalla de pago dice «te mandamos los datos por WhatsApp» · Áureo/Caro · espera a Áureo
@@ -16,6 +16,7 @@ Formato: `hilo · qué · quién · estado` (estado: por hacer · en curso · es
 - Todos · Pasar este repo a privado y dejar aureocl.github.io redirigiendo al dominio nuevo · espera a Áureo
 
 ## Listo
+- W1 · Portada de presentación a pantalla completa + categorías con ejemplos que avanzan solos · Áureo · 23-nov-2026
 - W1 · Piezas en la ficha de todos los escudos (Real Madrid y 8 que no tenían) · Áureo · 22-nov-2026
 - W2 · Mini de regalo con confirmación (no automática) + Ingreso rápido interno con descuentos (`#rapido`) · Áureo · 21-nov-2026
 - W1/W2 · Oferta especial en rojo en la ficha de cada escudo: escudo + 2 camisetas DEL MISMO EQUIPO (PAPA 1 / HIJO 10), botón «Lo quiero con camisetas»; el paso del pack ya no muestra camisetas de otro club · Áureo · 21-nov-2026

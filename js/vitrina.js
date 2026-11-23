@@ -21,22 +21,84 @@ function tarjeta(p){
 }
 const masVendidos=()=>(typeof MAS_VENDIDOS!=="undefined"?MAS_VENDIDOS:[]).map(porSlug).filter(p=>p&&p.precio);
 function vistaCatalogo(){
+  if(cat==="Todo"&&!norm(document.getElementById("buscar").value)){vistaInicio();return}
   modo("en-catalogo");
   const cats=[...new Set(P.map(p=>p.cat))].sort((a,b)=>{const i=ORDEN.indexOf(a),j=ORDEN.indexOf(b);return(i<0?99:i)-(j<0?99:j)});
   const q=norm(document.getElementById("buscar").value);
   const L=P.filter(p=>!esVarSec(p)&&(cat==="Todo"||p.cat===cat)&&(!q||(h=>q.split(/\s+/).every(w=>h.includes(w)))(norm(p.nombre+" "+p.cat+" "+textoVar(p)))));
   const tc=tramosCombo(),c=comboFila(),s=solaFila();
   document.getElementById("vista").innerHTML=`
-  <nav class="chips">${["Todo",...cats].map(x=>`<button class="chip${x===cat?" activa":""}" data-cat="${esc(x)}">${esc(x)}</button>`).join("")}</nav>
-  ${cat==="Todo"&&!q?`<section class="hero"><h1 class="serif">Tu equipo,<br><em>armado por ti.</em></h1>
-    <p>Escudos, camisetas y figuras en mini bloques. Llegan en caja, los armas en una tarde y quedan colgados en tu pared.</p>
-    <div class="sellos"><div class="sello"><b>🚚</b>Envío gratis en Santiago desde $20.000</div><div class="sello"><b>📦</b>Llega en caja, piezas por color</div><div class="sello"><b>🧩</b>Siempre van piezas de más</div></div></section>`:""}
-  ${cat==="Todo"&&!q&&masVendidos().length?`<div class="wrap"><section class="mas-vendidos"><h2 class="sec">🔥 Los más vendidos<small>en oferta</small></h2>
-    <div class="grilla">${masVendidos().map(tarjeta).join("")}</div></section></div>`:""}
+  <nav class="chips">${["Todo",...cats].map(x=>`<button class="chip${x===cat?" activa":""}" data-cat="${esc(x)}">${x==="Todo"?"🏠 Inicio":esc(x)}</button>`).join("")}</nav>
   <div class="wrap">${L.length?cats.filter(x=>L.some(p=>p.cat===x)).map(x=>{const ps=L.filter(p=>p.cat===x);
     return `<section><h2 class="sec">${esc(x)}<small>${ps.length}</small></h2>
     <div class="grilla">${ps.map(tarjeta).join("")}</div></section>`}).join(""):`<div class="a-pedido"><p class="serif" style="font-size:26px;margin:0">¿No está «${esc(q)}»?</p><p>Lo diseñamos a pedido: nos mandas la imagen, te decimos si se puede y te damos el precio.</p><a class="btn-grande wa" style="display:flex;align-items:center;justify-content:center;text-decoration:none" target="_blank" href="https://wa.me/${WHATSAPP}?text=${encodeURIComponent("Hola Áureo! Quiero un escudo a pedido de: "+q)}">Pedir el mío por WhatsApp</a></div>`}</div>
   <footer><a class="avisame" target="_blank" href="https://wa.me/${WHATSAPP}?text=${encodeURIComponent("Hola Áureo! Quiero que me avisen cuando lancen escudos y figuras nuevas.")}">🔔 Avísame de los lanzamientos</a><br><br>Precios en pesos chilenos · Pago por transferencia, coordinado por WhatsApp.</footer>`;
+}
+
+/* ---------- Inicio (Áureo, 22-nov-2026) ----------
+   Portada de presentación a pantalla completa y después una franja por categoría con sus productos avanzando solos.
+   Las franjas se pueden deslizar con el dedo; se detienen mientras la tocas y siguen a los 2,5 s.
+   «Ver todos» abre la categoría completa en grilla (la vista de siempre). Con «reducir movimiento» del teléfono no se mueven. */
+const catsOrden=()=>[...new Set(P.map(p=>p.cat))].sort((a,b)=>{const i=ORDEN.indexOf(a),j=ORDEN.indexOf(b);return(i<0?99:i)-(j<0?99:j)});
+const DESC_CAT={"Escudos de fútbol":"Tu club en la pared, del porte de un póster","Camisetas personalizadas":"Con el nombre y el número que quieras","Figuras 3D mini":"Chiquitas, para el escritorio o para regalar","Figuras 3D grandes":"Para armar por capas y lucir en la repisa","Figuras 2D":"Tus personajes favoritos en píxel","Música":"La portada de tu disco favorito","Personalizados":"Lo que quieras, diseñado para ti"};
+function franja(id,titulo,sub,ps,dir){
+  return `<section class="franja-sec" id="${id}"><div class="wrap franja-cab"><div><h2 class="sec">${titulo}</h2>${sub?`<p class="franja-sub">${sub}</p>`:""}</div>
+    ${id.startsWith("cat-")?`<button class="ver-todos" data-vercat="${esc(ps[0].cat)}">Ver ${ps.length>1?"los "+ps.length:"todo"} →</button>`:""}</div>
+    <div class="franja" data-dir="${dir}"><div class="franja-pista">${ps.length>2?(t=>t+t)(Array(Math.ceil(9/ps.length)).fill(ps.map(tarjeta).join("")).join("")):ps.map(tarjeta).join("")}</div></div></section>`;
+}
+function vistaInicio(){
+  modo("en-catalogo");document.body.classList.add("en-inicio");document.getElementById("cab").style.display="none";
+  const cats=catsOrden(),nEsc=P.filter(esEscudo).length,mv=masVendidos();
+  const vitrina=[...mv,...P.filter(p=>p.precio&&!esVarSec(p)&&!mv.includes(p)&&/figura|m[uú]sica/i.test(p.cat))].slice(0,7);
+  const wa=t=>`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(t)}`;
+  document.getElementById("vista").innerHTML=`
+  <section class="portada">
+    <div class="pt-texto">
+      <img class="pt-logo" src="logo.svg" alt="Áureo">
+      <p class="pt-eyebrow">Lo que amas se arma</p>
+      <h1 class="serif">Tu equipo,<br><em>armado por ti.</em></h1>
+      <p class="pt-bajada">Escudos, camisetas y figuras en mini bloques. Llegan en caja, los armas en una tarde y quedan colgados en tu pared.</p>
+      <div class="pt-botones"><a class="pt-btn oro" href="#categorias" data-bajar>Ver el catálogo</a><a class="pt-btn borde" target="_blank" rel="noopener" href="${wa("Hola Áureo! Quiero un diseño a pedido.")}">Pedir uno a pedido</a></div>
+      <div class="pt-datos"><div><b>${nEsc}</b>escudos</div><div><b>126</b>pedidos en octubre</div><div><b>Todo Chile</b>despachamos</div></div>
+    </div>
+    <div class="pt-vitrina" aria-hidden="true">${vitrina.map((p,i)=>`<div class="pt-foto${i?"":" ver"}"><img src="${esc(fotoDe(p))}" alt="" ${i?'loading="lazy"':""} onerror="this.parentNode.remove()"><span>${esc(p.nombre.replace(/ \(.*\)$/,""))}</span></div>`).join("")}</div>
+    <a class="pt-bajar" href="#categorias" data-bajar aria-label="Ver el catálogo">⌄</a>
+  </section>
+  <div class="sellos-banda"><div class="wrap sellos"><div class="sello"><b>🚚</b>Envío gratis en Santiago desde $20.000</div><div class="sello"><b>📦</b>Llega en caja, piezas por color</div><div class="sello"><b>🧩</b>Siempre van piezas de más</div></div></div>
+  <div id="categorias">
+    <nav class="chips cat-nav">${cats.map(x=>`<button class="chip" data-irfranja="${slug(x)}">${esc(x)}</button>`).join("")}</nav>
+    ${mv.length?franja("mas-vendidos","🔥 Los más vendidos","Los que más arman nuestros clientes",mv,1):""}
+    ${cats.map((x,i)=>{const ps=P.filter(p=>p.cat===x&&!esVarSec(p));return ps.length?franja("cat-"+slug(x),esc(x),DESC_CAT[x]||"",ps,i%2?1:-1):""}).join("")}
+  </div>
+  <div class="wrap"><div class="a-pedido"><p class="serif" style="font-size:26px;margin:0">¿No está el tuyo?</p><p>Lo diseñamos a pedido: nos mandas la imagen, te decimos si se puede y te damos el precio.</p><a class="btn-grande wa" style="display:flex;align-items:center;justify-content:center;text-decoration:none" target="_blank" rel="noopener" href="${wa("Hola Áureo! Quiero un diseño a pedido.")}">Pedir el mío por WhatsApp</a></div></div>
+  <footer><a class="avisame" target="_blank" href="${wa("Hola Áureo! Quiero que me avisen cuando lancen escudos y figuras nuevas.")}">🔔 Avísame de los lanzamientos</a><br><br>Precios en pesos chilenos · Pago por transferencia, coordinado por WhatsApp.</footer>`;
+  const V=document.getElementById("vista");
+  V.querySelectorAll("[data-bajar]").forEach(a=>a.onclick=e=>{e.preventDefault();document.getElementById("categorias").scrollIntoView({behavior:"smooth"})});
+  V.querySelectorAll("[data-irfranja]").forEach(b=>b.onclick=()=>{const s=document.getElementById("cat-"+b.dataset.irfranja);if(s)window.scrollTo({top:s.getBoundingClientRect().top+scrollY-70,behavior:"smooth"})});
+  V.querySelectorAll("[data-vercat]").forEach(b=>b.onclick=()=>{cat=b.dataset.vercat;vistaCatalogo();window.scrollTo(0,0)});
+  animarInicio();
+}
+let animId=0;
+function animarInicio(){
+  const id=++animId,hover=matchMedia("(hover: hover)").matches,quieto=matchMedia("(prefers-reduced-motion: reduce)").matches;
+  /* Vitrina de la portada: cambia de foto cada 3 s */
+  const fotos=()=>[...document.querySelectorAll(".pt-foto")];let fi=0;
+  const t=setInterval(()=>{if(id!==animId||!document.querySelector(".portada")){clearInterval(t);return}const F=fotos();if(F.length<2||document.hidden)return;F[fi%F.length].classList.remove("ver");fi=(fi+1)%F.length;F[fi].classList.add("ver")},3000);
+  if(quieto)return;
+  /* Franjas: avanzan solas (~32 px/s), en vuelta infinita (el contenido se repite hasta 9+ tarjetas y va dos veces, para que alcance en pantallas anchas) */
+  const S=[...document.querySelectorAll(".franja")].map(el=>{const s={el,x:0,pausa:0,vis:false,dir:+el.dataset.dir||1};
+    const parar=()=>{s.pausa=performance.now()+2500};
+    ["pointerdown","touchstart","wheel"].forEach(ev=>el.addEventListener(ev,parar,{passive:true}));
+    el.addEventListener("scroll",()=>{if(performance.now()<s.pausa)s.x=el.scrollLeft},{passive:true});
+    return s});
+  const io=new IntersectionObserver(es=>es.forEach(e=>{const s=S.find(s=>s.el===e.target);if(s)s.vis=e.isIntersecting}));S.forEach(s=>io.observe(s.el));
+  let ant=performance.now();
+  const tick=ahora=>{if(id!==animId||!document.body.classList.contains("en-inicio")){io.disconnect();return}
+    const dt=Math.min(ahora-ant,60)/1000;ant=ahora;
+    S.forEach(s=>{if(!s.vis||ahora<s.pausa||(hover&&s.el.matches(":hover")))return;const mitad=s.el.scrollWidth/2;if(mitad<=s.el.clientWidth)return;
+      if(!s.x)s.x=s.dir<0?mitad:s.el.scrollLeft;s.x+=s.dir*32*dt;if(s.x>=mitad)s.x-=mitad;if(s.x<=0)s.x+=mitad;s.el.scrollLeft=s.x});
+    requestAnimationFrame(tick)};
+  requestAnimationFrame(tick);
 }
 
 /* Oferta especial en rojo junto al escudo (Áureo, 21-nov-2026): el escudo + camisetas DEL MISMO EQUIPO (parCam en config.js).
