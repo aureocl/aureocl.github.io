@@ -33,6 +33,7 @@ function vistaCatalogo(){
     return `<section><h2 class="sec">${esc(x)}<small>${ps.length}</small></h2>
     <div class="grilla">${ps.map(tarjeta).join("")}</div></section>`}).join(""):`<div class="a-pedido"><p class="serif" style="font-size:26px;margin:0">¿No está «${esc(q)}»?</p><p>Lo diseñamos a pedido: nos mandas la imagen, te decimos si se puede y te damos el precio.</p><a class="btn-grande wa" style="display:flex;align-items:center;justify-content:center;text-decoration:none" target="_blank" href="https://wa.me/${WHATSAPP}?text=${encodeURIComponent("Hola Áureo! Quiero un escudo a pedido de: "+q)}">Pedir el mío por WhatsApp</a></div>`}</div>
   <footer><a class="avisame" target="_blank" href="https://wa.me/${WHATSAPP}?text=${encodeURIComponent("Hola Áureo! Quiero que me avisen cuando lancen escudos y figuras nuevas.")}">🔔 Avísame de los lanzamientos</a><br><br>Precios en pesos chilenos · Pago por transferencia, coordinado por WhatsApp.</footer>`;
+  restaurar();
 }
 
 /* ---------- Inicio (Áureo, 22-nov-2026) ----------
@@ -76,7 +77,7 @@ function vistaInicio(){
   V.querySelectorAll("[data-bajar]").forEach(a=>a.onclick=e=>{e.preventDefault();document.getElementById("categorias").scrollIntoView({behavior:"smooth"})});
   V.querySelectorAll("[data-irfranja]").forEach(b=>b.onclick=()=>{const s=document.getElementById("cat-"+b.dataset.irfranja);if(s)window.scrollTo({top:s.getBoundingClientRect().top+scrollY-70,behavior:"smooth"})});
   V.querySelectorAll("[data-vercat]").forEach(b=>b.onclick=()=>{cat=b.dataset.vercat;vistaCatalogo();window.scrollTo(0,0)});
-  animarInicio();
+  restaurar();animarInicio();
 }
 let animId=0;
 function animarInicio(){
@@ -96,7 +97,7 @@ function animarInicio(){
   const tick=ahora=>{if(id!==animId||!document.body.classList.contains("en-inicio")){io.disconnect();return}
     const dt=Math.min(ahora-ant,60)/1000;ant=ahora;
     S.forEach(s=>{if(!s.vis||ahora<s.pausa||(hover&&s.el.matches(":hover")))return;const mitad=s.el.scrollWidth/2;if(mitad<=s.el.clientWidth)return;
-      if(!s.x)s.x=s.dir<0?mitad:s.el.scrollLeft;s.x+=s.dir*32*dt;if(s.x>=mitad)s.x-=mitad;if(s.x<=0)s.x+=mitad;s.el.scrollLeft=s.x});
+      if(!s.x)s.x=s.el.scrollLeft||(s.dir<0?mitad:0);s.x+=s.dir*32*dt;if(s.x>=mitad)s.x-=mitad;if(s.x<=0)s.x+=mitad;s.el.scrollLeft=s.x});
     requestAnimationFrame(tick)};
   requestAnimationFrame(tick);
 }
@@ -122,9 +123,17 @@ function ofertaCamBotones(p,cant){
   box.querySelectorAll("[data-pn]").forEach(b=>b.onclick=()=>{packN=+b.dataset.pn;box.outerHTML=ofertaCam(p);ofertaCamBotones(p,cant)});
   box.querySelector("[data-pack]").onclick=()=>{agregar(p.slug,cant(),true);camisetas=Array.from({length:packN},(_,i)=>camisetas[i]||{n:"",d:""});medir("OfertaAceptada",{oferta:"pack-ficha",camisetas:packN});fijarMeta();paso=0;location.hash="#pedido"};
 }
+/* Volver al mismo lugar (Áureo, 23-nov-2026): al entrar a un producto desde el inicio o una categoría se guarda dónde ibas
+   (scroll de la página y de cada franja); al volver atrás se deja todo igual. */
+let retorno=null;
+const lugar=()=>({cat,q:document.getElementById("buscar").value,y:window.scrollY,fr:[...document.querySelectorAll(".franja")].map(f=>f.scrollLeft)});
+function restaurar(){const r=retorno;retorno=null;if(!r||r.cat!==cat||r.q!==document.getElementById("buscar").value)return;
+  document.querySelectorAll(".franja").forEach((f,i)=>{if(r.fr[i]!=null)f.scrollLeft=r.fr[i]});
+  window.scrollTo({top:r.y,behavior:"instant"});requestAnimationFrame(()=>window.scrollTo({top:r.y,behavior:"instant"}))}
 function vistaFicha(s){
+  if(/en-catalogo/.test(document.body.className))retorno=lugar();
   const p=porSlug(s);if(!p){location.hash="";return}
-  const sv=scrollVar;scrollVar=null;modo("en-ficha",p.nombre);if(sv==null)window.scrollTo(0,0);medir("ViewContent",{content_name:p.nombre,value:p.precio,currency:"CLP"});
+  const sv=scrollVar;scrollVar=null;modo("en-ficha",p.nombre);if(sv==null)window.scrollTo({top:0,behavior:"instant"});medir("ViewContent",{content_name:p.nombre,value:p.precio,currency:"CLP"});
   const h=esEscudo(p)?hincha(p):null, pl=PILOTO[p.slug]||null;
   const grp=grupoDe(p.slug),base=grp&&porSlug(grp[0][0])||p;
   const pz=(grp&&(grp.find(([s])=>s===p.slug)||[])[2])||(h&&!esVarSec(p)?h[1]:null)||PIEZAS[p.slug]||null;
