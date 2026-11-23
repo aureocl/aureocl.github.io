@@ -2,6 +2,7 @@
 
 Lo más nuevo arriba. Formato: `fecha · PC (Áureo/Caro) · hilo · qué cambió`.
 
+- 22-nov-2026 · Mac (Áureo) · W1 · **Piezas en todos los escudos**: Real Madrid «más de 2.600» (estaba vacío en `HINCHA`) y `PIEZAS` nuevo en `js/config.js` para los escudos sin apodo (Carabela 4.300, Universitario 1.200, U. de Concepción 2.300, Fernández Vial 2.100, Lota 2.300, Talleres 2.500, La Calera 1.700, Manchester 3.800), desde su grilla y redondeado hacia abajo. `js/vitrina.js` lo usa si no hay otro dato.
 - 21-nov-2026 · Mac (Áureo) · W2 · **Mini de regalo con confirmación**: ya no se agrega sola; «¡Desbloqueaste una minifigura!» con «Sí, la quiero» / «No, gracias» y series (pide al menos 1). Solo la aceptada va al resumen, WhatsApp y bandeja. **Ingreso rápido** (`js/interno.js`, `#rapido`, solo modo equipo, link en la franja morada): buscador, precio editable, camisetas, mini solo si se marca, **descuento con motivo** (ya rebajado en los precios; manda `descInterno` + `motivoDesc`), envío editable y guardar en la bandeja.
 - 21-nov-2026 · Áureo (Mac) · W2 · Entrega a domicilio: «Dirección (calle y número)» + casilla nueva **«Depto, casa, condominio o referencia
   (opcional)»**. A la bandeja y a WhatsApp va junto en la dirección («Av. Matta 1234 · Depto 504»); en punto Blue no sale.

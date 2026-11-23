@@ -65,7 +65,7 @@ function vistaFicha(s){
   const sv=scrollVar;scrollVar=null;modo("en-ficha",p.nombre);if(sv==null)window.scrollTo(0,0);medir("ViewContent",{content_name:p.nombre,value:p.precio,currency:"CLP"});
   const h=esEscudo(p)?hincha(p):null, pl=PILOTO[p.slug]||null;
   const grp=grupoDe(p.slug),base=grp&&porSlug(grp[0][0])||p;
-  const pz=(grp&&(grp.find(([s])=>s===p.slug)||[])[2])||(h&&!esVarSec(p)?h[1]:null);
+  const pz=(grp&&(grp.find(([s])=>s===p.slug)||[])[2])||(h&&!esVarSec(p)?h[1]:null)||PIEZAS[p.slug]||null;
   const nombreCorto=base.nombre.replace(/ \(.*\)$/,"");
   const titulo=esEscudo(p)?`Tu ${esc(nombreCorto)},<br>armado por ti.`:`${esc(nombreCorto)},<br>armado por ti.`;
   const otros=P.filter(x=>x.cat===p.cat&&x.slug!==p.slug&&x.precio&&!esVarSec(x)&&!(grp&&grp.some(([s])=>s===x.slug))).slice(0,10);
