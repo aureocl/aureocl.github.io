@@ -311,12 +311,20 @@ function listaEmpacados(L) {
   return h + (G.length ? G.map(tarjeta).join('') : `<p class="vacio">No hay empacados por ${EMP === 'paket' ? 'Paket' : 'Blue Express'}.</p>`);
 }
 
+/* «'dd-MM-yyyy HH:mm» → «yyyy-MM-dd HH:mm» para ordenar; sin fecha de pago, al final. */
+function clavePago(p) {
+  const m = /(\d{2})-(\d{2})-(\d{4})(?:\s+(\d{2}:\d{2}))?/.exec(String(p.pagadoEl || ''));
+  return m ? `${m[3]}-${m[2]}-${m[1]} ${m[4] || '00:00'}` : '9999';
+}
+
 function pintar() {
   pintarPanel();
   const cuenta = s => TODOS.filter(p => etapa(p) === s).length;
   $('#nP').textContent = cuenta('Pendiente'); $('#nG').textContent = cuenta('Pagado'); $('#nK').textContent = cuenta('Empacado'); $('#nE').textContent = cuenta('Enviado'); $('#nD').textContent = cuenta('Descartado');
   const q = norm($('#buscar').value);
   const L = TODOS.filter(p => etapa(p) === FILTRO && (!q || norm([p.id, p.cliente, p.tel, p.mail, p.comuna, p.seguimiento, p.numero].join(' ')).includes(q)));
+  // Por armar y Empacados: primero el que pagó antes (Áureo, 24-nov). La fecha que cuenta es «Pagado el», no cuándo hizo el pedido.
+  if (FILTRO === 'Pagado' || FILTRO === 'Empacado') L.sort((a, b) => clavePago(a).localeCompare(clavePago(b)));
   const vacios = { Pendiente: 'No hay pedidos esperando pago.', Pagado: 'No hay pedidos pagados por armar.', Empacado: 'No hay pedidos empacados esperando despacho.', Enviado: 'Todavía no hay pedidos enviados.', Descartado: 'Nada por aquí.' };
   $('#lista').innerHTML = FILTRO === 'Empacado' && L.length ? listaEmpacados(L) : L.length ? L.map(tarjeta).join('') : `<p class="vacio">${vacios[FILTRO]}</p>`;
   pintarResumen();
