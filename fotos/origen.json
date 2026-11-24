@@ -9,6 +9,12 @@
   "origen": "taller",
   "producto": "67 Six Seven Rosado"
  },
+ "alex-mini": {
+  "fecha": "2026-11-24T12:57:00",
+  "origen": "taller",
+  "producto": "Alex mini",
+  "protegida": true
+ },
  "arcade-mega-man": {
   "fecha": "2026-11-20T11:53:57",
   "origen": "taller",
