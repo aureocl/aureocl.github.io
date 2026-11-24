@@ -61,6 +61,15 @@
   .card.paket{border-left-color:var(--lila);background:linear-gradient(90deg,var(--lila-suave),#fff 140px)}
   .card.blue{border-left-color:var(--celeste);background:linear-gradient(90deg,var(--celeste-suave),#fff 140px)}
   .card.descartado{opacity:.6}
+  /* Cuadrito «Datos de envío» al lado de cada pedido (24-nov-2026): se muestra u oculta con el botón 📋 de la barra */
+  .card.con-datos{display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:14px;align-items:start}
+  .cuerpo{min-width:0}
+  @media (max-width:720px){.card.con-datos{grid-template-columns:minmax(0,1fr)}}
+  .caja-datos .tit{font-size:13px;font-weight:700;margin-bottom:6px}
+  .paket .caja-datos .tit{color:var(--lila)}
+  .blue .caja-datos .tit{color:var(--celeste)}
+  #verDatos{border:1px solid #444;background:transparent;color:#ddd;border-radius:999px;padding:6px 12px;font-size:14px;cursor:pointer}
+  #verDatos.on{background:var(--oro);border-color:var(--oro);color:#111;font-weight:700}
   .cab{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
   .cab .id{font-weight:700}
   .cab .cuando{color:var(--gris);font-size:13px}
@@ -219,6 +228,7 @@
     <button class="tab" data-f="Enviado">Enviados <b id="nE">·</b></button>
     <button class="tab" data-f="Descartado">Descartados <b id="nD">·</b></button>
     <input id="buscar" placeholder="Buscar nombre, teléfono, AU-… o seguimiento">
+    <button id="verDatos" title="Muestra u oculta, al lado de cada pedido, los datos para ingresarlo en Paket o Blue">📋 Datos de envío</button>
     <button id="refrescar">Actualizar</button>
   </div>
 </header>
@@ -347,7 +357,7 @@ function tarjeta(p) {
   const tel = String(p.tel).replace(/\D/g, '');
   const wa = tel ? WA + telWa(tel) : '';
   const entrega = p.entrega === 'Domicilio' ? 'A domicilio' : 'Punto Blue (buscarle el más cercano)';
-  let h = `<div class="card ${p.estado.toLowerCase()} ${claseEmp(p)}" data-id="${esc(p.id)}">
+  let h = `<div class="card ${p.estado.toLowerCase()} ${claseEmp(p)}${VER_DATOS ? ' con-datos' : ''}" data-id="${esc(p.id)}"><div class="cuerpo">
     <div class="cab"><div><div class="id">${esc(p.id)}</div><div class="cuando">${esc(p.recibido)}</div><span class="badge">${esc(empresaTxt(p))}${p.cambiada ? ' · cambiado' : ''}</span>${btnEmpresa(p)}</div><div class="total">${clp(p.total)}</div></div>
     <div class="cliente">${esc(p.cliente)}</div>
     <div class="datos">${wa ? `<a href="${wa}" target="_blank">${esc(p.tel)}</a>` : esc(p.tel)}${p.mail ? ' · ' + esc(p.mail) : ''}<br>
@@ -366,7 +376,6 @@ function tarjeta(p) {
   } else if (p.estado === 'Pagado') {
     h += `<div class="estado">✓ Pagó a ${esc(p.cuenta)}${p.pagadoEl ? ' · ' + esc(p.pagadoEl.replace(/^'/, '')) : ''} · ${p.empacadoEl ? '📦 empacado ' + esc(p.empacadoEl.replace(/^'/, '')) + ', falta despachar' : 'por armar'}</div>
     <div class="envio">
-      <details ${ABIERTOS.has(p.id) ? 'open' : ''} data-datos><summary style="font-weight:700;color:var(--negro);font-size:14px">📋 Datos para ${p.empresa === 'Paket' ? 'Paket' : 'Blue Express'}</summary>${datosEnvio(p)}</details>
       <div><div class="lbl">N° de seguimiento</div><div class="seg"><input data-seg value="${esc(p.seguimiento)}" placeholder="Pega aquí el número de ${p.empresa === 'Paket' ? 'Paket' : 'Blue'}" inputmode="text"><button data-guardar-seg>Guardar</button></div>
         ${p.seguimiento ? `<div class="ok" style="font-size:13px;margin-top:4px">✓ Guardado: ${esc(p.seguimiento)}</div>` : ''}</div>
       <div><div class="lbl">Foto del paquete</div><div class="foto">
@@ -384,16 +393,29 @@ function tarjeta(p) {
   } else {
     h += `<div class="estado gris">Descartado <button data-reabrir>Volver a pendientes</button></div>`;
   }
-  return h + '</div>';
+  return h + '</div>' + (VER_DATOS ? `<div class="caja-datos">${datosEnvio(p)}</div>` : '') + '</div>';
 }
 
+/* Cuadrito por pedido con lo que pide cada empresa, en su orden (Áureo, 24-nov-2026):
+   Blue domicilio: nombre, apellido, teléfono, correo, dirección (+ comuna y región).
+   Punto Blue: nombre, apellido, teléfono, correo, región, comuna y el punto (el cliente da una dirección de referencia).
+   Paket: nombre, teléfono, dirección y comuna. */
+let VER_DATOS = (() => { try { return localStorage.getItem('aureo-ver-datos') === '1'; } catch (e) { return false; } })();
+document.addEventListener('DOMContentLoaded', () => { const b = $('#verDatos'); if (b) b.classList.toggle('on', VER_DATOS); });
+function partirNombre(n) {
+  const w = String(n || '').trim().split(/\s+/).filter(Boolean);
+  const k = w.length >= 4 ? 2 : 1;   // «María José Candia Ramírez» → María José / Candia Ramírez
+  return [w.slice(0, k).join(' '), w.slice(k).join(' ')];
+}
+function telEnvio(t) { const d = String(t || '').replace(/\D/g, ''); return d.length === 11 && d.startsWith('56') ? d.slice(2) : d; }
 function datosEnvio(p) {
-  const D = [['Nombre', p.cliente], ['Teléfono', p.tel]];
-  if (p.empresa !== 'Paket') D.push(['Correo', p.mail]);
-  D.push([p.entrega === 'Domicilio' ? 'Dirección' : 'Dirección (buscarle el Punto Blue más cercano)', p.dir], ['Comuna', p.comuna]);
-  if (p.empresa !== 'Paket') D.push(['Región', p.region]);
+  const [nom, ape] = partirNombre(p.cliente), tel = telEnvio(p.tel);
+  let D, tit;
+  if (p.empresa === 'Paket') { tit = 'Para Paket'; D = [['Nombre', p.cliente], ['Teléfono', tel], ['Dirección', p.dir], ['Comuna', p.comuna]]; }
+  else if (p.entrega === 'Domicilio') { tit = 'Para Blue Express · domicilio'; D = [['Nombre', nom], ['Apellido', ape], ['Teléfono', tel], ['Correo', p.mail], ['Dirección', p.dir], ['Comuna', p.comuna], ['Región', p.region]]; }
+  else { tit = 'Para Blue Express · Punto Blue'; D = [['Nombre', nom], ['Apellido', ape], ['Teléfono', tel], ['Correo', p.mail], ['Región', p.region], ['Comuna', p.comuna], ['Punto Blue (el más cercano a)', p.dir]]; }
   const todo = D.map(([k, v]) => `${k}: ${v || ''}`).join('\n');
-  return `<div class="datos-envio">${D.map(([k, v]) => `<div class="dato"><div><span>${esc(k)}</span><b>${esc(v || '—')}</b></div><button class="copiar" data-copiar="${esc(v || '')}">Copiar</button></div>`).join('')}
+  return `<div class="datos-envio"><div class="tit">📋 ${tit}</div>${D.map(([k, v]) => `<div class="dato"><div><span>${esc(k)}</span><b>${esc(v || '—')}</b></div>${v ? `<button class="copiar" data-copiar="${esc(v)}">Copiar</button>` : ''}</div>`).join('')}
     <button class="copiar-todo" data-copiar="${esc(todo)}">Copiar todo</button></div>`;
 }
 
@@ -452,6 +474,7 @@ document.addEventListener('click', async ev => {
   const b = ev.target.closest('button'); if (!b || b.closest('.modal')) return;
   if (b.classList.contains('tab')) { document.querySelectorAll('.tab').forEach(t => t.classList.toggle('on', t === b)); FILTRO = b.dataset.f; pintar(); return; }
   if (b.dataset.emp) { EMP = b.dataset.emp; pintar(); return; }
+  if (b.id === 'verDatos') { VER_DATOS = !VER_DATOS; try { localStorage.setItem('aureo-ver-datos', VER_DATOS ? '1' : '0'); } catch (e) { } b.classList.toggle('on', VER_DATOS); pintar(); return; }
   if (b.id === 'refrescar') { toast('Actualizando…', 1200); cargar(); return; }
   if (b.id === 'ajustesBtn') { $('#aBlue').value = AJ.linkBlue; $('#aPaket').value = AJ.linkPaket; $('#aMsj').value = AJ.mensaje; $('#ajustes').style.display = 'flex'; return; }
   if ('copiar' in b.dataset) { try { await navigator.clipboard.writeText(b.dataset.copiar); b.textContent = '✓ Copiado'; } catch (e) { toast('Mantén apretado el texto para copiarlo'); } setTimeout(() => { b.textContent = b.classList.contains('copiar-todo') ? 'Copiar todo' : 'Copiar'; }, 1500); return; }
