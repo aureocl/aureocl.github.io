@@ -230,7 +230,7 @@ function vistaPedido(){
   v.querySelectorAll("[data-mini]").forEach(b=>b.onclick=ev=>{ev.preventDefault();datos.miniSi=b.dataset.mini==="si";const x=window.scrollY;vistaPedido();window.scrollTo(0,x)});
   v.querySelectorAll("[data-serie]").forEach(s=>s.onchange=()=>{datos.series=datos.series||[];datos.series[+s.dataset.serie]=s.value});
   var calc=()=>{const reg=document.getElementById("fReg").value,com=document.getElementById("fCom").value,mod=datos.mod||"Domicilio",e=envio(reg,com,mod,base);
-    const stgo=reg==="Metropolitana",dias=stgo?"1 a 3 días hábiles":"2 a 5 días hábiles";
+    const dias=diasEnvio(reg);
     const donde=mod==="Domicilio"?`a domicilio${com?" en "+com:""}`:`a tu Punto Blue${com?" en "+com:""}`;
     document.getElementById("envioLinea").innerHTML=`<b>Envío ${donde}: ${e.c?clp(e.c):"Gratis"}</b>${e.porque?e.porque+" · ":""}llega en ${dias}`;
     document.getElementById("envioRes").textContent="Envío "+(mod==="Domicilio"?"a domicilio":"a Punto Blue");

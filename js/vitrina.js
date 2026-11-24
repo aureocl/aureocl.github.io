@@ -160,7 +160,7 @@ function vistaFicha(s){
       ${p.precio?`<div class="f-precio">${p.antes>p.precio?`<s>${clp(p.antes)}</s>`:""}<b>${clp(p.precio)}</b><span>${(()=>{const r=esEscudo(p)&&REGION_CLUB[ALIAS[p.slug]||p.slug];const zona=r?(r.includes("|")?" y a punto Blue en Calama":` y a punto Blue en ${r}`):"";return p.precio>=GRATIS_DESDE?`Envío gratis en Santiago${zona}`:`Envío gratis en Santiago${zona} desde $20.000`})()}</span></div>`:`<div class="f-precio"><b style="font-size:20px">${esc(p.det||"Precio a consultar")}</b></div>`}
       ${p.precio?`<div class="cta-info"><div class="cant"><button data-menos>−</button><span data-cantn>1</span><button data-mas1>+</button></div><button class="btn-grande" data-cta>Agregar al pedido</button></div>`:""}
       ${esEscudo(p)&&p.precio?ofertaCam(p):""}
-      <ul class="confianza"><li>📦 Llega en caja, con las piezas separadas por color</li><li>🧩 Siempre van piezas de más</li><li>🚚 Santiago 1 a 3 días hábiles · regiones 2 a 5</li><li>💬 Confirmas y pagas por WhatsApp, con Javi y Caro</li></ul>
+      <ul class="confianza"><li>📦 Llega en caja, con las piezas separadas por color</li><li>🧩 Siempre van piezas de más</li><li>🚚 Santiago 1 a 3 días hábiles · regiones 2 a 6 (Aysén y Magallanes 5 a 10)</li><li>💬 Confirmas y pagas por WhatsApp, con Javi y Caro</li></ul>
     </div>
   </div>
   ${esEscudo(p)?`
@@ -190,7 +190,7 @@ function vistaFicha(s){
   <div class="bloque obj"><h3>¿Y si…?</h3>
     <details open><summary>¿Y si no sé armarlo?</summary><p>Si sabes seguir colores, lo armas. El instructivo va fila por fila. Y si te trabas, nos escribes por WhatsApp y te ayudamos.</p></details>
     <details><summary>¿No es caro para unas piezas?</summary><p>${pz?`Son más de ${pz} piezas, `:""}2 a 3 horas de panorama y un cuadro ${p.tam?`de ${esc(p.tam)} `:""}que vas a tener colgado por años. Y lo hiciste tú.</p></details>
-    <details><summary>¿Llega a tiempo?</summary><p>Santiago 1 a 3 días hábiles y regiones 2 a 5 desde que confirmamos el pago, con número de seguimiento. ¿Apurado? Al final puedes pasar tu pedido adelante en la fila de despacho.</p></details>
+    <details><summary>¿Llega a tiempo?</summary><p>Desde que confirmamos el pago: Santiago 1 a 3 días hábiles, Valparaíso a Biobío 2 a 4, norte y sur 3 a 6, Aysén y Magallanes 5 a 10. Te mandamos el número de seguimiento. ¿Apurado? Al final puedes pasar tu pedido adelante en la fila de despacho.</p></details>
     <details><summary>¿Es seguro pagar por transferencia?</summary><p>Confirmas tu pedido por WhatsApp con nosotros, Javi y Caro. Te mandamos los datos y, cuando sale, el número de seguimiento.</p></details></div>
   <div class="bloque"><h3>Nuestras garantías</h3><div class="garantias">
     <div><i>🧩</i><b>Piezas de más</b>Siempre enviamos piezas de repuesto. Y si igual te falta alguna, te la mandamos.</div>
@@ -205,7 +205,7 @@ function vistaFicha(s){
   <div class="bloque faq"><h3>Preguntas</h3>
     <details><summary>¿Viene armado?</summary><p>No: lo armas tú. Esa es la gracia. Llega con todo lo necesario.</p></details>
     <details><summary>¿Cómo se cuelga?</summary><p>Viene una tarjeta que enseña a armar el gancho con las mismas piezas.</p></details>
-    <details><summary>¿Cuánto demora en llegar?</summary><p>Santiago 1 a 3 días hábiles y regiones 2 a 5, desde que confirmamos el pago.</p></details>
+    <details><summary>¿Cuánto demora en llegar?</summary><p>Desde que confirmamos el pago: Santiago 1 a 3 días hábiles, Valparaíso a Biobío 2 a 4, norte (Arica a Coquimbo) y sur (Araucanía a Los Lagos) 3 a 6, Aysén y Magallanes 5 a 10.</p></details>
     <details><summary>¿Cómo pago?</summary><p>Por transferencia. Al enviar tu pedido por WhatsApp te mandamos los datos.</p></details>
     <details><summary>¿Es para regalo?</summary><p>Lo mandamos directo a quien lo recibe. Márcalo al completar tus datos.</p></details></div>
   ${otros.length?`<div class="bloque"><h3>${esEscudo(p)?"Otros escudos":"También te puede gustar"}</h3><div class="otros">${otros.map(tarjeta).join("")}</div></div>`:""}

@@ -16,6 +16,8 @@ const GRATIS_DESDE = 20000, GRATIS_CHILE = 40000;
 function clubRegional(){const x=items().find(x=>esEscudo(x.p)&&REGION_CLUB[ALIAS[x.p.slug]||x.p.slug]);if(!x)return null;const[reg,com]=REGION_CLUB[ALIAS[x.p.slug]||x.p.slug].split("|");return{p:x.p,reg,com}}
 /* «Envío gratis en Santiago» o «… y a punto Blue en Biobío»: el texto corto que usan la barra y las ofertas. */
 function dondeGratis(){const c=clubRegional();return "en Santiago"+(c?` y a punto Blue en ${c.com?c.com[0].toUpperCase()+c.com.slice(1):c.reg}`:"")}
+/* Plazos por zona en días hábiles desde el pago (Áureo, 24-nov-2026). Son los mismos que dice el agente de Meta: si cambian, cambiar allá también. */
+function diasEnvio(reg){if(reg==="Metropolitana")return"1 a 3 días hábiles";if(["Valparaíso","O'Higgins","Maule","Ñuble","Biobío"].includes(reg))return"2 a 4 días hábiles";if(reg==="Aysén"||reg==="Magallanes")return"5 a 10 días hábiles";return"3 a 6 días hábiles"}
 const REGIONES = ["Metropolitana","Arica y Parinacota","Tarapacá","Antofagasta","Atacama","Coquimbo","Valparaíso","O'Higgins","Maule","Ñuble","Biobío","Araucanía","Los Ríos","Los Lagos","Aysén","Magallanes"];
 
 function parseCSV(t){const F=[];let f=[],c="",q=false;for(let i=0;i<t.length;i++){const ch=t[i];if(q){if(ch=='"'){if(t[i+1]=='"'){c+='"';i++}else q=false}else c+=ch}else if(ch=='"')q=true;else if(ch==','){f.push(c);c=""}else if(ch=='\n'||ch=='\r'){if(ch=='\r'&&t[i+1]=='\n')i++;f.push(c);F.push(f);f=[];c=""}else c+=ch}if(c!==""||f.length){f.push(c);F.push(f)}return F}
