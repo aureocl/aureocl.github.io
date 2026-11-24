@@ -400,7 +400,7 @@ function tarjeta(p) {
    Blue domicilio: nombre, apellido, teléfono, correo, dirección (+ comuna y región).
    Punto Blue: nombre, apellido, teléfono, correo, región, comuna y el punto (el cliente da una dirección de referencia).
    Paket: nombre, teléfono, dirección y comuna. */
-let VER_DATOS = (() => { try { return localStorage.getItem('aureo-ver-datos') === '1'; } catch (e) { return false; } })();
+let VER_DATOS = true;   // Áureo (24-nov): siempre parte prendido; el botón lo oculta solo mientras la página esté abierta
 document.addEventListener('DOMContentLoaded', () => { const b = $('#verDatos'); if (b) b.classList.toggle('on', VER_DATOS); });
 function partirNombre(n) {
   const w = String(n || '').trim().split(/\s+/).filter(Boolean);
@@ -474,7 +474,7 @@ document.addEventListener('click', async ev => {
   const b = ev.target.closest('button'); if (!b || b.closest('.modal')) return;
   if (b.classList.contains('tab')) { document.querySelectorAll('.tab').forEach(t => t.classList.toggle('on', t === b)); FILTRO = b.dataset.f; pintar(); return; }
   if (b.dataset.emp) { EMP = b.dataset.emp; pintar(); return; }
-  if (b.id === 'verDatos') { VER_DATOS = !VER_DATOS; try { localStorage.setItem('aureo-ver-datos', VER_DATOS ? '1' : '0'); } catch (e) { } b.classList.toggle('on', VER_DATOS); pintar(); return; }
+  if (b.id === 'verDatos') { VER_DATOS = !VER_DATOS; b.classList.toggle('on', VER_DATOS); pintar(); return; }
   if (b.id === 'refrescar') { toast('Actualizando…', 1200); cargar(); return; }
   if (b.id === 'ajustesBtn') { $('#aBlue').value = AJ.linkBlue; $('#aPaket').value = AJ.linkPaket; $('#aMsj').value = AJ.mensaje; $('#ajustes').style.display = 'flex'; return; }
   if ('copiar' in b.dataset) { try { await navigator.clipboard.writeText(b.dataset.copiar); b.textContent = '✓ Copiado'; } catch (e) { toast('Mantén apretado el texto para copiarlo'); } setTimeout(() => { b.textContent = b.classList.contains('copiar-todo') ? 'Copiar todo' : 'Copiar'; }, 1500); return; }
