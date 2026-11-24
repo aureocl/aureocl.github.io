@@ -396,7 +396,7 @@ function tarjeta(p) {
       <div class="datos" style="margin-top:6px">${esc(p.aviso)}</div>`;
   } else if (p.estado === 'Enviado') {
     h += `<div class="estado">✓ Enviado ${esc(p.enviadoEl.replace(/^'/, ''))} · pedido ${esc(p.numero)} en el maestro · pagó a ${esc(p.cuenta)}</div>
-      <div class="datos" style="margin-top:6px">N° de seguimiento: <b>${esc(p.seguimiento)}</b>${p.foto ? ` · <a href="${esc(p.foto)}" target="_blank">ver foto</a>` : ''}<br>${esc(p.aviso)}</div>
+      <div class="datos" style="margin-top:6px">N° de seguimiento: <b>${esc(p.seguimiento)}</b>${p.foto ? ` · <a href="${esc(p.foto)}" target="_blank">ver foto</a>` : ''}<br>${esc(p.aviso)}${p.abrio ? `<br><b style="color:var(--verde)">👀 Abrió las instrucciones ${esc(p.abrio)}</b>` : (p.mail && conLinkArmar(p) ? '<br><span style="color:var(--gris)">Aún no abre las instrucciones del correo</span>' : '')}</div>
       <div class="acciones"><a class="btn wsp" style="text-align:center;text-decoration:none" target="_blank" href="${wa ? wa + '?text=' + encodeURIComponent(mensaje(p)) : '#'}">💬 Avisar por WhatsApp</a>${p.mail ? '<button class="suave" data-reenviar>✉️ Reenviar correo</button>' : ''}</div>`;
   } else {
     h += `<div class="estado gris">Descartado <button data-reabrir>Volver a pendientes</button></div>`;
@@ -433,6 +433,12 @@ function linkSeg(p) {
   if (!base) return '';
   return base.includes('{n}') ? base.replace('{n}', encodeURIComponent(p.seguimiento)) : base;
 }
+/** El correo trae el link de instrucciones desde el 25-nov-2026: antes de eso no hay cómo saber si lo abrió. */
+function conLinkArmar(p) {
+  const m = String(p.enviadoEl || '').replace(/^'/, '').match(/^(\d{2})-(\d{2})-(\d{4})/);
+  return !!m && (m[3] + m[2] + m[1]) >= '20261125';
+}
+
 function mensaje(p) {
   const link = linkSeg(p), nombre = String(p.cliente || '').trim().split(/\s+/)[0] || '';
   return String(AJ.mensaje || '').replace(/\{nombre\}/g, nombre).replace(/\{empresa\}/g, p.empresa === 'Paket' ? 'Paket' : 'Blue Express')

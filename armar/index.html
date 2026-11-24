@@ -170,5 +170,15 @@ footer a{color:var(--tinta);font-weight:600}
   window.addEventListener('hashchange',mostrar); mostrar();
 })();
 </script>
+<script>
+// Abierta desde el correo de envío (?p=pedido&t=código): avisa a la bandeja que el cliente la vio (24-nov-2026).
+(function(){
+  var q=new URLSearchParams(location.search), p=q.get('p'), t=q.get('t');
+  if(!p||!t||!/^AU-\d{6}-\d{3}$/.test(p)||!/^[0-9a-f]{12}$/.test(t))return;
+  try{history.replaceState(null,'',location.pathname+location.hash)}catch(e){}
+  fetch("https://script.google.com/macros/s/AKfycbyJwpVPwnc0EVQPGTlspepBK-zva0MWBjMAvwbXVlOlazQt22XV7UJyCg_qh-M9lYxu/exec",
+    {method:"POST",mode:"no-cors",keepalive:true,headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({tipo:"visto",id:p,t:t})}).catch(function(){});
+})();
+</script>
 </body>
 </html>
