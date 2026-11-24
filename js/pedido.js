@@ -5,8 +5,8 @@
 /* ---------- Checkout guiado: una oferta por pantalla ---------- */
 const escudosEn=()=>items().filter(x=>esEscudo(x.p));
 const nEscudos=()=>escudosEn().reduce((a,x)=>a+x.c,0);
-/* Descuento por escudos (Áureo, 17-nov-2026): desde 2 escudos, $1.000 por cada uno (2 = $2.000, 3 = $3.000, 4 = $4.000…). */
-const descEscudos=n=>PROP.descPorEscudo&&n>=2?n*PROP.descPorEscudo:0;
+/* Descuento por escudos (Áureo, 24-nov-2026): $2.000 por cada escudo desde el segundo (1 = $0, 2 = $2.000, 3 = $4.000, 4 = $6.000…). */
+const descEscudos=n=>PROP.descPorEscudo&&n>=2?(n-1)*PROP.descPorEscudo:0;
 function solasPrecio(n){const s=solaFila();if(!s||!n)return 0;const m=(s.det.match(/\$[\d.]+/g)||[]).map(num);const T3={1:s.precio,2:m[0]||s.precio*2,3:m[1]||s.precio*3};return n<=3?T3[n]:T3[3]+(n-3)*(m[2]||s.precio)}
 function precioCams(n){const tc=tramosCombo();if(!n||!tc)return 0;return n<=3?tc[n]:tc[3]+(n-3)*(tc.extra||tc[1])}
 const camRegalo=()=>PROP.camRegaloCada&&camisetas.length>=PROP.camRegaloCada;
@@ -111,7 +111,7 @@ function vistaPedido(){
     const n0=nEscudos(), desc=descEscudos(n0+1)-descEscudos(n0), otros=P.filter(x=>esEscudo(x)&&x.precio&&x.slug!==e0.s).slice(0,9);
     html=`<div class="oferta">${tag("2 de 2")}<div class="t1">Una sola vez, aquí</div>
       <h2>¿Alguien más en tu familia es hincha?</h2>
-      <p style="margin:0">Llévale el suyo: <b>por cada escudo te descontamos ${clp(PROP.descPorEscudo)}</b> (2 escudos = ${clp(descEscudos(2))} menos, 3 = ${clp(descEscudos(3))} menos, y así). Viajan juntos, en el mismo envío.</p>
+      <p style="margin:0">Llévale el suyo: <b>por cada escudo extra te descontamos ${clp(PROP.descPorEscudo)}</b> (2 escudos = ${clp(descEscudos(2))} menos, 3 = ${clp(descEscudos(3))} menos, 4 = ${clp(descEscudos(4))} menos, y así). Viajan juntos, en el mismo envío.</p>
       <button class="op" style="width:100%;margin-top:12px;display:flex;gap:10px;align-items:center" data-seg="${e0.s}">${img(e0.p)}<span style="text-align:left"><b>Otro ${esc(e0.p.nombre)}</b><s style="color:var(--suave)">${clp(e0.p.precio)}</s> <b style="display:inline">${clp(e0.p.precio-desc)}</b></span></button>
       <p class="nota" style="margin-top:12px">O elige el de otro equipo:</p>
       <div class="elige">${otros.map(x=>`<button data-seg="${x.slug}">${img(x)}<b>${esc(x.nombre)}</b><s>${clp(x.precio)}</s>${clp(x.precio-desc)}</button>`).join("")}</div></div>

@@ -23,7 +23,7 @@ const carrusel = () => { const c = CAMISETAS.map(([f,n,club])=>`<div class="cam"
 /* regaloMinProducto (Áureo, 20-nov-2026): para la mini de regalo solo cuentan productos desde $13.000 (y el pack de camisetas);
    las minis y figuras chicas no suman, y en «Seguir mirando» no aparecen. La meta es lo que llevaba (mínimo $13.000) + regaloMas.
    camRegaloCada: llevando 5 camisetas del pack, la 6.ª va de regalo. */
-const PROP = { coleccionDesc:0.2, barra:true, regaloMas:10000, regaloMinProducto:13000, porPoco:true, empaque:2000, descPorEscudo:1000, camRegaloCada:5, prioridad:3000 };
+const PROP = { coleccionDesc:0.2, barra:true, regaloMas:10000, regaloMinProducto:13000, porPoco:true, empaque:2000, descPorEscudo:2000, camRegaloCada:5, prioridad:3000 };
 const tag = l => FINAL ? "" : `<span class="prop">Propuesta ${l}</span><br>`;
 /* Camiseta de ejemplo por equipo (AUREO 10, del Laboratorio): lo que ve el cliente al elegir el equipo de cada camiseta. */
 const EQUIPOS_CAM = [["Colo-Colo","ej-colo-colo-local.jpg"],["Colo-Colo (visita)","ej-colo-colo-visita.jpg"],["U de Chile","ej-universidad-de-chile-local.jpg"],["Audax Italiano","ej-audax-italiano-local.jpg"],["Cobreloa","ej-cobreloa-local.jpg"],["Deportes Concepción","ej-deportes-concepcion-local.jpg"],["Deportes Iquique","ej-deportes-iquique-local.jpg"],["Deportes Temuco","ej-deportes-temuco-local.jpg"],["Huachipato","ej-huachipato-local.jpg"],["Magallanes","ej-magallanes-local.jpg"],["O'Higgins","ej-o-higgins-local.jpg"],["Rangers de Talca","ej-rangers-de-talca-local.jpg"],["River Plate","ej-river-plate-local.jpg"],["San Luis de Quillota","ej-san-luis-local.jpg"],["Santiago Wanderers","ej-santiago-wanderers-local.jpg"],["Unión Española","ej-union-espanola-local.jpg"]];
