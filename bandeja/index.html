@@ -180,6 +180,10 @@
   .periodo{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;padding:4px;background:var(--pista);border-radius:12px}
   .periodo button{border:0;background:none;color:inherit;border-radius:9px;min-height:40px;font:600 13px/1.2 inherit;cursor:pointer}
   .periodo button.on{background:var(--negro);color:var(--oro)}
+  .periodo.fuente{grid-template-columns:repeat(2,minmax(0,1fr));background:#fff;border:1px solid var(--linea)}
+  .tabla-mov{overflow-x:auto}
+  table.mes td{white-space:nowrap;padding-right:10px}
+  table.mes tr:first-child td{color:var(--gris);font-weight:600}
   .kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
   .kpi .et{color:var(--gris);font-size:12px}
   .kpi .val{font-size:23px;font-weight:700;margin:3px 0;white-space:nowrap}
@@ -700,6 +704,7 @@ function htmlInicio() {
 
 /* Ventas: cómo va el negocio en el período */
 function htmlVentas() {
+  if (FUENTE === 'todo') return htmlTodo();
   const ya = ahoraChile(), R = rango(PERIODO, ya), V = ventasEntre(R.ini, R.fin), A = ventasEntre(R.antIni, R.antFin);
   const tk = L => L.length ? vendido(L) / L.length : 0;
   const hayPanel = TODOS.some(p => p.panel);
@@ -764,6 +769,7 @@ function htmlVentas() {
   const origen = hayPanel ? grupo(p => !p.panel ? '' : p.panel.origen === 'Equipo' ? 'Lo ingresaron ustedes' : 'Compró solo en la web') : [];
 
   return `<div class="pnl">
+    ${selectorFuente()}
     <div class="periodo ancho">${[['hoy', 'Hoy'], ['7', '7 días'], ['30', '30 días'], ['mes', 'Este mes']].map(([k, n]) => `<button class="${PERIODO === k ? 'on' : ''}" data-periodo="${k}">${n}</button>`).join('')}</div>
     <div class="kpis ancho">
       ${kpi('Ventas', clp(vendido(V)), variacion(vendido(V), vendido(A), R.vs))}
@@ -784,6 +790,110 @@ function htmlVentas() {
   </div>`;
 }
 
+/* ---------- Todo el negocio: lee VENTAS del maestro (acción «historial», script versión 11) ----------
+   Mismas cuentas que la hoja RESUMEN. Sin datos de clientes: solo fecha, plata, canal, región, cuenta, anuncio y productos. */
+let FUENTE = 'web', PERIODO_T = 'mes', HIST = null;
+const REPOSICION = 'Reposición piezas faltantes';
+const MESES = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+function pedirHistorial(forzar) {
+  if (HIST === 'cargando' || (HIST && !HIST.error && !forzar)) return;
+  HIST = 'cargando';
+  llamar('historial')
+    .then(r => { HIST = r; })
+    .catch(e => { HIST = { error: /Acción desconocida/.test(e.message) ? 'falta-script' : e.message }; })
+    .then(() => { if (VISTA === 'ventas' && FUENTE === 'todo') pintarPanel(); });
+}
+function selectorFuente() {
+  return `<div class="periodo fuente ancho">${[['web', 'Solo web'], ['todo', 'Todo el negocio']].map(([k, n]) => `<button class="${FUENTE === k ? 'on' : ''}" data-fuente="${k}">${n}</button>`).join('')}</div>`;
+}
+function htmlTodo() {
+  if (HIST === null || HIST === 'cargando') { pedirHistorial(); return `<div class="pnl">${selectorFuente()}<p class="vacio ancho">Leyendo el maestro de ventas…</p></div>`; }
+  if (HIST.error) return `<div class="pnl">${selectorFuente()}<section class="pz ancho"><h2>No pude leer el maestro</h2><p class="nota">${HIST.error === 'falta-script'
+    ? 'Falta instalar en Google la versión 11 del script «Aureo · Pedidos web». Los pasos están en el README de clientes-pedidos/pedidos-web.'
+    : esc(HIST.error)}</p><button class="mini-btn" data-recargar-hist>Intentar de nuevo</button></section></div>`;
+
+  const ya = ahoraChile(), hoy = dia0(ya);
+  const P = HIST.pedidos.map(([f, prod, env, costo, cenv, canal, region, cuenta, ads], i) => {
+    const [a, m, d] = f.split('-').map(Number);
+    return { i, d: new Date(a, m - 1, d), ing: prod + env, costo: costo === null ? null : costo + cenv, canal, region, cuenta, ads };
+  });
+  const primero = P.length ? new Date(Math.min(...P.map(p => +p.d))) : hoy;
+  let R;
+  if (PERIODO_T === 'todo') R = { ini: primero, fin: hoy, vs: '' };
+  else if (PERIODO_T === 'mes') {
+    const finAnt = new Date(ya.getFullYear(), ya.getMonth(), 0);
+    R = { ini: new Date(ya.getFullYear(), ya.getMonth(), 1), fin: hoy, antIni: new Date(ya.getFullYear(), ya.getMonth() - 1, 1),
+      antFin: new Date(finAnt.getFullYear(), finAnt.getMonth(), Math.min(ya.getDate(), finAnt.getDate())), vs: 'mes pasado a esta fecha' };
+  } else {
+    const n = +PERIODO_T, ini = masDias(hoy, 1 - n);
+    R = { ini, fin: hoy, antIni: masDias(ini, -n), antFin: masDias(hoy, -n), vs: `${n} días anteriores` };
+  }
+  const en = (a, b) => P.filter(p => p.d >= a && p.d <= b);
+  const V = en(R.ini, R.fin), A = R.antIni ? en(R.antIni, R.antFin) : [];
+  const ing = L => suma(L, p => p.ing), tk = L => L.length ? ing(L) / L.length : 0;
+  const conC = L => L.filter(p => p.costo !== null), mg = L => suma(conC(L), p => p.ing - p.costo);
+  const vs = (a, b) => R.antIni ? variacion(a, b, R.vs) : '<div class="var">Desde el primer registro</div>';
+  const faltan = V.length - conC(V).length;
+  const kpi = (et, val, abajo) => `<div class="pz kpi"><div class="et">${et}</div><div class="val">${val}</div>${abajo}</div>`;
+  const plata = d => `${clp(d.v)} · ${plural(d.n, 'pedido', 'pedidos')}`;
+  const signo = n => (n < 0 ? '−' : '') + clp(Math.abs(n));
+
+  let serie = [], titulo = 'Ventas por día';
+  if (PERIODO_T === 'todo') {
+    titulo = 'Ventas por mes';
+    for (let m = new Date(primero.getFullYear(), primero.getMonth(), 1); m <= hoy; m = new Date(m.getFullYear(), m.getMonth() + 1, 1)) {
+      const L = en(m, new Date(m.getFullYear(), m.getMonth() + 1, 0));
+      serie.push({ v: ing(L), n: L.length, corto: MESES[m.getMonth()], largo: `${MESES[m.getMonth()]} ${m.getFullYear()}`, L, m });
+    }
+  } else {
+    for (let d = R.ini; d <= R.fin; d = masDias(d, 1)) {
+      const L = en(d, d);
+      serie.push({ v: ing(L), n: L.length, corto: PERIODO_T === '7' ? DIAS[d.getDay()] : `${d.getDate()}/${d.getMonth() + 1}`, largo: etiquetaDia(d) });
+    }
+  }
+
+  const gastoMes = Object.fromEntries(HIST.gastos || []);
+  const tablaMeses = PERIODO_T !== 'todo' ? '' : pieza('Mes a mes', 'Como la hoja RESUMEN: resultado = ingresos − costos − gastos', `<div class="tabla-mov"><table class="datos-g mes"><tr><td>Mes</td><td>Pedidos</td><td>Ingresos</td><td>Margen</td><td>Gastos</td><td>Resultado</td></tr>${
+    serie.map(s => { const k = `${s.m.getFullYear()}-${dd(s.m.getMonth() + 1)}`, g = gastoMes[k] || 0, ingM = ing(s.L), cost = suma(s.L, p => p.costo || 0);
+      return `<tr><td>${esc(s.largo)}</td><td>${s.n}</td><td>${clp(ingM)}</td><td>${signo(ingM - cost)}</td><td>${clp(g)}</td><td>${signo(ingM - cost - g)}</td></tr>`; }).reverse().join('')}</table></div>`, 'ancho');
+
+  const grupo = (f, L = V) => {
+    const m = new Map();
+    L.forEach(p => { const n = f(p) || 'Sin dato', o = m.get(n) || { c: 0, v: 0 }; o.c++; o.v += p.ing; m.set(n, o); });
+    return [...m].map(([n, o]) => ({ n, v: o.v, t: `${clp(o.v)} · ${o.c}` })).sort((a, b) => b.v - a.v);
+  };
+  const origen = p => /recompra/i.test(p.ads) ? 'Recompra' : p.ads ? 'Vino de un anuncio' : 'Sin anuncio anotado';
+  const ids = new Set(V.map(p => p.i)), prod = new Map();
+  HIST.lineas.forEach(([i, n, c, v]) => {
+    if (!ids.has(i) || n === REPOSICION) return;
+    const o = prod.get(n) || { c: 0, v: 0 }; o.c += c; o.v += v; prod.set(n, o);
+  });
+  const top = [...prod].map(([n, o]) => ({ n, v: o.v, t: `${clp(o.v)} · ${o.c} u.` })).sort((a, b) => b.v - a.v).slice(0, 8);
+  const semana = [1, 2, 3, 4, 5, 6, 0].map(k => { const L = V.filter(p => p.d.getDay() === k); return { v: ing(L), n: L.length, corto: DIAS[k], largo: DIAS[k] }; });
+
+  return `<div class="pnl">
+    ${selectorFuente()}
+    <div class="periodo ancho">${[['7', '7 días'], ['30', '30 días'], ['mes', 'Este mes'], ['todo', 'Todo']].map(([k, n]) => `<button class="${PERIODO_T === k ? 'on' : ''}" data-periodo-t="${k}">${n}</button>`).join('')}</div>
+    <div class="kpis ancho">
+      ${kpi('Ingresos', clp(ing(V)), vs(ing(V), ing(A)))}
+      ${kpi('Pedidos', V.length, vs(V.length, A.length))}
+      ${kpi('Ticket promedio', V.length ? clp(tk(V)) : '—', vs(tk(V), tk(A)))}
+      ${kpi('Margen', conC(V).length ? signo(mg(V)) : '—', faltan ? `<div class="var">Falta el costo de ${plural(faltan, 'pedido', 'pedidos')}</div>` : vs(mg(V), mg(A)))}
+    </div>
+    ${pieza(titulo, 'Productos + envío cobrado. Toca una barra para ver el detalle', columnas('todo' + PERIODO_T, serie, plata), 'ancho')}
+    ${tablaMeses}
+    ${pieza('Por canal', 'Dónde se cerró la venta', filasBarra(grupo(p => p.canal)))}
+    ${pieza('Anuncios', 'Según la columna Ads del maestro', filasBarra(grupo(origen)))}
+    ${pieza('Lo más vendido', 'Por plata, sin reposiciones', filasBarra(top))}
+    ${pieza('Qué día se vende más', 'Según la fecha de la venta', columnas('tsem' + PERIODO_T, semana, plata, true))}
+    ${pieza('Dónde compran', 'Ingresos y pedidos por región', filasBarra(grupo(p => p.region).slice(0, 6)))}
+    ${pieza('A qué cuenta entró', 'Columna Cuenta del maestro', filasBarra(grupo(p => p.cuenta)))}
+    <p class="nota ancho" style="color:var(--gris);font-size:12px">Del maestro de ventas, leído ${esc(HIST.leido)} (se actualiza cada 10 minutos). Las ventas web entran al maestro cuando se despachan.
+      Margen = ingresos − costo de productos − costo de envío, antes de gastos y anuncios.${HIST.sinFecha ? ` ${plural(HIST.sinFecha, 'pedido sin fecha quedó', 'pedidos sin fecha quedaron')} fuera.` : ''}
+      <button class="mini-btn" data-recargar-hist style="margin-left:6px">Actualizar ahora</button></p>
+  </div>`;
+}
+
 function pintarPanel() {
   document.body.classList.toggle('sin-clave', !K);
   document.body.dataset.vista = K ? VISTA : 'pedidos';
@@ -795,8 +905,8 @@ function pintarPanel() {
   if (!CARGADO) { $('#panel').innerHTML = '<p class="vacio">Cargando ventas…</p>'; return; }
   const abiertas = [...$('#panel').querySelectorAll('details')].map(d => d.open), vista = $('#panel').dataset.pintada;
   $('#panel').innerHTML = VISTA === 'inicio' ? htmlInicio() : htmlVentas();
-  $('#panel').dataset.pintada = VISTA + PERIODO;
-  if (vista === VISTA + PERIODO) $('#panel').querySelectorAll('details').forEach((d, i) => { d.open = !!abiertas[i]; });
+  $('#panel').dataset.pintada = VISTA + PERIODO + FUENTE + PERIODO_T;
+  if (vista === VISTA + PERIODO + FUENTE + PERIODO_T) $('#panel').querySelectorAll('details').forEach((d, i) => { d.open = !!abiertas[i]; });
 }
 function verLectura(b) {
   const l = document.querySelector(`[data-lectura="${b.dataset.graf}"]`);
@@ -811,6 +921,9 @@ document.addEventListener('click', ev => {
     verLectura(b); return;
   }
   if (b.dataset.periodo) { PERIODO = b.dataset.periodo; pintarPanel(); return; }
+  if (b.dataset.periodoT) { PERIODO_T = b.dataset.periodoT; pintarPanel(); return; }
+  if (b.dataset.fuente) { FUENTE = b.dataset.fuente; pintarPanel(); return; }
+  if ('recargarHist' in b.dataset) { HIST = null; pedirHistorial(true); pintarPanel(); return; }
   if (b.dataset.irPedidos) {
     FILTRO = b.dataset.irPedidos; $('#buscar').value = b.dataset.buscar || '';
     document.querySelectorAll('.tab').forEach(t => t.classList.toggle('on', t.dataset.f === FILTRO));
