@@ -42,4 +42,7 @@ No hace falta invitar a nadie: basta con traer (pull) y subir (push) los cambios
 ## Reglas que no cambian
 
 - Nunca «oficial» en ningún texto. Precios cerrados, nunca terminados en 990.
+- **La web y el agente de Meta dicen lo mismo.** Si cambias una oferta (`PROP` en `js/config.js`), el envío, los plazos o el funnel,
+  actualiza también el agente: `Aureo/asistente-wsp/agente-meta/` (`instrucciones.txt` 5 y 9c, `campos-meta.md`) y el campo
+  «Promociones» de Meta, que pega Áureo en la app.
 - Fotos públicas: 500 px, sin marca de agua desde el 13-nov (las pasa `catalogo.py` del repo privado).
