@@ -44,6 +44,15 @@
   .pil{border-radius:999px;padding:3px 10px;font-size:12px;font-weight:600}
   .pil.paket{background:var(--lila-suave);color:var(--lila)}
   .pil.blue{background:var(--celeste-suave);color:var(--celeste)}
+  /* Empacados: filtro Paket / Blue (24-nov-2026) */
+  .subtabs{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 12px}
+  .subtabs button{border:1px solid var(--linea);background:#fff;color:var(--negro);border-radius:999px;padding:7px 14px;font-size:14px;font-weight:600;cursor:pointer}
+  .subtabs button.on{background:var(--negro);border-color:var(--negro);color:#fff}
+  .subtabs button.paket.on{background:var(--lila);border-color:var(--lila)}
+  .subtabs button.blue.on{background:var(--celeste);border-color:var(--celeste)}
+  .grupo{font-size:13px;font-weight:700;margin:14px 0 8px;padding:4px 10px;border-radius:8px;display:inline-block}
+  .grupo.paket{background:var(--lila-suave);color:var(--lila)}
+  .grupo.blue{background:var(--celeste-suave);color:var(--celeste)}
   details.res-movil>summary{font-weight:700;font-size:15px;color:var(--negro);list-style:none}
   @media (min-width:981px){details.res-movil>summary{pointer-events:none}}
   @media (max-width:980px){details.res-movil>summary::after{content:'  ▾ toca para ver';font-weight:400;font-size:13px;color:var(--gris)}details.res-movil[open]>summary::after{content:''}}
@@ -199,13 +208,25 @@ async function cargar() {
 /* «Empacado» no es un estado en la planilla: es un pagado con «Empacado el». Sale del resumen y espera el despacho. */
 const etapa = p => p.estado === 'Pagado' && p.empacadoEl ? 'Empacado' : p.estado;
 
+/* Empacados: todos juntos (primero Paket, después Blue) o filtrados por empresa, para despachar de a una. */
+let EMP = 'todos';
+function listaEmpacados(L) {
+  const pk = L.filter(p => claseEmp(p) === 'paket'), bl = L.filter(p => claseEmp(p) === 'blue');
+  const chip = (v, txt, n, c) => `<button class="${c} ${EMP === v ? 'on' : ''}" data-emp="${v}">${txt} · ${n}</button>`;
+  let h = `<div class="subtabs">${chip('todos', 'Todos', L.length, '')}${chip('paket', 'Paket', pk.length, 'paket')}${chip('blue', 'Blue Express', bl.length, 'blue')}</div>`;
+  const grupo = (G, c, txt) => G.length ? `<div class="grupo ${c}">${txt} · ${G.length}</div>` + G.map(tarjeta).join('') : '';
+  if (EMP === 'todos') return h + grupo(pk, 'paket', 'Paket') + grupo(bl, 'blue', 'Blue Express');
+  const G = EMP === 'paket' ? pk : bl;
+  return h + (G.length ? G.map(tarjeta).join('') : `<p class="vacio">No hay empacados por ${EMP === 'paket' ? 'Paket' : 'Blue Express'}.</p>`);
+}
+
 function pintar() {
   const cuenta = s => TODOS.filter(p => etapa(p) === s).length;
   $('#nP').textContent = cuenta('Pendiente'); $('#nG').textContent = cuenta('Pagado'); $('#nK').textContent = cuenta('Empacado'); $('#nE').textContent = cuenta('Enviado'); $('#nD').textContent = cuenta('Descartado');
   const q = norm($('#buscar').value);
   const L = TODOS.filter(p => etapa(p) === FILTRO && (!q || norm([p.id, p.cliente, p.tel, p.mail, p.comuna, p.seguimiento, p.numero].join(' ')).includes(q)));
   const vacios = { Pendiente: 'No hay pedidos esperando pago.', Pagado: 'No hay pedidos pagados por armar.', Empacado: 'No hay pedidos empacados esperando despacho.', Enviado: 'Todavía no hay pedidos enviados.', Descartado: 'Nada por aquí.' };
-  $('#lista').innerHTML = L.length ? L.map(tarjeta).join('') : `<p class="vacio">${vacios[FILTRO]}</p>`;
+  $('#lista').innerHTML = FILTRO === 'Empacado' && L.length ? listaEmpacados(L) : L.length ? L.map(tarjeta).join('') : `<p class="vacio">${vacios[FILTRO]}</p>`;
   pintarResumen();
   editando = false;
 }
@@ -347,6 +368,7 @@ async function accion(card, fn, ...a) {
 document.addEventListener('click', async ev => {
   const b = ev.target.closest('button'); if (!b || b.closest('.modal')) return;
   if (b.classList.contains('tab')) { document.querySelectorAll('.tab').forEach(t => t.classList.toggle('on', t === b)); FILTRO = b.dataset.f; pintar(); return; }
+  if (b.dataset.emp) { EMP = b.dataset.emp; pintar(); return; }
   if (b.id === 'refrescar') { toast('Actualizando…', 1200); cargar(); return; }
   if (b.id === 'ajustesBtn') { $('#aBlue').value = AJ.linkBlue; $('#aPaket').value = AJ.linkPaket; $('#aMsj').value = AJ.mensaje; $('#ajustes').style.display = 'flex'; return; }
   if ('copiar' in b.dataset) { try { await navigator.clipboard.writeText(b.dataset.copiar); b.textContent = '✓ Copiado'; } catch (e) { toast('Mantén apretado el texto para copiarlo'); } setTimeout(() => { b.textContent = b.classList.contains('copiar-todo') ? 'Copiar todo' : 'Copiar'; }, 1500); return; }
