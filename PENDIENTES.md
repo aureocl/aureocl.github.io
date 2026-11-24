@@ -8,7 +8,6 @@ Formato: `hilo · qué · quién · estado` (estado: por hacer · en curso · es
 
 ## Por hacer
 - W2 · Escribir las cuentas de Javi y Caro en `CUENTAS` (`js/config.js`): mientras estén vacías, la pantalla de pago dice «te mandamos los datos por WhatsApp» · Áureo/Caro · espera a Áureo
-- W3 · La bandeja de pedidos recibe el campo nuevo `pagoDeclarado` («Javi»/«Caro» cuando el cliente dice que ya transfirió): mostrarlo en PEDIDOS WEB · por hacer
 - W2 · Oferta única por equipo: cada club con su complemento (escudo clásico, estandarte, pelota…) en vez de la pelota mini para todos · por hacer (Áureo, 20-nov)
 - W1/W2 · Pack de camisetas: mejor montaje de la imagen (escudo + camisetas), partiendo por la landing de Colo-Colo · por hacer (Áureo, 20-nov)
 - W4 · Comprar dominio (aureocl.cl o tiendaaureo.cl) y conectarlo a Cloudflare · Áureo · espera a Áureo
@@ -16,6 +15,7 @@ Formato: `hilo · qué · quién · estado` (estado: por hacer · en curso · es
 - Todos · Pasar este repo a privado y dejar aureocl.github.io redirigiendo al dominio nuevo · espera a Áureo
 
 ## Listo
+- W3 · Bandeja con **Inicio** (vendido hoy, lo que hay que hacer, últimos 7 días y pedidos) y **Ventas** (hoy, 7 y 30 días, mes: ventas, pedidos, ticket, margen estimado, por día, día de la semana, hora, del pedido al despacho, lo más vendido, ofertas, regiones, cuentas). La tarjeta del pedido muestra «Dice que transfirió a Javi/Caro» · Áureo · 24-nov-2026
 - W1 · Portada de presentación a pantalla completa + categorías con ejemplos que avanzan solos · Áureo · 23-nov-2026
 - W1 · Piezas en la ficha de todos los escudos (Real Madrid y 8 que no tenían) · Áureo · 22-nov-2026
 - W2 · Mini de regalo con confirmación (no automática) + Ingreso rápido interno con descuentos (`#rapido`) · Áureo · 21-nov-2026
