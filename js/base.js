@@ -6,11 +6,12 @@ const SERIES = ["Anime","Pokémon","Harry Potter","Marvel","Mario Bros","Sonic",
 /* REGLA DE ENVÍO GRATIS (Áureo, 19-nov-2026), pedidos desde $20.000:
    1. Santiago (Región Metropolitana): gratis, a domicilio o a punto Blue. Vale para todo el catálogo.
    2. Escudo de un club CHILENO de regiones: además gratis a PUNTO BLUE en la región de ese club (a domicilio, $3.000).
-   3. Clubes extranjeros y el resto del catálogo: fuera de Santiago el envío se paga.
+   3. Pedidos desde $40.000 (Áureo, 24-nov-2026): gratis a PUNTO BLUE en todo Chile, lleve lo que lleve (a domicilio, $3.000).
+   4. Bajo eso, clubes extranjeros y el resto del catálogo: fuera de Santiago el envío se paga.
    Los clubes de Santiago no van en esta lista (ya los cubre la regla 1). Al sumar un escudo chileno de regiones, agregarlo aquí.
    Cobreloa: solo Calama. */
 const REGION_CLUB = {"santiago-wanderers":"Valparaíso","everton":"Valparaíso","san-luis-de-quillota":"Valparaíso","union-la-calera":"Valparaíso","deportes-iquique":"Tarapacá","deportes-iquique-clasico":"Tarapacá","nublense":"Ñuble","huachipato":"Biobío","deportes-concepcion":"Biobío","deportes-concepcion-leon":"Biobío","universidad-de-concepcion":"Biobío","fernandez-vial":"Biobío","lota-schwager":"Biobío","rangers-de-talca":"Maule","curico-unido":"Maule","o-higgins":"O'Higgins","coquimbo-unido":"Coquimbo","deportes-la-serena":"Coquimbo","deportes-temuco":"Araucanía","cobreloa":"Antofagasta|calama","deportes-puerto-montt":"Los Lagos","san-marcos-de-arica":"Arica y Parinacota"};
-const GRATIS_DESDE = 20000;
+const GRATIS_DESDE = 20000, GRATIS_CHILE = 40000;
 /* Región (y comuna) de envío gratis del primer escudo chileno de regiones del pedido, o null. */
 function clubRegional(){const x=items().find(x=>esEscudo(x.p)&&REGION_CLUB[ALIAS[x.p.slug]||x.p.slug]);if(!x)return null;const[reg,com]=REGION_CLUB[ALIAS[x.p.slug]||x.p.slug].split("|");return{p:x.p,reg,com}}
 /* «Envío gratis en Santiago» o «… y a punto Blue en Biobío»: el texto corto que usan la barra y las ofertas. */
@@ -58,7 +59,8 @@ function envio(reg,com,mod,base){
   const club=I.find(x=>esEscudo(x.p)&&regionClub(x.p.slug,reg,com));
   if(club&&base>=GRATIS_DESDE){return mod==="Punto Bluexpress"?{c:0,porque:`Tu ${club.p.nombre} viaja gratis a punto Blue en ${reg}`}:{c:3000,porque:`Gratis a punto Blue en ${reg}; a domicilio $3.000`}}
   if(club)return{...pago,porque:`Desde $20.000 tu ${club.p.nombre} viaja gratis a punto Blue en ${reg}`};
-  return{...pago,porque:"Fuera de Santiago el envío se paga"};
+  if(base>=GRATIS_CHILE)return mod==="Punto Bluexpress"?{c:0,porque:"Desde $40.000 el envío es gratis a punto Blue en todo Chile"}:{c:3000,porque:"Desde $40.000 es gratis a punto Blue en todo Chile; a domicilio $3.000"};
+  return{...pago,porque:"Desde $40.000 el envío es gratis a punto Blue en todo Chile"};
 }
 function guardar(){try{localStorage.setItem("aureo-pedido",JSON.stringify(carro))}catch(e){}pintarFlot()}
 function agregar(s,c=1,silencio){const i=carro.find(x=>x.s===s);i?i.c+=c:carro.push({s,c});guardar();const p=porSlug(s);medir("AddToCart",{content_name:p.nombre,value:p.precio*c,currency:"CLP"});if(!silencio)toast(`${p.nombre} agregado a tu pedido`)}

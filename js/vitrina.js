@@ -69,7 +69,7 @@ function vistaInicio(){
     <div class="pt-vitrina" aria-hidden="true">${vitrina.map((p,i)=>`<div class="pt-foto${i?"":" ver"}"><img src="${esc(fotoDe(p))}" alt="" ${i?'loading="lazy"':""} onerror="this.parentNode.remove()"><span>${esc(p.nombre.replace(/ \(.*\)$/,""))}</span></div>`).join("")}</div>
     <a class="pt-bajar" href="#categorias" data-bajar aria-label="Ver el catálogo">⌄</a>
   </section>
-  <div class="sellos-banda"><div class="wrap sellos"><div class="sello"><b>🚚</b>Envío gratis en Santiago desde $20.000</div><div class="sello"><b>📦</b>Llega en caja, piezas por color</div><div class="sello"><b>🧩</b>Siempre van piezas de más</div></div></div>
+  <div class="sellos-banda"><div class="wrap sellos"><div class="sello"><b>🚚</b>Envío gratis en Santiago desde $20.000 · a todo Chile desde $40.000 (punto Blue)</div><div class="sello"><b>📦</b>Llega en caja, piezas por color</div><div class="sello"><b>🧩</b>Siempre van piezas de más</div></div></div>
   <div id="categorias">
     <nav class="chips cat-nav">${cats.map(x=>`<button class="chip" data-irfranja="${slug(x)}">${esc(x)}</button>`).join("")}</nav>
     ${mv.length?franja("mas-vendidos","🔥 Los más vendidos","Los que más arman nuestros clientes",mv,1):""}
