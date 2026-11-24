@@ -29,7 +29,7 @@ function vistaRapido(){
   if(!EQUIPO){location.hash="";return}
   rCargar();modo("en-pedido","Ingreso rápido");
   const v=document.getElementById("vista"), X=rCuentas(), q=norm(R.buscar);
-  const encontrados=q?P.filter(p=>p.precio&&norm(p.nombre+" "+p.cat).includes(q)).slice(0,8):[];
+  const encontrados=q?P.filter(p=>p.precio&&coincide(p.nombre+" "+p.cat,q)).slice(0,8):[];
   const opsEq=eq=>[...EQUIPOS_CAM.map(x=>x[0]),OTRO_EQ].map(x=>`<option${x===eq?" selected":""}>${esc(x)}</option>`).join("");
   const sel=i=>`<select data-rserie="${i}"><option value="">Serie ${i+1}…</option>${SERIES.map(s=>`<option${R.series[i]===s?" selected":""}>${s}</option>`).join("")}</select>`;
   v.innerHTML=`<div class="wrap pedido rapido">

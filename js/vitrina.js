@@ -8,6 +8,10 @@ const grupoDe=s=>VARIANTES.find(g=>g.some(([x])=>x===s));
 const esVarSec=p=>{const g=grupoDe(p.slug);return!!(g&&g[0][0]!==p.slug&&porSlug(g[0][0]))};
 const textoVar=p=>{const g=grupoDe(p.slug);return g?g.map(([s,l])=>(porSlug(s)?.nombre||"")+" "+l).join(" "):""};
 const esTam=g=>g.some(([,l])=>/^(chico|mediano|grande|gigante)$/i.test(l));
+/* Buscador sin signos (Áureo, 24-nov-2026): «ohiggins», «o higgins» y «o'higgins» encuentran O'Higgins; «colocolo» encuentra Colo-Colo.
+   Sin tildes, mayúsculas, apóstrofes, guiones ni puntos, en lo que se escribe y en el producto. */
+const plano=s=>norm(s).replace(/[^a-z0-9\s]/g,"");
+const coincide=(texto,q)=>{const h=norm(texto).replace(/[^a-z0-9\s]/g," ")+" "+plano(texto)+" "+plano(texto).replace(/\s+/g,"");return plano(q).split(/\s+/).filter(Boolean).every(w=>h.includes(w))};
 let scrollVar=null;
 function modo(m,titulo=""){document.body.className=m+(FINAL?" final":"");document.getElementById("top").classList.toggle("en-ficha",m!=="en-catalogo");document.getElementById("titulo").textContent=titulo;document.getElementById("cab").style.display=m==="en-catalogo"?"":"none"}
 
@@ -25,7 +29,7 @@ function vistaCatalogo(){
   modo("en-catalogo");
   const cats=[...new Set(P.map(p=>p.cat))].sort((a,b)=>{const i=ORDEN.indexOf(a),j=ORDEN.indexOf(b);return(i<0?99:i)-(j<0?99:j)});
   const q=norm(document.getElementById("buscar").value);
-  const L=P.filter(p=>!esVarSec(p)&&(cat==="Todo"||p.cat===cat)&&(!q||(h=>q.split(/\s+/).every(w=>h.includes(w)))(norm(p.nombre+" "+p.cat+" "+textoVar(p)))));
+  const L=P.filter(p=>!esVarSec(p)&&(cat==="Todo"||p.cat===cat)&&(!q||coincide(p.nombre+" "+p.cat+" "+textoVar(p),q)));
   const tc=tramosCombo(),c=comboFila(),s=solaFila();
   document.getElementById("vista").innerHTML=`
   <nav class="chips">${["Todo",...cats].map(x=>`<button class="chip${x===cat?" activa":""}" data-cat="${esc(x)}">${x==="Todo"?"🏠 Inicio":esc(x)}</button>`).join("")}</nav>
