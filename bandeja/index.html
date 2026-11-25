@@ -227,6 +227,22 @@
 
   /* ---------- Inicio y Ventas (borrador v9, 22-nov-2026) ---------- */
   :root{--barra-dato:#96733A;--pista:#EFEAE0;color-scheme:light}
+  /* Gráficos de línea y ganancia (v12, 25-nov-2026). Serie 1 azul y 2 naranja: par validado para daltónicos. */
+  :root{--s1:#2a78d6;--s2:#eb6834;--antes:#A8A396;--ref:#8A8478;--malo:#C0392B}
+  .lg{position:relative;margin-top:6px}
+  .lg svg{display:block;width:100%;height:auto;overflow:visible;touch-action:pan-y}
+  .lg .rej{stroke:var(--linea);stroke-width:1}
+  .lg .ejy,.lg .ejx{fill:var(--gris);font-size:10px}
+  .lg .ref{stroke:var(--ref);stroke-width:1;stroke-dasharray:4 4}
+  .lg .refx{fill:var(--gris);font-size:10px;font-weight:600;paint-order:stroke;stroke:#fff;stroke-width:3px}
+  .lg .cruz{stroke:var(--negro);stroke-width:1;opacity:.35}
+  .lg .tt{position:absolute;top:0;pointer-events:none;background:#fff;border:1px solid var(--linea);border-radius:8px;box-shadow:0 4px 14px rgba(0,0,0,.12);padding:7px 9px;font-size:12px;white-space:nowrap;z-index:3}
+  .lg .tt b{display:block;margin-bottom:3px}
+  .lg .tt i{display:inline-block;width:10px;height:3px;border-radius:2px;margin-right:6px;vertical-align:middle}
+  .leyenda{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--gris);margin-top:4px}
+  .leyenda i{display:inline-block;width:14px;height:3px;border-radius:2px;margin-right:6px;vertical-align:middle}
+  .leyenda i.punteada{background:repeating-linear-gradient(90deg,var(--antes) 0 4px,transparent 4px 7px)!important}
+  .kpi .chispa{display:block;width:100%;height:28px;margin-top:4px}
   [hidden]{display:none!important}
   button:focus-visible{outline:2px solid var(--oro);outline-offset:2px}
   #vistas{display:flex;gap:4px}
@@ -896,6 +912,63 @@ function filasBarra(L, max) {
   const tope = max || Math.max(1, ...L.map(x => x.v));
   return L.map(x => `<div class="hb"><div class="r"><span>${esc(x.n)}</span><b>${esc(x.t)}</b></div><div class="pista"><i style="width:${Math.min(100, x.v / tope * 100)}%"></i></div></div>`).join('');
 }
+/* ---------- Gráficos de línea estilo Shopify (v12, 25-nov-2026) ----------
+   lineas(id, x, series, opc): x = [{corto, largo}], series = [{n, color, dash, v:[números]}] (todas del largo de x),
+   opc = {fmt, refs:[{v, n}], barras:true (una serie: barras verdes/rojas desde $0)}. Un solo eje. Al pasar el dedo o el mouse,
+   línea vertical + cuadro con los valores del día. Siempre con «Ver en tabla». */
+const GRAF = {};
+const clpCorto = n => { const a = Math.abs(n), s = n < 0 ? '−' : ''; return a >= 1e6 ? `${s}$${(a / 1e6).toFixed(1).replace('.', ',')}M` : a >= 1000 ? `${s}$${Math.round(a / 1000)}k` : `${s}$${Math.round(a)}`; };
+function lineas(id, x, series, opc = {}) {
+  const fmt = opc.fmt || clp, refs = opc.refs || [], W = innerWidth < 640 ? Math.max(300, innerWidth - 60) : 600, H = innerWidth < 640 ? 200 : 190, L = 42, R = 8, T = 10, B = 22, n = x.length;
+  if (!n) return '<div class="sin-datos">Todavía no hay datos en este período.</div>';
+  const todos = [...series.flatMap(s => s.v), ...refs.map(r => r.v), 0];
+  let min = Math.min(...todos), max = Math.max(...todos);
+  if (max === min) max = min + 1;
+  const pad = (max - min) * .08; max += pad; if (min < 0) min -= pad;
+  const X = i => L + (n === 1 ? (W - L - R) / 2 : i * (W - L - R) / (n - 1)), Y = v => T + (max - v) / (max - min) * (H - T - B);
+  // Marcas «redondas» (0, 10k, 20k…), siempre incluyendo el $0.
+  const crudo = (max - min) / 5, mag = 10 ** Math.floor(Math.log10(crudo)), paso0 = [1, 2, 5, 10].map(k => k * mag).find(k => k >= crudo);
+  const marcas = []; for (let v = Math.ceil(min / paso0) * paso0; v <= max; v += paso0) marcas.push(v);
+  const paso = (W - L - R) / Math.max(1, n - 1), ancho = Math.max(2, Math.min(18, paso * .6));
+  const cada = Math.ceil(n / (W < 600 ? 5 : 7));
+  let svg = marcas.map(v => `<line class="rej" x1="${L}" x2="${W - R}" y1="${Y(v)}" y2="${Y(v)}"/><text class="ejy" x="${L - 6}" y="${Y(v) + 3}" text-anchor="end">${opc.corto ? opc.corto(v) : clpCorto(v)}</text>`).join('');
+  if (min < 0) svg += `<line x1="${L}" x2="${W - R}" y1="${Y(0)}" y2="${Y(0)}" stroke="var(--gris)" stroke-width="1"/>`;
+  svg += refs.map(r => `<line class="ref" x1="${L}" x2="${W - R}" y1="${Y(r.v)}" y2="${Y(r.v)}"/><text class="refx" x="${W - R}" y="${Y(r.v) - 4}" text-anchor="end">${esc(r.n)}</text>`).join('');
+  if (opc.barras) {
+    const s = series[0];
+    svg += s.v.map((v, i) => { const y0 = Y(0), y1 = Y(v), h = Math.abs(y1 - y0); if (!v) return '';
+      return `<rect x="${X(i) - ancho / 2}" y="${Math.min(y0, y1)}" width="${ancho}" height="${Math.max(h, 1)}" rx="3" fill="${v >= 0 ? 'var(--verde)' : 'var(--malo)'}"/>`; }).join('');
+  } else {
+    svg += series.map(s => `<polyline fill="none" stroke="${s.color}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"${s.dash ? ' stroke-dasharray="5 4"' : ''} points="${s.v.map((v, i) => `${X(i).toFixed(1)},${Y(v).toFixed(1)}`).join(' ')}"/>`).join('');
+    if (n === 1) svg += series.map(s => `<circle cx="${X(0)}" cy="${Y(s.v[0])}" r="4" fill="${s.color}"/>`).join('');
+  }
+  svg += x.map((d, i) => (n - 1 - i) % cada ? '' : `<text class="ejx" x="${X(i)}" y="${H - 6}" text-anchor="middle">${esc(d.corto)}</text>`).join('');
+  GRAF[id] = { x, series, fmt, X, W, n };
+  const leyenda = series.length > 1 ? `<div class="leyenda">${series.map(s => `<span><i class="${s.dash ? 'punteada' : ''}" style="background:${s.color}"></i>${esc(s.n)}</span>`).join('')}</div>` : '';
+  const tabla = `<details><summary>Ver en tabla</summary><div class="tabla-mov"><table class="datos-g"><tr><td></td>${series.map(s => `<td>${esc(s.n)}</td>`).join('')}</tr>${
+    x.map((d, i) => `<tr><td>${esc(d.largo)}</td>${series.map(s => `<td>${esc(fmt(s.v[i]))}</td>`).join('')}</tr>`).join('')}</table></div></details>`;
+  return `${leyenda}<div class="lg" data-lg="${id}"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(opc.alt || 'Gráfico')}">${svg}<line class="cruz" x1="0" x2="0" y1="${T}" y2="${H - B}" visibility="hidden"/></svg><div class="tt" hidden></div></div>${tabla}`;
+}
+function verLinea(caja, clientX) {
+  const g = GRAF[caja.dataset.lg]; if (!g) return;
+  const svg = caja.querySelector('svg'), r = svg.getBoundingClientRect(), xs = (clientX - r.left) / r.width * g.W;
+  let i = 0; for (let k = 1; k < g.n; k++) if (Math.abs(g.X(k) - xs) < Math.abs(g.X(i) - xs)) i = k;
+  const cruz = svg.querySelector('.cruz'), tt = caja.querySelector('.tt'), px = g.X(i) / g.W * r.width;
+  cruz.setAttribute('x1', g.X(i)); cruz.setAttribute('x2', g.X(i)); cruz.setAttribute('visibility', 'visible');
+  tt.innerHTML = `<b>${esc(g.x[i].largo)}</b>${g.series.map(s => `<div><i style="background:${s.color}"></i>${esc(s.n)}: <b style="display:inline">${esc(g.fmt(s.v[i]))}</b></div>`).join('')}`;
+  tt.hidden = false;
+  const w = tt.offsetWidth; tt.style.left = Math.max(0, Math.min(r.width - w, px + 12 > r.width - w ? px - w - 12 : px + 12)) + 'px';
+}
+document.addEventListener('pointermove', ev => { const c = ev.target.closest && ev.target.closest('[data-lg]'); if (c) verLinea(c, ev.clientX); });
+document.addEventListener('pointerdown', ev => { const c = ev.target.closest && ev.target.closest('[data-lg]'); if (c) verLinea(c, ev.clientX); });
+document.addEventListener('pointerout', ev => { const c = ev.target.closest && ev.target.closest('[data-lg]');
+  if (c && !c.contains(ev.relatedTarget)) { c.querySelector('.tt').hidden = true; c.querySelector('.cruz').setAttribute('visibility', 'hidden'); } });
+/* Mini línea dentro de una tarjeta (sin ejes): solo la forma de la tendencia. */
+function chispa(v, color = 'var(--barra-dato)') {
+  if (v.length < 2) return '';
+  const mx = Math.max(...v, 0), mn = Math.min(...v, 0), H = 28, W = 100, Y = x => H - 2 - (x - mn) / ((mx - mn) || 1) * (H - 4);
+  return `<svg class="chispa" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true"><polyline fill="none" stroke="${color}" stroke-width="1.6" vector-effect="non-scaling-stroke" points="${v.map((x, i) => `${(i * W / (v.length - 1)).toFixed(1)},${Y(x).toFixed(1)}`).join(' ')}"/></svg>`;
+}
 const pieza = (titulo, nota, cuerpo, clase = '') => `<section class="pz ${clase}"><h2>${titulo}</h2><p class="nota">${nota}</p>${cuerpo}</section>`;
 
 /* Inicio: primero lo que hay que hacer, después lo que se vendió */
@@ -1078,14 +1151,30 @@ function htmlTodo() {
   } else {
     for (let d = R.ini; d <= R.fin; d = masDias(d, 1)) {
       const L = en(d, d);
-      serie.push({ v: ing(L), n: L.length, corto: PERIODO_T === '7' ? DIAS[d.getDay()] : `${d.getDate()}/${d.getMonth() + 1}`, largo: etiquetaDia(d) });
+      serie.push({ v: ing(L), n: L.length, corto: PERIODO_T === '7' ? DIAS[d.getDay()] : `${d.getDate()}/${d.getMonth() + 1}`, largo: etiquetaDia(d), L, d });
     }
   }
+  /* Mismo día del período anterior (para la línea punteada, como Shopify). */
+  const diaAntes = d => PERIODO_T === 'mes'
+    ? (d.getDate() <= new Date(d.getFullYear(), d.getMonth(), 0).getDate() ? new Date(d.getFullYear(), d.getMonth() - 1, d.getDate()) : null)
+    : masDias(d, -(+PERIODO_T));
+  const vsAntes = PERIODO_T === 'todo' ? '' : pieza('Ventas vs período anterior', `Línea punteada: ${R.vs}. Pasa el dedo para ver cada día`, lineas('vsant' + PERIODO_T,
+    serie, [{ n: 'Este período', color: 'var(--barra-dato)', v: serie.map(s => s.v) },
+      { n: 'Período anterior', color: 'var(--antes)', dash: true, v: serie.map(s => { const a = diaAntes(s.d); return a ? ing(en(a, a)) : 0; }) }],
+    { alt: 'Ventas por día comparadas con el período anterior' }), 'ancho');
+  const chMg = serie.map(s => mg(conC(s.L || []))), chPed = serie.map(s => s.n), chTk = serie.map(s => s.n ? s.v / s.n : 0);
 
-  const gastoMes = Object.fromEntries(HIST.gastos || []);
-  const tablaMeses = PERIODO_T !== 'todo' ? '' : pieza('Mes a mes', 'Como la hoja RESUMEN: resultado = ingresos − costos − gastos', `<div class="tabla-mov"><table class="datos-g mes"><tr><td>Mes</td><td>Pedidos</td><td>Ingresos</td><td>Margen</td><td>Gastos</td><td>Resultado</td></tr>${
-    serie.map(s => { const k = `${s.m.getFullYear()}-${dd(s.m.getMonth() + 1)}`, g = gastoMes[k] || 0, ingM = ing(s.L), cost = suma(s.L, p => p.costo || 0);
-      return `<tr><td>${esc(s.largo)}</td><td>${s.n}</td><td>${clp(ingM)}</td><td>${signo(ingM - cost)}</td><td>${clp(g)}</td><td>${signo(ingM - cost - g)}</td></tr>`; }).reverse().join('')}</table></div>`, 'ancho');
+  /* Gasto de Meta (script v12): pestaña ADS, por día y con IVA. En los meses con ADS, «Publicidad» de GASTOS no se resta (sería doble). */
+  const llave = d => `${d.getFullYear()}-${dd(d.getMonth() + 1)}-${dd(d.getDate())}`;
+  const ADS = new Map((HIST.ads || []).map(([f, g, m]) => [f, { g, m }]));
+  const metaMes = {};
+  ADS.forEach((o, f) => { metaMes[f.slice(0, 7)] = (metaMes[f.slice(0, 7)] || 0) + o.g; });
+  const gastoMes = {};
+  (HIST.gastos || []).forEach(([m, total, pub]) => { gastoMes[m] = total - (metaMes[m] ? pub || 0 : 0); });
+  const tablaMeses = PERIODO_T !== 'todo' ? '' : pieza('Mes a mes', 'Resultado = margen − gastos − Meta. Si un mes ya tiene el gasto de Meta, «Publicidad» de GASTOS no se resta otra vez', `<div class="tabla-mov"><table class="datos-g mes"><tr><td>Mes</td><td>Pedidos</td><td>Ingresos</td><td>Margen</td><td>Gastos</td><td>Meta</td><td>Resultado</td></tr>${
+    serie.map(s => { const k = `${s.m.getFullYear()}-${dd(s.m.getMonth() + 1)}`, g = gastoMes[k] || 0, me = metaMes[k] || 0, ingM = ing(s.L), cost = suma(s.L, p => p.costo || 0);
+      return `<tr><td>${esc(s.largo)}</td><td>${s.n}</td><td>${clp(ingM)}</td><td>${signo(ingM - cost)}</td><td>${clp(g)}</td><td>${me ? clp(me) : '—'}</td><td>${signo(ingM - cost - g - me)}</td></tr>`; }).reverse().join('')}</table></div>`, 'ancho');
+  const ganando = bloqueGanando({ R, hoy, en, ing, conC, mg, ADS, llave, signo, kpi });
 
   const grupo = (f, L = V) => {
     const m = new Map();
@@ -1105,11 +1194,13 @@ function htmlTodo() {
     ${selectorFuente()}
     <div class="periodo ancho">${[['7', '7 días'], ['30', '30 días'], ['mes', 'Este mes'], ['todo', 'Todo']].map(([k, n]) => `<button class="${PERIODO_T === k ? 'on' : ''}" data-periodo-t="${k}">${n}</button>`).join('')}</div>
     <div class="kpis ancho">
-      ${kpi('Ingresos', clp(ing(V)), vs(ing(V), ing(A)))}
-      ${kpi('Pedidos', V.length, vs(V.length, A.length))}
-      ${kpi('Ticket promedio', V.length ? clp(tk(V)) : '—', vs(tk(V), tk(A)))}
-      ${kpi('Margen', conC(V).length ? signo(mg(V)) : '—', faltan ? `<div class="var">Falta el costo de ${plural(faltan, 'pedido', 'pedidos')}</div>` : vs(mg(V), mg(A)))}
+      ${kpi('Ingresos', clp(ing(V)), vs(ing(V), ing(A)) + chispa(serie.map(s => s.v)))}
+      ${kpi('Pedidos', V.length, vs(V.length, A.length) + chispa(chPed))}
+      ${kpi('Ticket promedio', V.length ? clp(tk(V)) : '—', vs(tk(V), tk(A)) + chispa(chTk))}
+      ${kpi('Margen', conC(V).length ? signo(mg(V)) : '—', (faltan ? `<div class="var">Falta el costo de ${plural(faltan, 'pedido', 'pedidos')}</div>` : vs(mg(V), mg(A))) + chispa(chMg))}
     </div>
+    ${ganando}
+    ${vsAntes}
     ${pieza(titulo, 'Productos + envío cobrado. Toca una barra para ver el detalle', columnas('todo' + PERIODO_T, serie, plata), 'ancho')}
     ${tablaMeses}
     ${pieza('Por canal', 'Dónde se cerró la venta', filasBarra(grupo(p => p.canal)))}
@@ -1122,6 +1213,65 @@ function htmlTodo() {
       Margen = ingresos − costo de productos − costo de envío, antes de gastos y anuncios.${HIST.sinFecha ? ` ${plural(HIST.sinFecha, 'pedido sin fecha quedó', 'pedidos sin fecha quedaron')} fuera.` : ''}
       <button class="mini-btn" data-recargar-hist style="margin-left:6px">Actualizar ahora</button></p>
   </div>`;
+}
+
+/* ---------- ¿Estamos ganando? (script v12, 25-nov-2026) ----------
+   Ganancia = margen (ingresos − costo de productos − costo de envío) − gasto de Meta con IVA. Sin gastos fijos.
+   Metas DIARIAS de Áureo: equilibrio, $50.000, $100.000 y $200.000. Pedidos necesarios = (Meta al día + meta) ÷ margen promedio
+   por pedido de los últimos 30 días. Meta al día = promedio de los últimos 7 días con gasto cargado. */
+const METAS_DIA = [[0, 'Punto de equilibrio'], [50000, 'Ganar $50.000 al día'], [100000, 'Ganar $100.000 al día'], [200000, 'Ganar $200.000 al día']];
+function bloqueGanando({ R, hoy, en, ing, conC, mg, ADS, llave, signo, kpi }) {
+  if (!HIST.ads) return pieza('¿Estamos ganando?', 'Falta instalar en Google la versión 12 del script «Aureo · Pedidos web» (pestaña ADS con el gasto de Meta).', '', 'ancho');
+  if (!ADS.size) return pieza('¿Estamos ganando?', 'Todavía no hay gasto de Meta cargado en la pestaña ADS del maestro. Pídele a Claude «actualiza los ads».', '', 'ancho');
+  const fechas = [...ADS.keys()].sort(), [ua, um, ud] = fechas[fechas.length - 1].split('-').map(Number), ultimo = new Date(ua, um - 1, ud);
+  const metaEntre = (a, b) => { let g = 0, m = 0; for (let d = a; d <= b; d = masDias(d, 1)) { const o = ADS.get(llave(d)); if (o) { g += o.g; m += o.m; } } return { g, m }; };
+  // Margen promedio por pedido: últimos 30 días con costo conocido.
+  const L30 = conC(en(masDias(hoy, -29), hoy)), mgProm = L30.length ? mg(L30) / L30.length : 0;
+  // Ritmo de Meta: últimos 7 días hasta el último día cargado.
+  const metaDia = metaEntre(masDias(ultimo, -6), ultimo).g / 7;
+  // El período se mide solo hasta el último día con gasto cargado (hoy recién se carga mañana).
+  // …y desde el primer día con gasto cargado (en «Todo», los meses sin ADS no se comparan con nada).
+  const [pa, pm, pd] = fechas[0].split('-').map(Number), primero = new Date(pa, pm - 1, pd), ini = primero > R.ini ? primero : R.ini;
+  const fin = ultimo < R.fin ? ultimo : R.fin, dias = Math.max(1, Math.round((fin - ini) / 864e5) + 1);
+  if (fin < ini) return pieza('¿Estamos ganando?', `El gasto de Meta está cargado hasta el ${etiquetaDia(ultimo)}: todavía no hay datos de este período.`, '', 'ancho');
+  const V = en(ini, fin), M = metaEntre(ini, fin), conCosto = conC(V);
+  const margen = mg(conCosto), gan = margen - M.g, pedDia = V.length / dias;
+  // Día a día, para los gráficos.
+  const X = [], gMg = [], gMeta = [], gGan = [], gPed = [];
+  for (let d = ini; d <= fin; d = masDias(d, 1)) {
+    const Ld = en(d, d), m = mg(conC(Ld)), me = (ADS.get(llave(d)) || { g: 0 }).g;
+    X.push({ corto: `${d.getDate()}/${d.getMonth() + 1}`, largo: etiquetaDia(d) }); gMg.push(m); gMeta.push(me); gGan.push(m - me); gPed.push(Ld.length);
+  }
+  const pedPara = meta => mgProm > 0 ? Math.ceil((metaDia + meta) / mgProm) : null;
+  const graficos = `
+    <h3 style="margin:18px 0 0;font-size:14px">Margen y gasto de Meta, día a día</h3>
+    <p class="nota">Cuando la línea azul va arriba de la naranja, ese día ganamos.</p>
+    ${lineas('mgmeta', X, [{ n: 'Margen del día', color: 'var(--s1)', v: gMg }, { n: 'Gasto en Meta', color: 'var(--s2)', v: gMeta }], { alt: 'Margen y gasto de Meta por día' })}
+    <h3 style="margin:18px 0 0;font-size:14px">Ganancia de cada día</h3>
+    <p class="nota">Verde = ganamos ese día · rojo = perdimos. La línea punteada es la meta de ganar $50.000 al día.</p>
+    ${lineas('ganancia', X, [{ n: 'Ganancia', color: 'var(--verde)', v: gGan }], { barras: true, refs: [{ v: 50000, n: 'Meta $50.000' }], fmt: signo, alt: 'Ganancia después de Meta por día' })}
+    <h3 style="margin:18px 0 0;font-size:14px">Pedidos por día</h3>
+    <p class="nota">Las líneas punteadas marcan cuántos pedidos hacen falta para no perder y para ganar $50.000.</p>
+    ${lineas('pedidos', X, [{ n: 'Pedidos', color: 'var(--s1)', v: gPed }], { fmt: v => plural(v, 'pedido', 'pedidos'), corto: v => String(Math.round(v)),
+      refs: pedPara(0) === null ? [] : [{ v: pedPara(0), n: `Equilibrio: ${pedPara(0)}` }, { v: pedPara(50000), n: `$50.000: ${pedPara(50000)}` }], alt: 'Pedidos por día' })}`;
+  const filas = METAS_DIA.map(([meta, nombre]) => {
+    const necesita = metaDia + meta, ped = mgProm > 0 ? Math.ceil(necesita / mgProm) : null, ok = ped !== null && pedDia >= ped;
+    return `<tr${ok ? ' style="color:var(--verde,#1a7f37);font-weight:600"' : ''}><td>${ok ? '✓ ' : ''}${nombre}</td><td>${clp(necesita)}</td><td>${ped === null ? '—' : ped}</td></tr>`;
+  }).join('');
+  return `<section class="pz ancho"><h2>¿Estamos ganando?</h2>
+    <p class="nota">Margen − gasto de Meta con IVA, del ${etiquetaDia(ini)} al ${etiquetaDia(fin)}. Sin gastos fijos.</p>
+    <div class="kpis">
+      ${kpi('Gasto en Meta', clp(M.g), `<div class="var">${clp(M.g / dias)} al día</div>${chispa(gMeta, 'var(--s2)')}`)}
+      ${kpi('Ganancia después de Meta', signo(gan), `<div class="var ${gan >= 0 ? 'sube' : 'baja'}">${signo(gan / dias)} al día</div>${chispa(gGan, gan >= 0 ? 'var(--verde)' : 'var(--malo)')}`)}
+      ${kpi('Costo de Meta por pedido', V.length ? clp(M.g / V.length) : '—', `<div class="var ${V.length && M.g / V.length <= 5000 ? 'sube' : 'baja'}">meta ≤ $5.000</div>`)}
+      ${kpi('Retorno de Meta', M.g ? (ing(V) / M.g).toFixed(1).replace('.', ',') + ' ×' : '—', `<div class="var">ventas ÷ gasto${M.m ? ` · ${clp(M.g / M.m)} por mensaje` : ''}</div>`)}
+    </div>
+    <p class="nota" style="margin-top:12px">Cuántos pedidos tienen que salir <b>cada día</b>. Meta hoy gasta ~${clp(metaDia)} al día (últimos 7 días) y cada pedido deja ~${clp(mgProm)} de margen (promedio de 30 días).
+      Vamos en <b>${pedDia.toFixed(1).replace('.', ',')} pedidos al día</b> en este período.</p>
+    <div class="tabla-mov"><table class="datos-g mes"><tr><td>Meta</td><td>Margen al día</td><td>Pedidos al día</td></tr>${filas}</table></div>
+    ${graficos}
+    ${conCosto.length < V.length ? `<p class="nota">${plural(V.length - conCosto.length, 'pedido no tiene', 'pedidos no tienen')} costo: no entra${V.length - conCosto.length === 1 ? '' : 'n'} al margen.</p>` : ''}
+  </section>`;
 }
 
 function pintarPanel() {

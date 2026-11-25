@@ -15,6 +15,7 @@ Formato: `hilo · qué · quién · estado` (estado: por hacer · en curso · es
 - Todos · Pasar este repo a privado y dejar aureocl.github.io redirigiendo al dominio nuevo · espera a Áureo
 
 ## Listo
+- W3 · Bandeja: gasto diario de Meta (pestaña ADS) + «¿Estamos ganando?» con metas diarias y gráficos estilo Shopify · Áureo · 25-nov-2026
 - Común + W1 · Envío gratis a punto Blue en todo Chile desde $40.000 (a domicilio en regiones $3.000) · Áureo · 24-nov-2026
 - W3 · Bandeja con **Inicio** (vendido hoy, lo que hay que hacer, últimos 7 días y pedidos) y **Ventas** (hoy, 7 y 30 días, mes: ventas, pedidos, ticket, margen estimado, por día, día de la semana, hora, del pedido al despacho, lo más vendido, ofertas, regiones, cuentas). La tarjeta del pedido muestra «Dice que transfirió a Javi/Caro» · Áureo · 24-nov-2026
 - W1 · Portada de presentación a pantalla completa + categorías con ejemplos que avanzan solos · Áureo · 23-nov-2026
