@@ -155,6 +155,76 @@
   .modal textarea{min-height:150px}
   .chk{display:flex;gap:8px;align-items:center;margin-top:10px;font-size:14px}
 
+  /* ---------- Bandeja sobria (Áureo, 25-nov-2026): lista a la izquierda y el pedido a la derecha, partido en
+     «Para copiar» y «Pedido». Negro, dorado y crema, sin esquinas redondas. BLUE negro · PUNTO borde negro · PAKET dorado. ---------- */
+  .layout{grid-template-columns:minmax(0,1fr)!important;max-width:1280px}
+  #resumen.arriba{position:static;border-radius:0;margin:0 0 12px;padding:10px 14px}
+  #resumen.arriba details.res-movil>summary{pointer-events:auto;cursor:pointer}
+  #resumen.arriba table{max-width:520px}
+  .pil{border-radius:0}.pil.paket{background:var(--oro);color:#fff}.pil.blue{background:var(--negro);color:#fff}
+  .tab,#buscar{border-radius:0}
+  .tag{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.06em;padding:2px 6px;margin-right:7px;vertical-align:2px;line-height:1.2;white-space:nowrap}
+  .tag.tb{background:var(--negro);color:#fff;border:1px solid var(--negro)}
+  .tag.tbp{background:#fff;color:var(--negro);border:1px solid var(--negro)}
+  .tag.tp{background:var(--oro);color:#fff;border:1px solid var(--oro)}
+  .tag.tf{background:#EFEAE0;color:var(--gris);border:1px solid var(--linea)}
+  .md{display:grid;grid-template-columns:290px minmax(0,1fr);border:1px solid var(--linea);background:#fff;align-items:start}
+  .md-lista{border-right:1px solid var(--linea);max-height:calc(100vh - 150px);overflow:auto;position:sticky;top:110px}
+  .it{display:block;width:100%;text-align:left;border:0;border-bottom:1px solid var(--linea);background:#fff;padding:10px 12px;font:inherit;font-size:14px;color:var(--negro);cursor:pointer}
+  .it:hover{background:var(--crema)}
+  .it.on{background:var(--crema);box-shadow:inset 3px 0 var(--oro)}
+  .it b{font-weight:600}
+  .it-s{display:flex;justify-content:space-between;gap:8px;color:var(--gris);font-size:12px;margin-top:3px}
+  .it-s span{color:var(--negro);font-variant-numeric:tabular-nums}
+  .md-det{min-width:0}
+  .md-det .card{border:0;border-radius:0;margin:0;background:#fff;padding:16px 20px}
+  .det-cab{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;padding-bottom:12px;border-bottom:1px solid var(--linea)}
+  .det-nom{font-size:18px}
+  .det-sub{color:var(--gris);font-size:12px;margin-top:4px}
+  .det-sub a{color:var(--negro)}
+  .det-der{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+  .det-der .suave{border:1px solid var(--linea);background:#fff;padding:5px 12px;font:600 13px inherit;cursor:pointer;color:var(--negro)}
+  .det-cols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr)}
+  .det-copiar{padding:14px 20px 4px 0;border-right:1px solid var(--linea);min-width:0}
+  .det-pedido{padding:14px 0 4px 20px;min-width:0}
+  .det-cols .tit{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--gris);margin-bottom:8px}
+  .datos-envio{border:0;border-radius:0;padding:0;background:none}
+  .dato{padding:7px 0}
+  .copiar{border-radius:0;color:var(--oro);font-weight:700}
+  .copiar-todo{border-radius:0;margin-top:10px}
+  .pidio{border-radius:0;margin:0 0 10px}
+  .aviso,.info{border-radius:0}
+  .acciones button,.btn{border-radius:0;font-size:14px;padding:10px}
+  .javi,.caro,.enviar{background:var(--negro);color:#fff}
+  .enviar[disabled]{background:#b9b5ad}
+  .acciones .empacar{background:var(--oro);color:#fff}
+  .descartar,.suave{background:#fff;color:var(--negro);border:1px solid var(--linea)!important}
+  .estado{color:var(--negro)}
+  .cambiar-emp{border-radius:0;margin:0}
+  .fl input,.seg input,.seg button,.foto label.subir{border-radius:0}
+  .subtabs button{border-radius:0}
+  .subtabs button.paket.on,.subtabs button.blue.on{background:var(--negro);border-color:var(--negro)}
+  .tabla-env{border-radius:0}
+  .tabla-env tr.paket td:first-child,.tabla-env tr.blue td:first-child{box-shadow:none}
+  .tabla-env .acc a,.tabla-env .acc button{border-radius:0}
+  .tabla-env .acc a.wsp{background:#fff;border-color:var(--linea);color:var(--negro)}
+  .tabla-env .acc a.wsp.rec{background:#fff;border-color:var(--oro);color:var(--negro)}
+  .tabla-env .vio{color:var(--negro)}
+  .modal .caja,.modal .botones button,.modal label.campo input,.modal label.campo textarea{border-radius:0}
+  #mSi,#aGuardar,#eSi{background:var(--negro);color:#fff}#eNo{background:#eee;color:#333}
+  .modal .caja.ancha{max-width:680px}
+  .e-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}.e-grid .ancho{grid-column:1/-1}
+  .modal label.campo select{display:block;width:100%;margin-top:4px;border:1px solid var(--linea);padding:8px;font:inherit;background:#fff;color:var(--negro)}
+  .e-suma{font-size:13px;color:var(--gris);margin:4px 0 0}.e-suma.mal{color:var(--rojo);font-weight:600}
+  @media (max-width:820px){
+    .md{grid-template-columns:minmax(0,1fr)}
+    .md-lista{position:static;max-height:300px;border-right:0;border-bottom:2px solid var(--negro)}
+    .det-cols{grid-template-columns:minmax(0,1fr)}
+    .det-copiar{border-right:0;padding-right:0;border-bottom:1px solid var(--linea);padding-bottom:12px}
+    .det-pedido{padding-left:0}
+    .e-grid{grid-template-columns:1fr}
+  }
+
   /* ---------- Inicio y Ventas (borrador v9, 22-nov-2026) ---------- */
   :root{--barra-dato:#96733A;--pista:#EFEAE0;color-scheme:light}
   [hidden]{display:none!important}
@@ -249,14 +319,12 @@
     <button class="tab" data-f="Enviado">Enviados <b id="nE">·</b></button>
     <button class="tab" data-f="Descartado">Descartados <b id="nD">·</b></button>
     <input id="buscar" placeholder="Buscar nombre, teléfono, AU-… o seguimiento">
-    <button id="verDatos" title="Muestra u oculta, al lado de cada pedido, los datos para ingresarlo en Paket o Blue">📋 Datos de envío</button>
     <button id="refrescar">Actualizar</button>
   </div>
 </header>
 <div id="panel"><p class="vacio">Cargando ventas…</p></div>
 <div class="layout">
   <main id="lista"><p class="vacio">Cargando pedidos…</p></main>
-  <aside id="resumen"></aside>
 </div>
 <div id="toast"></div>
 <div class="modal" id="modal"><div class="caja"><div id="mTxt"></div><div id="mExtra"></div><div class="botones"><button id="mNo">Cancelar</button><button id="mSi">Sí, confirmar</button></div></div></div>
@@ -269,7 +337,26 @@
   <p style="font-size:12px;color:var(--gris);margin:6px 0 0">Se reemplazan solos: {nombre} {empresa} {seguimiento} {link}. Si el link no tiene {n}, se manda tal cual.</p>
   <div class="botones"><button id="aCerrar">Cerrar</button><button id="aGuardar">Guardar</button></div>
 </div></div>
-<datalist id="cat"></datalist>
+<div class="modal" id="editar"><div class="caja ancha">
+  <b id="eTit">Editar pedido</b>
+  <div class="e-grid">
+    <label class="campo">Nombre y apellido<input id="eNom" autocomplete="off"></label>
+    <label class="campo">Teléfono<input id="eTel" inputmode="tel" autocomplete="off"></label>
+    <label class="campo">Correo<input id="eMail" type="email" autocomplete="off" placeholder="Si no dejó, queda vacío"></label>
+    <label class="campo">Entrega<select id="eEnt"><option value="Domicilio">A domicilio</option><option value="Punto Bluexpress">Punto Blue</option></select></label>
+    <label class="campo">Región<input id="eReg" list="regiones" autocomplete="off"></label>
+    <label class="campo">Comuna<input id="eCom" autocomplete="off"></label>
+    <label class="campo ancho"><span id="eDirL">Dirección</span><input id="eDir" autocomplete="off"></label>
+  </div>
+  <div class="lbl" style="margin-top:16px">Productos (así quedan en el maestro)</div>
+  <div class="filas" id="eFilas"></div>
+  <button class="mas" id="eMas">+ agregar fila</button>
+  <label class="campo">Total del pedido<input id="eTot" inputmode="numeric"></label>
+  <p class="e-suma" id="eSuma"></p>
+  <div id="eAviso"></div>
+  <div class="botones"><button id="eNo">Cancelar</button><button id="eSi">Guardar cambios</button></div>
+</div></div>
+<datalist id="cat"></datalist><datalist id="regiones"></datalist>
 <script>
 window.onerror = (m, s, l, c) => { const e = document.getElementById("lista"); if (e) e.innerHTML = `<p class="vacio">Error en la página: ${m} (línea ${l})</p>`; };
 </script>
@@ -328,11 +415,9 @@ let EMP = 'todos';
 function listaEmpacados(L) {
   const pk = L.filter(p => claseEmp(p) === 'paket'), bl = L.filter(p => claseEmp(p) === 'blue');
   const chip = (v, txt, n, c) => `<button class="${c} ${EMP === v ? 'on' : ''}" data-emp="${v}">${txt} · ${n}</button>`;
-  let h = `<div class="subtabs">${chip('todos', 'Todos', L.length, '')}${chip('paket', 'Paket', pk.length, 'paket')}${chip('blue', 'Blue Express', bl.length, 'blue')}</div>`;
-  const grupo = (G, c, txt) => G.length ? `<div class="grupo ${c}">${txt} · ${G.length}</div>` + G.map(tarjeta).join('') : '';
-  if (EMP === 'todos') return h + grupo(pk, 'paket', 'Paket') + grupo(bl, 'blue', 'Blue Express');
-  const G = EMP === 'paket' ? pk : bl;
-  return h + (G.length ? G.map(tarjeta).join('') : `<p class="vacio">No hay empacados por ${EMP === 'paket' ? 'Paket' : 'Blue Express'}.</p>`);
+  const h = `<div class="subtabs">${chip('todos', 'Todos', L.length, '')}${chip('paket', 'Paket', pk.length, 'paket')}${chip('blue', 'Blue Express', bl.length, 'blue')}</div>`;
+  const G = EMP === 'todos' ? L : EMP === 'paket' ? pk : bl;
+  return h + (G.length ? maestroDetalle(G) : `<p class="vacio">No hay empacados por ${EMP === 'paket' ? 'Paket' : 'Blue Express'}.</p>`);
 }
 
 /* Enviados en tabla, el último enviado arriba. 👀 = el cliente apretó «Ver instrucciones» en el correo (columna «Abrió»):
@@ -347,7 +432,7 @@ function tablaEnviados(L) {
       : !p.mail ? '<span class="novio" title="No dejó correo">— Sin correo</span>'
       : conLinkArmar(p) ? '<span class="novio">Aún no</span>' : '<span class="novio" title="Enviado antes del 25-nov: el correo no traía el link">— Sin dato</span>';
     const rec = !p.abrio && !p.porFuera && wa ? `<a class="wsp rec" target="_blank" href="${waTexto(wa, recordatorio(p))}" title="Recordar por WhatsApp (lleva su link de instrucciones: al abrirlo queda 👀 Sí)">🔔</a>` : '';
-    const emp = p.porFuera ? '🤝 Por fuera' : p.empresa === 'Paket' ? 'Paket' : (p.entrega === 'Domicilio' ? 'Blue · domicilio' : 'Blue · Punto Blue');
+    const emp = tagEmp(p);
     const link = !p.porFuera && p.seguimiento ? linkSeg(p) : '';
     const seg = p.porFuera ? `<span class="chico">${esc(p.aviso.replace(/^Entregado por fuera: /, ''))}</span>` : link ? `<a href="${esc(link)}" target="_blank">${esc(p.seguimiento)}</a>` : esc(p.seguimiento || '—');
     return `<tr class="${claseEmp(p)}" data-id="${esc(p.id)}">
@@ -356,10 +441,10 @@ function tablaEnviados(L) {
       <td><b>${esc(p.numero)}</b><span class="chico">${esc(p.id)}</span></td>
       <td><b>${esc(p.cliente)}</b><span class="chico">${wa ? `<a href="${wa}" target="_blank">${esc(p.tel)}</a>` : esc(p.tel)}</span></td>
       <td>${esc(p.comuna)}<span class="chico">${esc(p.region)}</span></td>
-      <td style="white-space:nowrap">${esc(emp)}</td>
+      <td style="white-space:nowrap">${emp}</td>
       <td>${seg}</td>
       <td style="white-space:nowrap;text-align:right">${clp(p.total)}<span class="chico">pagó a ${esc(p.cuenta)}</span></td>
-      <td><div class="acc">${rec}${!p.porFuera && wa ? `<a class="wsp" target="_blank" href="${waTexto(wa, mensaje(p))}" title="Avisar por WhatsApp">💬</a>` : ''}${!p.porFuera && p.mail ? '<button data-reenviar title="Reenviar correo">✉️</button>' : ''}${p.foto ? `<a href="${esc(p.foto)}" target="_blank" title="Ver foto del paquete">📷</a>` : ''}</div></td>
+      <td><div class="acc">${rec}${!p.porFuera && wa ? `<a class="wsp" target="_blank" href="${waTexto(wa, mensaje(p))}" title="Avisar por WhatsApp">💬</a>` : ''}${!p.porFuera && p.mail ? '<button data-reenviar title="Reenviar correo">✉️</button>' : ''}${p.foto ? `<a href="${esc(p.foto)}" target="_blank" title="Ver foto del paquete">📷</a>` : ''}<button data-editar title="Editar datos, productos o total">✏️</button></div></td>
     </tr>`;
   };
   const vistos = L.filter(p => p.abrio).length;
@@ -383,14 +468,15 @@ function pintar() {
   // Por armar y Empacados: primero el que pagó antes (Áureo, 24-nov). La fecha que cuenta es «Pagado el», no cuándo hizo el pedido.
   if (FILTRO === 'Pagado' || FILTRO === 'Empacado') L.sort((a, b) => clavePago(a).localeCompare(clavePago(b)));
   const vacios = { Pendiente: 'No hay pedidos esperando pago.', Pagado: 'No hay pedidos pagados por armar.', Empacado: 'No hay pedidos empacados esperando despacho.', Enviado: 'Todavía no hay pedidos enviados.', Descartado: 'Nada por aquí.' };
-  document.querySelector('.layout').classList.toggle('ancho', FILTRO === 'Enviado');
-  $('#lista').innerHTML = FILTRO === 'Enviado' && L.length ? tablaEnviados(L) : FILTRO === 'Empacado' && L.length ? listaEmpacados(L) : L.length ? L.map(tarjeta).join('') : `<p class="vacio">${vacios[FILTRO]}</p>`;
+  const arriba = FILTRO === 'Pagado' ? '<aside id="resumen" class="arriba"></aside>' : '';
+  $('#lista').innerHTML = arriba + (FILTRO === 'Enviado' && L.length ? tablaEnviados(L) : FILTRO === 'Empacado' && L.length ? listaEmpacados(L) : L.length ? maestroDetalle(L) : `<p class="vacio">${vacios[FILTRO]}</p>`);
   pintarResumen();
   editando = false;
 }
 
 /* ---------- Resumen: lo que hay que armar (solo pagados sin enviar) ---------- */
 function pintarResumen() {
+  if (!$('#resumen')) return;
   const P = TODOS.filter(p => etapa(p) === 'Pagado'), K = TODOS.filter(p => etapa(p) === 'Empacado').length;
   const paket = P.filter(p => p.empresa === 'Paket').length, blue = P.length - paket;
   const tot = {}, camisetas = [], regalos = [], empaques = [];
@@ -419,17 +505,32 @@ const btnEmpresa = p => p.cambiable && (p.estado === 'Pendiente' || p.estado ===
   ? `<button class="cambiar-emp" data-empresa="${p.empresa === 'Paket' ? 'Bluexpress' : 'Paket'}">⇄ Mandar por ${p.empresa === 'Paket' ? 'Blue' : 'Paket'}</button>` : '';
 const claseEmp = p => p.empresa === 'Paket' ? 'paket' : 'blue';
 
+/* Lista a la izquierda (orden de la pestaña) y el pedido elegido a la derecha. */
+let SEL = '';
+const tagEmp = p => p.porFuera ? '<span class="tag tf">EN MANO</span>' : p.empresa === 'Paket' ? '<span class="tag tp">PAKET</span>'
+  : p.entrega === 'Domicilio' ? '<span class="tag tb">BLUE</span>' : '<span class="tag tbp">PUNTO</span>';
+const diaMes = v => String(v || '').replace(/^'/, '').slice(0, 5);
+function itemLista(p) {
+  const cuando = p.pagadoEl ? 'pagó ' + diaMes(p.pagadoEl) : 'llegó ' + diaMes(p.recibido);
+  return `<button class="it ${p.id === SEL ? 'on' : ''}" data-sel="${esc(p.id)}">${tagEmp(p)}<b>${esc(p.cliente)}</b>
+    <span class="it-s">${esc(p.comuna || p.region)} · ${cuando}<span>${clp(p.total)}</span></span></button>`;
+}
+function maestroDetalle(L) {
+  if (!L.some(p => p.id === SEL)) SEL = L[0].id;
+  return `<div class="md"><nav class="md-lista">${L.map(itemLista).join('')}</nav><div class="md-det">${tarjeta(L.find(p => p.id === SEL))}</div></div>`;
+}
+
 function tarjeta(p) {
   const tel = String(p.tel).replace(/\D/g, '');
   const wa = tel ? WA + telWa(tel) : '';
-  const entrega = p.entrega === 'Domicilio' ? 'A domicilio' : 'Punto Blue (buscarle el más cercano)';
-  let h = `<div class="card ${p.estado.toLowerCase()} ${claseEmp(p)}${VER_DATOS ? ' con-datos' : ''}" data-id="${esc(p.id)}"><div class="cuerpo">
-    <div class="cab"><div><div class="id">${esc(p.id)}</div><div class="cuando">${esc(p.recibido)}</div><span class="badge">${esc(empresaTxt(p))}${p.cambiada ? ' · cambiado' : ''}</span>${btnEmpresa(p)}</div><div class="total">${clp(p.total)}</div></div>
-    <div class="cliente">${esc(p.cliente)}</div>
-    <div class="datos">${wa ? `<a href="${wa}" target="_blank">${esc(p.tel)}</a>` : esc(p.tel)}${p.mail ? ' · ' + esc(p.mail) : ''}<br>
-      ${esc(entrega)} · ${esc(p.comuna)}, ${esc(p.region)}<br>${esc(p.dir)}
-      ${p.necesita ? `<br><b>Lo necesita para: ${esc(p.necesita)}</b>` : ''}${p.esRegalo ? '<br><b>🎁 Es regalo</b>' : ''}</div>
-    <div class="pidio">${esc(p.resumen)}\nEnvío: ${p.envio ? clp(p.envio) : 'gratis'}</div>`;
+  let h = `<div class="card det ${p.estado.toLowerCase()}" data-id="${esc(p.id)}">
+    <div class="det-cab"><div>${tagEmp(p)}<b class="det-nom">${esc(p.cliente)}</b>
+      <div class="det-sub">${esc(p.id)}${p.numero ? ' · N° ' + esc(p.numero) : ''} · llegó ${esc(p.recibido)}${wa ? ` · <a href="${wa}" target="_blank">WhatsApp ${esc(p.tel)}</a>` : ''}${p.cambiada ? ' · empresa cambiada a mano' : ''}</div></div>
+      <div class="det-der"><div class="total">${clp(p.total)}</div><button class="suave" data-editar>✏️ Editar</button>${btnEmpresa(p)}</div></div>
+    <div class="det-cols"><div class="det-copiar">${datosEnvio(p)}</div><div class="det-pedido">
+    <div class="tit">Pedido</div>
+    <div class="pidio">${esc(p.resumen)}\nEnvío: ${p.envio ? clp(p.envio) : 'gratis'}</div>
+    ${p.necesita ? `<div class="info">Lo necesita para: <b>${esc(p.necesita)}</b></div>` : ''}${p.esRegalo ? '<div class="info">🎁 Es regalo</div>' : ''}`;
   if (p.previo) h += `<div class="info">↺ ${esc(p.previo)}</div>`;
   if (p.estado === 'Pendiente') {
     if (p.panel && p.panel.declarado) h += `<div class="info">Dice que transfirió a ${esc(p.panel.declarado)}: míralo en el banco antes de confirmar.</div>`;
@@ -459,15 +560,13 @@ function tarjeta(p) {
   } else {
     h += `<div class="estado gris">Descartado <button data-reabrir>Volver a pendientes</button></div>`;
   }
-  return h + '</div>' + (VER_DATOS ? `<div class="caja-datos">${datosEnvio(p)}</div>` : '') + '</div>';
+  return h + '</div></div></div>';
 }
 
 /* Cuadrito por pedido con lo que pide cada empresa, en su orden (Áureo, 24-nov-2026):
    Blue domicilio: nombre, apellido, teléfono, correo, dirección (+ comuna y región).
    Punto Blue: nombre, apellido, teléfono, correo, región, comuna y el punto (el cliente da una dirección de referencia).
    Paket: nombre, teléfono, dirección y comuna. */
-let VER_DATOS = true;   // Áureo (24-nov): siempre parte prendido; el botón lo oculta solo mientras la página esté abierta
-document.addEventListener('DOMContentLoaded', () => { const b = $('#verDatos'); if (b) b.classList.toggle('on', VER_DATOS); });
 function partirNombre(n) {
   const w = String(n || '').trim().split(/\s+/).filter(Boolean);
   const k = w.length >= 4 ? 2 : 1;   // «María José Candia Ramírez» → María José / Candia Ramírez
@@ -481,7 +580,7 @@ function datosEnvio(p) {
   else if (p.entrega === 'Domicilio') { tit = 'Para Blue Express · domicilio'; D = [['Nombre', nom], ['Apellido', ape], ['Teléfono', tel], ['Correo', p.mail], ['Dirección', p.dir], ['Comuna', p.comuna], ['Región', p.region]]; }
   else { tit = 'Para Blue Express · Punto Blue'; D = [['Nombre', nom], ['Apellido', ape], ['Teléfono', tel], ['Correo', p.mail], ['Región', p.region], ['Comuna', p.comuna], ['Punto Blue (el más cercano a)', p.dir]]; }
   const todo = D.map(([k, v]) => `${k}: ${v || ''}`).join('\n');
-  return `<div class="datos-envio"><div class="tit">📋 ${tit}</div>${D.map(([k, v]) => `<div class="dato"><div><span>${esc(k)}</span><b>${esc(v || '—')}</b></div>${v ? `<button class="copiar" data-copiar="${esc(v)}">Copiar</button>` : ''}</div>`).join('')}
+  return `<div class="datos-envio"><div class="tit">Para copiar · ${tit.replace(/^Para /, '')}</div>${D.map(([k, v]) => `<div class="dato"><div><span>${esc(k)}</span><b>${esc(v || '—')}</b></div>${v ? `<button class="copiar" data-copiar="${esc(v)}">Copiar</button>` : ''}</div>`).join('')}
     <button class="copiar-todo" data-copiar="${esc(todo)}">Copiar todo</button></div>`;
 }
 
@@ -555,12 +654,17 @@ document.addEventListener('click', async ev => {
   const b = ev.target.closest('button'); if (!b || b.closest('.modal')) return;
   if (b.classList.contains('tab')) { document.querySelectorAll('.tab').forEach(t => t.classList.toggle('on', t === b)); FILTRO = b.dataset.f; pintar(); return; }
   if (b.dataset.emp) { EMP = b.dataset.emp; pintar(); return; }
-  if (b.id === 'verDatos') { VER_DATOS = !VER_DATOS; b.classList.toggle('on', VER_DATOS); pintar(); return; }
   if (b.id === 'refrescar') { toast('Actualizando…', 1200); cargar(); return; }
   if (b.id === 'ajustesBtn') { $('#aBlue').value = AJ.linkBlue; $('#aPaket').value = AJ.linkPaket; $('#aMsj').value = AJ.mensaje; $('#aRec').value = AJ.recordatorio || ''; $('#ajustes').style.display = 'flex'; return; }
   if ('copiar' in b.dataset) { try { await navigator.clipboard.writeText(b.dataset.copiar); b.textContent = '✓ Copiado'; } catch (e) { toast('Mantén apretado el texto para copiarlo'); } setTimeout(() => { b.textContent = b.classList.contains('copiar-todo') ? 'Copiar todo' : 'Copiar'; }, 1500); return; }
+  if (b.dataset.sel) {
+    SEL = b.dataset.sel; pintar();
+    if (matchMedia('(max-width:820px)').matches) { const d = $('.md-det'); if (d) d.scrollIntoView({ behavior: 'smooth' }); }
+    return;
+  }
   const card = b.closest('.card, tr[data-id]'); if (!card) return;
   const id = card.dataset.id, p = TODOS.find(x => x.id === id);
+  if ('editar' in b.dataset) { abrirEditar(p); return; }
   if ('quitar' in b.dataset) {
     const fs = card.querySelector('.filas'), x = b.closest('.fl'), env = x.querySelector('.env');
     x.remove();
@@ -663,6 +767,63 @@ document.addEventListener('change', async ev => {
 });
 document.addEventListener('toggle', ev => { const d = ev.target; if (d.matches && d.matches('[data-datos]')) { const id = d.closest('.card').dataset.id; d.open ? ABIERTOS.add(id) : ABIERTOS.delete(id); } }, true);
 document.addEventListener('input', ev => { if (ev.target.closest('.card')) editando = true; if (ev.target.id === 'buscar') pintar(); });
+
+/* ✏️ Editar pedido (Áureo, 25-nov-2026): datos del cliente, productos y total. Si ya está en VENTAS, el servidor lo corrige también ahí. */
+let ED = null;
+const soloNum = v => Number(String(v || '').replace(/\D/g, '') || 0);
+function abrirEditar(p) {
+  ED = { id: p.id, estado: p.estado };
+  $('#eTit').textContent = `Editar pedido · ${p.cliente}`;
+  $('#eNom').value = p.cliente; $('#eTel').value = p.tel; $('#eMail').value = p.mail;
+  $('#eEnt').value = p.entrega === 'Domicilio' ? 'Domicilio' : 'Punto Bluexpress';
+  $('#eReg').value = p.region; $('#eCom').value = p.comuna; $('#eDir').value = p.dir;
+  $('#regiones').innerHTML = [...new Set(TODOS.map(x => x.region).filter(Boolean))].sort().map(r => `<option value="${esc(r)}">`).join('');
+  $('#eFilas').innerHTML = (p.filas || []).map((f, i) => fila(f, i)).join('');
+  ED.base = JSON.stringify(leerFilas($('#eFilas')));
+  $('#eTot').value = p.total;
+  $('#eAviso').innerHTML = p.estado === 'Enviado' ? `<p class="aviso">Ya está en el maestro (VENTAS, pedido ${esc(p.numero)}): lo que cambies se corrige también ahí. Los productos solo si queda la misma cantidad de filas.</p>`
+    : p.estado === 'Pendiente' ? '<p class="e-suma">Todavía no pagó: los productos que dejes aquí son los que se confirman con «Pagó a Javi/Caro».</p>' : '';
+  dirE(); sumaE(); $('#editar').style.display = 'flex';
+}
+function dirE() { $('#eDirL').textContent = $('#eEnt').value === 'Domicilio' ? 'Dirección' : 'Punto Blue (o la dirección de referencia para buscarle el más cercano)'; }
+function sumaE() {
+  const F = leerFilas($('#eFilas')), e = $('#eSuma');
+  if (!F.length) { e.textContent = 'Sin productos.'; e.className = 'e-suma mal'; return; }
+  const s = F.reduce((a, f) => a + f.Cantidad * f['Precio Unit.'], 0) + (F[0]['Envio Cobrado'] || 0), t = soloNum($('#eTot').value);
+  e.textContent = s === t ? `✓ Los productos suman ${clp(s)}, igual que el total.` : `Ojo: los productos suman ${clp(s)} y el total dice ${clp(t)}.`;
+  e.className = 'e-suma' + (s === t ? '' : ' mal');
+}
+$('#editar').addEventListener('input', () => sumaE());
+$('#eEnt').onchange = dirE;
+$('#editar').addEventListener('click', async ev => {
+  const b = ev.target.closest('button'); if (!b) return;
+  if ('quitar' in b.dataset) {
+    const fs = $('#eFilas'), x = b.closest('.fl'), env = x.querySelector('.env');
+    x.remove();
+    const primera = fs.querySelector('.fl');
+    if (env && primera) primera.lastElementChild.outerHTML = env.outerHTML;
+    sumaE(); return;
+  }
+  if (b.id === 'eMas') { const fs = $('#eFilas'); fs.insertAdjacentHTML('beforeend', fila({ Producto: '', Cantidad: 1, 'Precio Unit.': 0, 'Envio Cobrado': 0 }, fs.children.length)); sumaE(); return; }
+  if (b.id === 'eNo') { $('#editar').style.display = 'none'; return; }
+  if (b.id !== 'eSi') return;
+  const F = leerFilas($('#eFilas')), cambiaron = JSON.stringify(F) !== ED.base;
+  if (cambiaron && !F.length) { toast('Deja al menos un producto'); return; }
+  const d = {
+    cliente: { nombre: $('#eNom').value.trim(), tel: $('#eTel').value.trim(), mail: $('#eMail').value.trim(), entrega: $('#eEnt').value,
+      region: $('#eReg').value.trim(), comuna: $('#eCom').value.trim(), dir: $('#eDir').value.trim() },
+    total: soloNum($('#eTot').value), filas: cambiaron ? F : null,
+  };
+  if (!d.cliente.nombre || !d.cliente.tel) { toast('Falta el nombre o el teléfono'); return; }
+  b.disabled = true; b.textContent = 'Guardando…';
+  try {
+    const r = await llamar('editarPedido', ED.id, d);
+    $('#editar').style.display = 'none';
+    toast('✓ Pedido corregido' + (r && r.ventas ? ' ' + r.ventas : ''), 5000);
+    await cargar();
+  } catch (e) { toast('No se pudo: ' + e.message, 8000); }
+  finally { b.disabled = false; b.textContent = 'Guardar cambios'; }
+});
 
 $('#aCerrar').onclick = () => { $('#ajustes').style.display = 'none'; };
 $('#aGuardar').onclick = async () => {
@@ -1009,7 +1170,7 @@ document.addEventListener('focusin', ev => { if (ev.target.matches('[data-graf]'
 
 /* Se actualiza sola cada minuto (salvo que estén escribiendo o con una ventana abierta). */
 setInterval(() => {
-  const ocupado = editando || document.hidden || $('#modal').style.display === 'flex' || $('#ajustes').style.display === 'flex' || (document.activeElement && document.activeElement.matches('input,textarea'));
+  const ocupado = editando || document.hidden || $('#modal').style.display === 'flex' || $('#ajustes').style.display === 'flex' || $('#editar').style.display === 'flex' || (document.activeElement && document.activeElement.matches('input,textarea'));
   if (K && !ocupado) cargar();
 }, 60000);
 function pedirClave(error) {
