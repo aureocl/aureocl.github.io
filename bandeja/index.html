@@ -285,6 +285,8 @@ const clp = n => '$' + Math.round(Number(n) || 0).toString().replace(/\B(?=(\d{3
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const norm = s => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
 const WA = 'https:\/\/wa.me/';
+/* Mensaje con texto: wa.me rompe los emojis al redirigir (cuadrado negro, 25-nov); api.whatsapp.com los respeta. */
+const waTexto = (wa, texto) => 'https:\/\/api.whatsapp.com/send?phone=' + wa.slice(WA.length) + '&text=' + encodeURIComponent(texto);
 function toast(t, ms = 3500) { const e = $('#toast'); e.textContent = t; e.style.display = 'block'; clearTimeout(toast.t); toast.t = setTimeout(() => e.style.display = 'none', ms); }
 function preguntar(txt, extra) {
   return new Promise(ok => {
@@ -344,7 +346,7 @@ function tablaEnviados(L) {
       : p.porFuera ? '<span class="novio" title="Entregado en mano: no lleva correo">🤝 En mano</span>'
       : !p.mail ? '<span class="novio" title="No dejó correo">— Sin correo</span>'
       : conLinkArmar(p) ? '<span class="novio">Aún no</span>' : '<span class="novio" title="Enviado antes del 25-nov: el correo no traía el link">— Sin dato</span>';
-    const rec = !p.abrio && !p.porFuera && wa ? `<a class="wsp rec" target="_blank" href="${wa}?text=${encodeURIComponent(recordatorio(p))}" title="Recordar por WhatsApp (lleva su link de instrucciones: al abrirlo queda 👀 Sí)">🔔</a>` : '';
+    const rec = !p.abrio && !p.porFuera && wa ? `<a class="wsp rec" target="_blank" href="${waTexto(wa, recordatorio(p))}" title="Recordar por WhatsApp (lleva su link de instrucciones: al abrirlo queda 👀 Sí)">🔔</a>` : '';
     const emp = p.porFuera ? '🤝 Por fuera' : p.empresa === 'Paket' ? 'Paket' : (p.entrega === 'Domicilio' ? 'Blue · domicilio' : 'Blue · Punto Blue');
     const link = !p.porFuera && p.seguimiento ? linkSeg(p) : '';
     const seg = p.porFuera ? `<span class="chico">${esc(p.aviso.replace(/^Entregado por fuera: /, ''))}</span>` : link ? `<a href="${esc(link)}" target="_blank">${esc(p.seguimiento)}</a>` : esc(p.seguimiento || '—');
@@ -357,7 +359,7 @@ function tablaEnviados(L) {
       <td style="white-space:nowrap">${esc(emp)}</td>
       <td>${seg}</td>
       <td style="white-space:nowrap;text-align:right">${clp(p.total)}<span class="chico">pagó a ${esc(p.cuenta)}</span></td>
-      <td><div class="acc">${rec}${!p.porFuera && wa ? `<a class="wsp" target="_blank" href="${wa}?text=${encodeURIComponent(mensaje(p))}" title="Avisar por WhatsApp">💬</a>` : ''}${!p.porFuera && p.mail ? '<button data-reenviar title="Reenviar correo">✉️</button>' : ''}${p.foto ? `<a href="${esc(p.foto)}" target="_blank" title="Ver foto del paquete">📷</a>` : ''}</div></td>
+      <td><div class="acc">${rec}${!p.porFuera && wa ? `<a class="wsp" target="_blank" href="${waTexto(wa, mensaje(p))}" title="Avisar por WhatsApp">💬</a>` : ''}${!p.porFuera && p.mail ? '<button data-reenviar title="Reenviar correo">✉️</button>' : ''}${p.foto ? `<a href="${esc(p.foto)}" target="_blank" title="Ver foto del paquete">📷</a>` : ''}</div></td>
     </tr>`;
   };
   const vistos = L.filter(p => p.abrio).length;
@@ -453,7 +455,7 @@ function tarjeta(p) {
   } else if (p.estado === 'Enviado') {
     h += `<div class="estado">✓ Enviado ${esc(p.enviadoEl.replace(/^'/, ''))} · pedido ${esc(p.numero)} en el maestro · pagó a ${esc(p.cuenta)}</div>
       <div class="datos" style="margin-top:6px">N° de seguimiento: <b>${esc(p.seguimiento)}</b>${p.foto ? ` · <a href="${esc(p.foto)}" target="_blank">ver foto</a>` : ''}<br>${esc(p.aviso)}${p.abrio ? `<br><b style="color:var(--verde)">👀 Abrió las instrucciones ${esc(p.abrio)}</b>` : (p.mail && conLinkArmar(p) ? '<br><span style="color:var(--gris)">Aún no abre las instrucciones del correo</span>' : '')}</div>
-      <div class="acciones"><a class="btn wsp" style="text-align:center;text-decoration:none" target="_blank" href="${wa ? wa + '?text=' + encodeURIComponent(mensaje(p)) : '#'}">💬 Avisar por WhatsApp</a>${p.mail ? '<button class="suave" data-reenviar>✉️ Reenviar correo</button>' : ''}</div>`;
+      <div class="acciones"><a class="btn wsp" style="text-align:center;text-decoration:none" target="_blank" href="${wa ? waTexto(wa, mensaje(p)) : '#'}">💬 Avisar por WhatsApp</a>${p.mail ? '<button class="suave" data-reenviar>✉️ Reenviar correo</button>' : ''}</div>`;
   } else {
     h += `<div class="estado gris">Descartado <button data-reabrir>Volver a pendientes</button></div>`;
   }
