@@ -61,6 +61,22 @@
   .card.paket{border-left-color:var(--lila);background:linear-gradient(90deg,var(--lila-suave),#fff 140px)}
   .card.blue{border-left-color:var(--celeste);background:linear-gradient(90deg,var(--celeste-suave),#fff 140px)}
   .card.descartado{opacity:.6}
+  /* Enviados como tabla tipo Excel (24-nov-2026): una fila por pedido, la primera columna dice si abrió las instrucciones */
+  .layout.ancho{grid-template-columns:minmax(0,1fr)}.layout.ancho #resumen{display:none}
+  .tabla-env{overflow-x:auto;background:#fff;border:1px solid var(--linea);border-radius:12px}
+  .tabla-env table{width:100%;border-collapse:collapse;font-size:14px;min-width:820px}
+  .tabla-env th{text-align:left;font-size:12px;color:var(--gris);font-weight:700;padding:10px;border-bottom:2px solid var(--linea);background:var(--crema);position:sticky;top:0;white-space:nowrap}
+  .tabla-env td{padding:12px 10px;border-bottom:1px solid var(--linea);vertical-align:middle}
+  .tabla-env tr:hover td{background:#fafafa}
+  .tabla-env tr.paket td:first-child{box-shadow:inset 5px 0 var(--lila)}
+  .tabla-env tr.blue td:first-child{box-shadow:inset 5px 0 var(--celeste)}
+  .tabla-env .vio{color:var(--verde);font-weight:700;white-space:nowrap}
+  .tabla-env .novio{color:var(--gris);white-space:nowrap}
+  .tabla-env .chico{font-size:12px;color:var(--gris);display:block;font-weight:400}
+  .tabla-env .acc{display:flex;gap:6px;white-space:nowrap}
+  .tabla-env .acc a,.tabla-env .acc button{border:1px solid var(--linea);background:#fff;border-radius:8px;padding:5px 9px;font-size:13px;cursor:pointer;text-decoration:none;color:var(--negro)}
+  .tabla-env .acc a.wsp{background:#25D366;border-color:#25D366;color:#fff}
+  .tabla-env tr.cargando{opacity:.5;pointer-events:none}
   /* Cuadrito «Datos de envío» al lado de cada pedido (24-nov-2026): se muestra u oculta con el botón 📋 de la barra */
   .card.con-datos{display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:14px;align-items:start}
   .cuerpo{min-width:0}
@@ -315,6 +331,38 @@ function listaEmpacados(L) {
   return h + (G.length ? G.map(tarjeta).join('') : `<p class="vacio">No hay empacados por ${EMP === 'paket' ? 'Paket' : 'Blue Express'}.</p>`);
 }
 
+/* Enviados en tabla, el último enviado arriba. 👀 = el cliente apretó «Ver instrucciones» en el correo (columna «Abrió»):
+   le llegó y no hay que insistirle. */
+const claveFecha = v => { const m = /(\d{2})-(\d{2})-(\d{4})(?:\s+(\d{2}:\d{2}))?/.exec(String(v || '')); return m ? `${m[3]}-${m[2]}-${m[1]} ${m[4] || '00:00'}` : ''; };
+function tablaEnviados(L) {
+  L = L.slice().sort((a, b) => claveFecha(b.enviadoEl).localeCompare(claveFecha(a.enviadoEl)));
+  const fila = p => {
+    const tel = String(p.tel).replace(/\D/g, ''), wa = tel ? WA + telWa(tel) : '';
+    const visto = p.abrio ? `<span class="vio" title="Apretó «Ver instrucciones» en el correo">👀 Sí<span class="chico">${esc(p.abrio)}</span></span>`
+      : p.porFuera ? '<span class="novio" title="Entregado en mano: no lleva correo">🤝 En mano</span>'
+      : !p.mail ? '<span class="novio" title="No dejó correo">— Sin correo</span>'
+      : conLinkArmar(p) ? '<span class="novio">Aún no</span>' : '<span class="novio" title="Enviado antes del 25-nov: el correo no traía el link">— Sin dato</span>';
+    const emp = p.porFuera ? '🤝 Por fuera' : p.empresa === 'Paket' ? 'Paket' : (p.entrega === 'Domicilio' ? 'Blue · domicilio' : 'Blue · Punto Blue');
+    const link = !p.porFuera && p.seguimiento ? linkSeg(p) : '';
+    const seg = p.porFuera ? `<span class="chico">${esc(p.aviso.replace(/^Entregado por fuera: /, ''))}</span>` : link ? `<a href="${esc(link)}" target="_blank">${esc(p.seguimiento)}</a>` : esc(p.seguimiento || '—');
+    return `<tr class="${claseEmp(p)}" data-id="${esc(p.id)}">
+      <td>${visto}</td>
+      <td style="white-space:nowrap">${esc(p.enviadoEl.replace(/^'/, '').slice(0, 10))}</td>
+      <td><b>${esc(p.numero)}</b><span class="chico">${esc(p.id)}</span></td>
+      <td><b>${esc(p.cliente)}</b><span class="chico">${wa ? `<a href="${wa}" target="_blank">${esc(p.tel)}</a>` : esc(p.tel)}</span></td>
+      <td>${esc(p.comuna)}<span class="chico">${esc(p.region)}</span></td>
+      <td style="white-space:nowrap">${esc(emp)}</td>
+      <td>${seg}</td>
+      <td style="white-space:nowrap;text-align:right">${clp(p.total)}<span class="chico">pagó a ${esc(p.cuenta)}</span></td>
+      <td><div class="acc">${!p.porFuera && wa ? `<a class="wsp" target="_blank" href="${wa}?text=${encodeURIComponent(mensaje(p))}" title="Avisar por WhatsApp">💬</a>` : ''}${!p.porFuera && p.mail ? '<button data-reenviar title="Reenviar correo">✉️</button>' : ''}${p.foto ? `<a href="${esc(p.foto)}" target="_blank" title="Ver foto del paquete">📷</a>` : ''}</div></td>
+    </tr>`;
+  };
+  const vistos = L.filter(p => p.abrio).length;
+  return `<p style="margin:0 0 8px;font-size:13px;color:var(--gris)">👀 ${vistos} de ${L.length} ya abrieron las instrucciones del correo (a esos no hay que insistirles).</p>
+    <div class="tabla-env"><table><thead><tr><th>👀 Vio</th><th>Enviado</th><th>Pedido</th><th>Cliente</th><th>Comuna</th><th>Empresa</th><th>Seguimiento</th><th style="text-align:right">Total</th><th></th></tr></thead>
+    <tbody>${L.map(fila).join('')}</tbody></table></div>`;
+}
+
 /* «'dd-MM-yyyy HH:mm» → «yyyy-MM-dd HH:mm» para ordenar; sin fecha de pago, al final. */
 function clavePago(p) {
   const m = /(\d{2})-(\d{2})-(\d{4})(?:\s+(\d{2}:\d{2}))?/.exec(String(p.pagadoEl || ''));
@@ -330,7 +378,8 @@ function pintar() {
   // Por armar y Empacados: primero el que pagó antes (Áureo, 24-nov). La fecha que cuenta es «Pagado el», no cuándo hizo el pedido.
   if (FILTRO === 'Pagado' || FILTRO === 'Empacado') L.sort((a, b) => clavePago(a).localeCompare(clavePago(b)));
   const vacios = { Pendiente: 'No hay pedidos esperando pago.', Pagado: 'No hay pedidos pagados por armar.', Empacado: 'No hay pedidos empacados esperando despacho.', Enviado: 'Todavía no hay pedidos enviados.', Descartado: 'Nada por aquí.' };
-  $('#lista').innerHTML = FILTRO === 'Empacado' && L.length ? listaEmpacados(L) : L.length ? L.map(tarjeta).join('') : `<p class="vacio">${vacios[FILTRO]}</p>`;
+  document.querySelector('.layout').classList.toggle('ancho', FILTRO === 'Enviado');
+  $('#lista').innerHTML = FILTRO === 'Enviado' && L.length ? tablaEnviados(L) : FILTRO === 'Empacado' && L.length ? listaEmpacados(L) : L.length ? L.map(tarjeta).join('') : `<p class="vacio">${vacios[FILTRO]}</p>`;
   pintarResumen();
   editando = false;
 }
@@ -496,7 +545,7 @@ document.addEventListener('click', async ev => {
   if (b.id === 'refrescar') { toast('Actualizando…', 1200); cargar(); return; }
   if (b.id === 'ajustesBtn') { $('#aBlue').value = AJ.linkBlue; $('#aPaket').value = AJ.linkPaket; $('#aMsj').value = AJ.mensaje; $('#ajustes').style.display = 'flex'; return; }
   if ('copiar' in b.dataset) { try { await navigator.clipboard.writeText(b.dataset.copiar); b.textContent = '✓ Copiado'; } catch (e) { toast('Mantén apretado el texto para copiarlo'); } setTimeout(() => { b.textContent = b.classList.contains('copiar-todo') ? 'Copiar todo' : 'Copiar'; }, 1500); return; }
-  const card = b.closest('.card'); if (!card) return;
+  const card = b.closest('.card, tr[data-id]'); if (!card) return;
   const id = card.dataset.id, p = TODOS.find(x => x.id === id);
   if ('quitar' in b.dataset) {
     const fs = card.querySelector('.filas'), x = b.closest('.fl'), env = x.querySelector('.env');
