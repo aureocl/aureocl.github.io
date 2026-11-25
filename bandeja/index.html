@@ -265,7 +265,7 @@
   <label class="campo">Link de seguimiento de Blue Express<input id="aBlue" placeholder="Pega el link. Donde va el número escribe {n}"></label>
   <label class="campo">Link de seguimiento de Paket<input id="aPaket" placeholder="Pega el link. Donde va el número escribe {n}"></label>
   <label class="campo">Mensaje (correo y WhatsApp)<textarea id="aMsj"></textarea></label>
-  <label class="campo">Recordatorio 🔔 (WhatsApp al que aún no abre las instrucciones; {instrucciones} = su link)<textarea id="aRec"></textarea></label>
+  <label class="campo">Recordatorio 🔔 (WhatsApp al que aún no abre las instrucciones; {seguimiento}, {link} = seguimiento, {instrucciones} = su link)<textarea id="aRec"></textarea></label>
   <p style="font-size:12px;color:var(--gris);margin:6px 0 0">Se reemplazan solos: {nombre} {empresa} {seguimiento} {link}. Si el link no tiene {n}, se manda tal cual.</p>
   <div class="botones"><button id="aCerrar">Cerrar</button><button id="aGuardar">Guardar</button></div>
 </div></div>
@@ -490,11 +490,13 @@ function linkSeg(p) {
   return base.includes('{n}') ? base.replace('{n}', encodeURIComponent(p.seguimiento)) : base;
 }
 /** Recordatorio por WhatsApp: mismo link del correo, así al abrirlo se marca 👀 Sí. */
-const RECORDATORIO_BASE = '¡Hola {nombre}! 😊 Te escribimos de Aureo: tu pedido ya va en camino.\n\nTe dejamos las instrucciones para armarlo, colgarlo y tu misión Áureo:\n{instrucciones}\n\nCualquier duda, escríbenos por aquí.';
+const RECORDATORIO_BASE = '¡Hola {nombre}! 😊 Te escribimos de Aureo: tu pedido ya va en camino.\n\nLo lleva: {empresa}\nN° de seguimiento: {seguimiento}\n{link}\n\nY aquí tienes las instrucciones para armarlo, colgarlo y tu misión Áureo:\n{instrucciones}\n\nCualquier duda, escríbenos por aquí.';
 function recordatorio(p) {
-  const nombre = String(p.cliente || '').trim().split(/\s+/)[0] || '';
+  const link = linkSeg(p), nombre = String(p.cliente || '').trim().split(/\s+/)[0] || '';
   return String(AJ.recordatorio || RECORDATORIO_BASE).replace(/\{nombre\}/g, nombre)
-    .replace(/\{instrucciones\}/g, p.linkArmar || 'https:\/\/aureocl.github.io/armar/').replace(/\{seguimiento\}/g, p.seguimiento || '').trim();
+    .replace(/\{empresa\}/g, p.empresa === 'Paket' ? 'Paket' : 'Blue Express').replace(/\{seguimiento\}/g, p.seguimiento || '')
+    .replace(/\{link\}/g, link ? 'Síguelo aquí: ' + link : '')
+    .replace(/\{instrucciones\}/g, p.linkArmar || 'https:\/\/aureocl.github.io/armar/').replace(/\n{3,}/g, '\n\n').trim();
 }
 /** El correo trae el link de instrucciones desde el 25-nov-2026: antes de eso no hay cómo saber si lo abrió. */
 function conLinkArmar(p) {
