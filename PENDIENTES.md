@@ -4,7 +4,7 @@ Tablero común de los dos PCs. Antes de tomar algo, revisar que nadie lo tenga �
 Formato: `hilo · qué · quién · estado` (estado: por hacer · en curso · espera a Áureo · listo).
 
 ## En curso
-- W1 + Común · Home nueva «Arma lo que amas» (fotos que rotan, transiciones), menú desplegable / ☰ Menú y página propia por categoría (`#c/…`), Fútbol y Básquetbol separados, escudos chilenos e internacionales. Toca `js/vitrina.js`, `css/estilos.css` (vitrina) y una línea de `js/app.js` (ruta `#c/`) · Áureo · en curso
+- (nada)
 
 ## Por hacer
 - W2 · Escribir las cuentas de Javi y Caro en `CUENTAS` (`js/config.js`): mientras estén vacías, la pantalla de pago dice «te mandamos los datos por WhatsApp» · Áureo/Caro · espera a Áureo
@@ -15,6 +15,7 @@ Formato: `hilo · qué · quién · estado` (estado: por hacer · en curso · es
 - Todos · Pasar este repo a privado y dejar aureocl.github.io redirigiendo al dominio nuevo · espera a Áureo
 
 ## Listo
+- W1 + Común · Home nueva «Arma lo que amas», menú desplegable / ☰ Menú y página por categoría (`#c/…`) · Áureo · 26-nov-2026 · falta: direcciones para Google (`/musica/`), packs por tramos de precio, fotos de clientes y de Javi y Caro
 - W4 + W3 · Pestaña **Visitas** en la bandeja con datos reales: la página anota cada visita (anónima) en VISITAS del maestro · Áureo · 25-nov-2026 · script instalado en Google como versión 17 (primera visita registrada)
 - W4 · Pestaña «Visitas» de prueba (estilo Shopify, números de ejemplo): aureocl.github.io/bandeja/visitas-prueba.html · Áureo · 25-nov-2026
 - W3 · Bandeja: gasto diario de Meta (pestaña ADS) + «¿Estamos ganando?» con metas diarias y gráficos estilo Shopify · Áureo · 25-nov-2026

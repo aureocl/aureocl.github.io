@@ -1,10 +1,10 @@
-/* Arranque y navegación entre vistas (#pedido, #listo, #p/…).
+/* Arranque y navegación entre vistas (#pedido, #listo, #p/…, #c/… = página de cada categoría).
    Parte de: todos (cambios con cuidado). Lo carga index.html en este orden: config → medicion → base → vitrina → pedido → app.
    Todos comparten las mismas variables globales (scripts clásicos, sin módulos). */
 /* ---------- Navegación ---------- */
 (()=>{const u=document.getElementById("urgencia");if(URGENCIA&&new Date()<=new Date(URGENCIA.hasta+"T23:59:59")){u.textContent=URGENCIA.texto;u.style.display=""}})();
 if(FINAL)document.body.classList.add("final");else document.getElementById("avisoProto").style.display="";
-function ruta(){document.getElementById("toast").classList.remove("ver");const h=location.hash;if(h==="#listo"){vistaListo();return}if(h==="#rapido"&&EQUIPO){vistaRapido();return}if(h.startsWith("#p/"))vistaFicha(h.slice(3));else if(h==="#pedido")vistaPedido();else vistaCatalogo()}
+function ruta(){document.getElementById("toast").classList.remove("ver");const h=location.hash;if(h==="#listo"){vistaListo();return}if(h==="#rapido"&&EQUIPO){vistaRapido();return}if(h.startsWith("#p/"))vistaFicha(h.slice(3));else if(h.startsWith("#c/"))vistaCategoria(h.slice(3));else if(h==="#pedido")vistaPedido();else vistaCatalogo()}
 document.addEventListener("click",e=>{
   const a=e.target.closest("[data-add]");if(a){e.stopPropagation();agregar(a.dataset.add);return}
   const c=e.target.closest("[data-cat]");if(c){cat=c.dataset.cat;vistaCatalogo();return}
