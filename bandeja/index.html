@@ -243,6 +243,12 @@
   .leyenda i{display:inline-block;width:14px;height:3px;border-radius:2px;margin-right:6px;vertical-align:middle}
   .leyenda i.punteada{background:repeating-linear-gradient(90deg,var(--antes) 0 4px,transparent 4px 7px)!important}
   .kpi .chispa{display:block;width:100%;height:28px;margin-top:4px}
+  .cascada{display:flex;gap:2px;height:16px;border-radius:4px;overflow:hidden}
+  .cascada i{display:block;min-width:2px}
+  table.desglose td:not(:first-child){text-align:right;white-space:nowrap;padding-left:10px}
+  table.desglose tr.resta td:nth-child(2){color:var(--rojo)}
+  table.desglose tr.dsub td{font-weight:700;border-top:1px solid var(--linea)}
+  table.desglose tr.dfin td{font-size:15px;font-weight:700}
   [hidden]{display:none!important}
   button:focus-visible{outline:2px solid var(--oro);outline-offset:2px}
   #vistas{display:flex;gap:4px}
@@ -1118,7 +1124,7 @@ function htmlTodo() {
   const ya = ahoraChile(), hoy = dia0(ya);
   const P = HIST.pedidos.map(([f, prod, env, costo, cenv, canal, region, cuenta, ads], i) => {
     const [a, m, d] = f.split('-').map(Number);
-    return { i, d: new Date(a, m - 1, d), ing: prod + env, costo: costo === null ? null : costo + cenv, canal, region, cuenta, ads };
+    return { i, d: new Date(a, m - 1, d), ing: prod + env, prod, env, cprod: costo, cenv, costo: costo === null ? null : costo + cenv, canal, region, cuenta, ads };
   });
   const primero = P.length ? new Date(Math.min(...P.map(p => +p.d))) : hoy;
   let R;
@@ -1243,6 +1249,25 @@ function bloqueGanando({ R, hoy, en, ing, conC, mg, ADS, llave, signo, kpi }) {
     X.push({ corto: `${d.getDate()}/${d.getMonth() + 1}`, largo: etiquetaDia(d) }); gMg.push(m); gMeta.push(me); gGan.push(m - me); gPed.push(Ld.length);
   }
   const pedPara = meta => mgProm > 0 ? Math.ceil((metaDia + meta) / mgProm) : null;
+  /* Desglose (Áureo, 25-nov): de cada $100 que entran, cuánto se va en productos, envío y Meta, y cuánto queda.
+     Sobre los pedidos con costo conocido, para que todo cuadre: ingresos − productos − envío = margen; margen − Meta = ganancia. */
+  const sum = f => suma(conCosto, f), nP = conCosto.length || 1;
+  const dIng = sum(p => p.ing), dCobEnv = sum(p => p.env), dProd = sum(p => p.cprod), dEnv = sum(p => p.cenv), dMg = dIng - dProd - dEnv, dGan = dMg - M.g;
+  const pct = v => dIng ? `${Math.round(v / dIng * 100)} %` : '—';
+  const fila = (n, v, clase, nota) => `<tr class="${clase || ''}"><td>${n}${nota ? `<div class="var">${nota}</div>` : ''}</td><td>${clase === 'resta' ? '−' : ''}${clp(Math.abs(v))}</td><td>${clp(Math.abs(v) / nP)}</td><td>${pct(Math.abs(v))}</td></tr>`;
+  const tramo = (v, color, n) => v > 0 ? `<i style="flex:${v};background:${color}" title="${esc(n)}: ${clp(v)}"></i>` : '';
+  const desglose = `
+    <h3 style="margin:18px 0 6px;font-size:14px">Desglose: de lo que vendimos, ¿a dónde se va?</h3>
+    <div class="cascada">${tramo(dProd, '#8A6A3A', 'Costo de productos')}${tramo(dEnv, 'var(--s1)', 'Costo de envío')}${tramo(M.g, 'var(--s2)', 'Costo de anuncios')}${tramo(Math.max(0, dGan), 'var(--verde)', 'Ganancia')}</div>
+    <div class="leyenda"><span><i style="background:#8A6A3A"></i>Productos</span><span><i style="background:var(--s1)"></i>Envío</span><span><i style="background:var(--s2)"></i>Anuncios</span><span><i style="background:var(--verde)"></i>Ganancia</span></div>
+    <div class="tabla-mov"><table class="datos-g desglose"><tr><td></td><td>Total</td><td>Por pedido</td><td>De lo vendido</td></tr>
+      ${fila('Ingresos', dIng, 'suma', `productos ${clp(dIng - dCobEnv)} + envío cobrado ${clp(dCobEnv)}`)}
+      ${fila('Costo de productos', dProd, 'resta')}
+      ${fila('Costo de envío', dEnv, 'resta', dEnv > dCobEnv ? `cobramos ${clp(dCobEnv)}: el envío gratis nos costó ${clp(dEnv - dCobEnv)}` : '')}
+      ${fila('Margen', dMg, 'dsub')}
+      ${fila('Costo de anuncios (Meta con IVA)', M.g, 'resta')}
+      ${fila(dGan >= 0 ? 'Ganancia' : 'Pérdida', dGan, 'dsub dfin')}
+    </table></div>`;
   const graficos = `
     <h3 style="margin:18px 0 0;font-size:14px">Margen y gasto de Meta, día a día</h3>
     <p class="nota">Cuando la línea azul va arriba de la naranja, ese día ganamos.</p>
@@ -1266,6 +1291,7 @@ function bloqueGanando({ R, hoy, en, ing, conC, mg, ADS, llave, signo, kpi }) {
       ${kpi('Costo de Meta por pedido', V.length ? clp(M.g / V.length) : '—', `<div class="var ${V.length && M.g / V.length <= 5000 ? 'sube' : 'baja'}">meta ≤ $5.000</div>`)}
       ${kpi('Retorno de Meta', M.g ? (ing(V) / M.g).toFixed(1).replace('.', ',') + ' ×' : '—', `<div class="var">ventas ÷ gasto${M.m ? ` · ${clp(M.g / M.m)} por mensaje` : ''}</div>`)}
     </div>
+    ${desglose}
     <p class="nota" style="margin-top:12px">Cuántos pedidos tienen que salir <b>cada día</b>. Meta hoy gasta ~${clp(metaDia)} al día (últimos 7 días) y cada pedido deja ~${clp(mgProm)} de margen (promedio de 30 días).
       Vamos en <b>${pedDia.toFixed(1).replace('.', ',')} pedidos al día</b> en este período.</p>
     <div class="tabla-mov"><table class="datos-g mes"><tr><td>Meta</td><td>Margen al día</td><td>Pedidos al día</td></tr>${filas}</table></div>
