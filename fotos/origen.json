@@ -134,6 +134,12 @@
   "origen": "taller",
   "producto": "coquimbo-unido"
  },
+ "cruzeiro": {
+  "fecha": "2026-11-25T16:36:50",
+  "origen": "taller",
+  "producto": "Cruzeiro",
+  "protegida": true
+ },
  "curico-unido": {
   "fecha": "2026-11-03T20:00:00",
   "origen": "taller",
