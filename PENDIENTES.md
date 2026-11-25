@@ -4,7 +4,7 @@ Tablero común de los dos PCs. Antes de tomar algo, revisar que nadie lo tenga �
 Formato: `hilo · qué · quién · estado` (estado: por hacer · en curso · espera a Áureo · listo).
 
 ## En curso
-- (nada)
+- W1 + Común · Home nueva «Arma lo que amas» (fotos que rotan, transiciones), menú desplegable / ☰ Menú y página propia por categoría (`#c/…`), Fútbol y Básquetbol separados, escudos chilenos e internacionales. Toca `js/vitrina.js`, `css/estilos.css` (vitrina) y una línea de `js/app.js` (ruta `#c/`) · Áureo · en curso
 
 ## Por hacer
 - W2 · Escribir las cuentas de Javi y Caro en `CUENTAS` (`js/config.js`): mientras estén vacías, la pantalla de pago dice «te mandamos los datos por WhatsApp» · Áureo/Caro · espera a Áureo
