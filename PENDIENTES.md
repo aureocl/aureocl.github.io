@@ -12,11 +12,10 @@ Formato: `hilo · qué · quién · estado` (estado: por hacer · en curso · es
 - W1/W2 · Pack de camisetas: mejor montaje de la imagen (escudo + camisetas), partiendo por la landing de Colo-Colo · por hacer (Áureo, 20-nov)
 - W4 · Comprar dominio (aureocl.cl o tiendaaureo.cl) y conectarlo a Cloudflare · Áureo · espera a Áureo
 - W4 · Píxel «Aureo web» en Meta + verificar dominio + aviso de cookies · por hacer
-- W4 · Instalar en Google la versión 13 del script «Aureo · Pedidos web» (visitas) · Áureo · espera a Áureo
 - Todos · Pasar este repo a privado y dejar aureocl.github.io redirigiendo al dominio nuevo · espera a Áureo
 
 ## Listo
-- W4 + W3 · Pestaña **Visitas** en la bandeja con datos reales: la página anota cada visita (anónima) en VISITAS del maestro · Áureo · 25-nov-2026 · **falta instalar el script v13**
+- W4 + W3 · Pestaña **Visitas** en la bandeja con datos reales: la página anota cada visita (anónima) en VISITAS del maestro · Áureo · 25-nov-2026 · script instalado en Google como versión 17 (primera visita registrada)
 - W4 · Pestaña «Visitas» de prueba (estilo Shopify, números de ejemplo): aureocl.github.io/bandeja/visitas-prueba.html · Áureo · 25-nov-2026
 - W3 · Bandeja: gasto diario de Meta (pestaña ADS) + «¿Estamos ganando?» con metas diarias y gráficos estilo Shopify · Áureo · 25-nov-2026
 - Común + W1 · Envío gratis a punto Blue en todo Chile desde $40.000 (a domicilio en regiones $3.000) · Áureo · 24-nov-2026
