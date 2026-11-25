@@ -76,6 +76,7 @@
   .tabla-env .acc{display:flex;gap:6px;white-space:nowrap}
   .tabla-env .acc a,.tabla-env .acc button{border:1px solid var(--linea);background:#fff;border-radius:8px;padding:5px 9px;font-size:13px;cursor:pointer;text-decoration:none;color:var(--negro)}
   .tabla-env .acc a.wsp{background:#25D366;border-color:#25D366;color:#fff}
+  .tabla-env .acc a.wsp.rec{background:#fff4cc;border-color:#e0b400;color:var(--negro)}
   .tabla-env tr.cargando{opacity:.5;pointer-events:none}
   /* Cuadrito «Datos de envío» al lado de cada pedido (24-nov-2026): se muestra u oculta con el botón 📋 de la barra */
   .card.con-datos{display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:14px;align-items:start}
@@ -264,6 +265,7 @@
   <label class="campo">Link de seguimiento de Blue Express<input id="aBlue" placeholder="Pega el link. Donde va el número escribe {n}"></label>
   <label class="campo">Link de seguimiento de Paket<input id="aPaket" placeholder="Pega el link. Donde va el número escribe {n}"></label>
   <label class="campo">Mensaje (correo y WhatsApp)<textarea id="aMsj"></textarea></label>
+  <label class="campo">Recordatorio 🔔 (WhatsApp al que aún no abre las instrucciones; {instrucciones} = su link)<textarea id="aRec"></textarea></label>
   <p style="font-size:12px;color:var(--gris);margin:6px 0 0">Se reemplazan solos: {nombre} {empresa} {seguimiento} {link}. Si el link no tiene {n}, se manda tal cual.</p>
   <div class="botones"><button id="aCerrar">Cerrar</button><button id="aGuardar">Guardar</button></div>
 </div></div>
@@ -342,6 +344,7 @@ function tablaEnviados(L) {
       : p.porFuera ? '<span class="novio" title="Entregado en mano: no lleva correo">🤝 En mano</span>'
       : !p.mail ? '<span class="novio" title="No dejó correo">— Sin correo</span>'
       : conLinkArmar(p) ? '<span class="novio">Aún no</span>' : '<span class="novio" title="Enviado antes del 25-nov: el correo no traía el link">— Sin dato</span>';
+    const rec = !p.abrio && !p.porFuera && wa ? `<a class="wsp rec" target="_blank" href="${wa}?text=${encodeURIComponent(recordatorio(p))}" title="Recordar por WhatsApp (lleva su link de instrucciones: al abrirlo queda 👀 Sí)">🔔</a>` : '';
     const emp = p.porFuera ? '🤝 Por fuera' : p.empresa === 'Paket' ? 'Paket' : (p.entrega === 'Domicilio' ? 'Blue · domicilio' : 'Blue · Punto Blue');
     const link = !p.porFuera && p.seguimiento ? linkSeg(p) : '';
     const seg = p.porFuera ? `<span class="chico">${esc(p.aviso.replace(/^Entregado por fuera: /, ''))}</span>` : link ? `<a href="${esc(link)}" target="_blank">${esc(p.seguimiento)}</a>` : esc(p.seguimiento || '—');
@@ -354,7 +357,7 @@ function tablaEnviados(L) {
       <td style="white-space:nowrap">${esc(emp)}</td>
       <td>${seg}</td>
       <td style="white-space:nowrap;text-align:right">${clp(p.total)}<span class="chico">pagó a ${esc(p.cuenta)}</span></td>
-      <td><div class="acc">${!p.porFuera && wa ? `<a class="wsp" target="_blank" href="${wa}?text=${encodeURIComponent(mensaje(p))}" title="Avisar por WhatsApp">💬</a>` : ''}${!p.porFuera && p.mail ? '<button data-reenviar title="Reenviar correo">✉️</button>' : ''}${p.foto ? `<a href="${esc(p.foto)}" target="_blank" title="Ver foto del paquete">📷</a>` : ''}</div></td>
+      <td><div class="acc">${rec}${!p.porFuera && wa ? `<a class="wsp" target="_blank" href="${wa}?text=${encodeURIComponent(mensaje(p))}" title="Avisar por WhatsApp">💬</a>` : ''}${!p.porFuera && p.mail ? '<button data-reenviar title="Reenviar correo">✉️</button>' : ''}${p.foto ? `<a href="${esc(p.foto)}" target="_blank" title="Ver foto del paquete">📷</a>` : ''}</div></td>
     </tr>`;
   };
   const vistos = L.filter(p => p.abrio).length;
@@ -486,6 +489,13 @@ function linkSeg(p) {
   if (!base) return '';
   return base.includes('{n}') ? base.replace('{n}', encodeURIComponent(p.seguimiento)) : base;
 }
+/** Recordatorio por WhatsApp: mismo link del correo, así al abrirlo se marca 👀 Sí. */
+const RECORDATORIO_BASE = '¡Hola {nombre}! 😊 Te escribimos de Aureo: tu pedido ya va en camino.\n\nTe dejamos las instrucciones para armarlo, colgarlo y tu misión Áureo:\n{instrucciones}\n\nCualquier duda, escríbenos por aquí.';
+function recordatorio(p) {
+  const nombre = String(p.cliente || '').trim().split(/\s+/)[0] || '';
+  return String(AJ.recordatorio || RECORDATORIO_BASE).replace(/\{nombre\}/g, nombre)
+    .replace(/\{instrucciones\}/g, p.linkArmar || 'https:\/\/aureocl.github.io/armar/').replace(/\{seguimiento\}/g, p.seguimiento || '').trim();
+}
 /** El correo trae el link de instrucciones desde el 25-nov-2026: antes de eso no hay cómo saber si lo abrió. */
 function conLinkArmar(p) {
   const m = String(p.enviadoEl || '').replace(/^'/, '').match(/^(\d{2})-(\d{2})-(\d{4})/);
@@ -543,7 +553,7 @@ document.addEventListener('click', async ev => {
   if (b.dataset.emp) { EMP = b.dataset.emp; pintar(); return; }
   if (b.id === 'verDatos') { VER_DATOS = !VER_DATOS; b.classList.toggle('on', VER_DATOS); pintar(); return; }
   if (b.id === 'refrescar') { toast('Actualizando…', 1200); cargar(); return; }
-  if (b.id === 'ajustesBtn') { $('#aBlue').value = AJ.linkBlue; $('#aPaket').value = AJ.linkPaket; $('#aMsj').value = AJ.mensaje; $('#ajustes').style.display = 'flex'; return; }
+  if (b.id === 'ajustesBtn') { $('#aBlue').value = AJ.linkBlue; $('#aPaket').value = AJ.linkPaket; $('#aMsj').value = AJ.mensaje; $('#aRec').value = AJ.recordatorio || ''; $('#ajustes').style.display = 'flex'; return; }
   if ('copiar' in b.dataset) { try { await navigator.clipboard.writeText(b.dataset.copiar); b.textContent = '✓ Copiado'; } catch (e) { toast('Mantén apretado el texto para copiarlo'); } setTimeout(() => { b.textContent = b.classList.contains('copiar-todo') ? 'Copiar todo' : 'Copiar'; }, 1500); return; }
   const card = b.closest('.card, tr[data-id]'); if (!card) return;
   const id = card.dataset.id, p = TODOS.find(x => x.id === id);
@@ -652,7 +662,7 @@ document.addEventListener('input', ev => { if (ev.target.closest('.card')) edita
 
 $('#aCerrar').onclick = () => { $('#ajustes').style.display = 'none'; };
 $('#aGuardar').onclick = async () => {
-  try { AJ = await llamar('guardarAjustes', { linkBlue: $('#aBlue').value.trim(), linkPaket: $('#aPaket').value.trim(), mensaje: $('#aMsj').value }); $('#ajustes').style.display = 'none'; toast('✓ Ajustes guardados'); pintar(); }
+  try { AJ = await llamar('guardarAjustes', { linkBlue: $('#aBlue').value.trim(), linkPaket: $('#aPaket').value.trim(), mensaje: $('#aMsj').value, recordatorio: $('#aRec').value }); $('#ajustes').style.display = 'none'; toast('✓ Ajustes guardados'); pintar(); }
   catch (e) { toast('No se pudo: ' + e.message, 6000); }
 };
 
