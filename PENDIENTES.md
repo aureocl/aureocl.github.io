@@ -4,7 +4,7 @@ Tablero común de los dos PCs. Antes de tomar algo, revisar que nadie lo tenga �
 Formato: `hilo · qué · quién · estado` (estado: por hacer · en curso · espera a Áureo · listo).
 
 ## En curso
-- W4 + W3 · Pestaña «Visitas» de verdad: la página anota cada visita (`js/medicion.js`) → hoja VISITAS (script v13) → bandeja (`Panel.html`) · Áureo · en curso
+- (nada)
 
 ## Por hacer
 - W2 · Escribir las cuentas de Javi y Caro en `CUENTAS` (`js/config.js`): mientras estén vacías, la pantalla de pago dice «te mandamos los datos por WhatsApp» · Áureo/Caro · espera a Áureo
@@ -12,11 +12,11 @@ Formato: `hilo · qué · quién · estado` (estado: por hacer · en curso · es
 - W1/W2 · Pack de camisetas: mejor montaje de la imagen (escudo + camisetas), partiendo por la landing de Colo-Colo · por hacer (Áureo, 20-nov)
 - W4 · Comprar dominio (aureocl.cl o tiendaaureo.cl) y conectarlo a Cloudflare · Áureo · espera a Áureo
 - W4 · Píxel «Aureo web» en Meta + verificar dominio + aviso de cookies · por hacer
-- W4 · Que la página anote cada visita (anónimo, sin datos personales) en una hoja VISITAS para llenar la pestaña «Visitas» · por hacer (Áureo, 25-nov)
-- W3 · Pasar la pestaña «Visitas» a la bandeja de verdad (`Panel.html`) cuando haya datos · por hacer
+- W4 · Instalar en Google la versión 13 del script «Aureo · Pedidos web» (visitas) · Áureo · espera a Áureo
 - Todos · Pasar este repo a privado y dejar aureocl.github.io redirigiendo al dominio nuevo · espera a Áureo
 
 ## Listo
+- W4 + W3 · Pestaña **Visitas** en la bandeja con datos reales: la página anota cada visita (anónima) en VISITAS del maestro · Áureo · 25-nov-2026 · **falta instalar el script v13**
 - W4 · Pestaña «Visitas» de prueba (estilo Shopify, números de ejemplo): aureocl.github.io/bandeja/visitas-prueba.html · Áureo · 25-nov-2026
 - W3 · Bandeja: gasto diario de Meta (pestaña ADS) + «¿Estamos ganando?» con metas diarias y gráficos estilo Shopify · Áureo · 25-nov-2026
 - Común + W1 · Envío gratis a punto Blue en todo Chile desde $40.000 (a domicilio en regiones $3.000) · Áureo · 24-nov-2026
