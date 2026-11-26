@@ -2,6 +2,8 @@
    Parte de: W1 · Vitrina. Lo carga index.html en este orden: config → medicion → base → vitrina → pedido → app.
    Todos comparten las mismas variables globales (scripts clásicos, sin módulos). */
 /* ---------- Vistas ---------- */
+/* Pedidos que se muestran (Áureo, 25-nov-2026): se sube de 50 en 50 cuando corresponda (+400, +450…). */
+const PEDIDOS="+350";
 let cat="Todo";
 /* Tamaños/versiones (VARIANTES en config.js): solo el primero de cada grupo sale en el catálogo. */
 const grupoDe=s=>VARIANTES.find(g=>g.some(([x])=>x===s));
@@ -164,7 +166,7 @@ function vistaInicio(){
       <p class="h-rota" aria-live="polite"><span id="hRota">Tu equipo, en tu pared.</span></p>
       <p class="h-bajada">Escudos de fútbol, cuadros de música, figuras de tus personajes, camisetas con tu nombre y hasta tu mascota, en mini bloques. Te llega la caja, lo armas en una tarde y te queda para siempre.</p>
       <div class="h-btns"><a class="h-btn oro" href="#categorias" data-bajar="categorias">Elige el tuyo ↓</a><a class="h-btn borde" href="#c/regalo-papa" data-bajar="regalo">🎁 Regalos</a></div>
-      <div class="h-prueba">⭐ <b>126 pedidos</b> solo en octubre · despachamos a <b>todo Chile</b></div>
+      <div class="h-prueba">⭐ <b>${PEDIDOS} pedidos</b> · despachamos a <b>todo Chile</b></div>
     </div>
     <figure class="h-hero-foto" id="hFoto"><figcaption><a id="hLink" href="#p/colo-colo"><span id="hCap">Escudo de Colo-Colo</span> →</a></figcaption><div class="h-puntos" id="hPuntos" aria-hidden="true"></div></figure>
   </div></section>
@@ -383,7 +385,7 @@ function vistaFicha(s){
     <div><b>➕</b>Piezas de repuesto</div><div><b>🪝</b>Tarjeta para armar el gancho con las mismas piezas</div></div></div></div>
   ${h&&(pl||!FINAL)?`<div class="bloque"><h3>Para el ${esc(h[0])}</h3><p>${pl?esc(pl.hincha):"[2 o 3 líneas para el hincha: un recuerdo, una gesta, lo que se siente.]"}</p></div>`:""}
   <div class="bloque"><h3>Ya lo armaron</h3>
-    <div class="contador"><div><b>126</b>pedidos solo en octubre</div><div><b>${nEsc}</b>escudos para elegir</div><div><b>Todo Chile</b>despachamos a todas las regiones</div></div>
+    <div class="contador"><div><b>${PEDIDOS}</b>pedidos a todo Chile</div><div><b>${nEsc}</b>escudos para elegir</div><div><b>Todo Chile</b>despachamos a todas las regiones</div></div>
     ${pl?`<div class="clientes">${pl.clientes.map(([k,txt])=>`<figure><img src="${fp(pl,k)}" alt="" loading="lazy"><figcaption>${esc(txt)}</figcaption></figure>`).join("")}</div>
       <p class="cita-grande">«${esc(pl.cita)}»<small>Cliente de Áureo, por WhatsApp</small></p>`:
       `<div class="clientes"><div class="placeholder">[Foto cliente 1]</div><div class="placeholder">[Foto cliente 2]</div><div class="placeholder">[Foto cliente 3]</div></div><p class="cita">[Frase real de un cliente, con su permiso]</p>`}</div>
