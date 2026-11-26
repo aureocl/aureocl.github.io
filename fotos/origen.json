@@ -417,6 +417,12 @@
   "producto": "rocky-mini",
   "protegida": true
  },
+ "roshi-y-goku": {
+  "fecha": "2026-11-26T09:43:48",
+  "origen": "taller",
+  "producto": "Roshi y Goku",
+  "protegida": true
+ },
  "san-luis-de-quillota": {
   "fecha": "2026-11-03T20:00:00",
   "origen": "laboratorio",
