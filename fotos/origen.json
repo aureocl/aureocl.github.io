@@ -145,6 +145,12 @@
   "origen": "taller",
   "producto": "curico-unido"
  },
+ "deportes-antofagasta": {
+  "fecha": "2026-11-26T11:38:33",
+  "origen": "taller",
+  "producto": "Deportes Antofagasta",
+  "protegida": true
+ },
  "deportes-concepcion": {
   "fecha": "2026-11-03T20:06:48",
   "origen": "laboratorio",
