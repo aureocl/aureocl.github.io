@@ -183,9 +183,10 @@
   "producto": "deportes-temuco"
  },
  "everton": {
-  "fecha": "2026-11-03T20:00:00",
+  "fecha": "2026-11-26T09:51:21",
   "origen": "taller",
-  "producto": "everton"
+  "producto": "Everton",
+  "protegida": true
  },
  "fernandez-vial": {
   "fecha": "2026-11-13T09:11:07",
