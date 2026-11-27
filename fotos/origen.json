@@ -556,6 +556,12 @@
   "origen": "taller",
   "producto": "Universitario de Deportes"
  },
+ "zoey-chibi": {
+  "fecha": "2026-11-26T22:54:17",
+  "origen": "taller",
+  "producto": "Zoey chibi",
+  "protegida": true
+ },
  "zoey-cuerpo-entero": {
   "fecha": "2026-11-26T22:54:07",
   "origen": "taller",
