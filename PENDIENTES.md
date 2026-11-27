@@ -5,7 +5,6 @@ Formato: `hilo · qué · quién · estado` (estado: por hacer · en curso · es
 
 ## En curso
 - W3 · Fase 1 Cloudflare: comparar una semana (hasta 4-dic) que cada pedido de Google también esté en D1; después fase 2 (bandeja lee de Cloudflare, login por código al correo) · Áureo · en curso
-- W2 · Arreglo del salto a WhatsApp al enviar el pedido (se quedaba en la página «Descargar» de WhatsApp o no abría en el celular): app directa en celular, WhatsApp Web en computador y botones de respaldo en «Pedido listo» · Áureo · en curso
 
 ## Por hacer
 - W2 · Escribir las cuentas de Javi y Caro en `CUENTAS` (`js/config.js`): mientras estén vacías, la pantalla de pago dice «te mandamos los datos por WhatsApp» · Áureo/Caro · espera a Áureo
@@ -16,6 +15,7 @@ Formato: `hilo · qué · quién · estado` (estado: por hacer · en curso · es
 - Todos · Pasar este repo a privado y dejar aureocl.github.io redirigiendo al dominio nuevo · espera a Áureo
 
 ## Listo
+- W2 · Salto a WhatsApp arreglado: app directa en celular (sin la página «Descargar»), WhatsApp Web en computador, y en «Pedido listo» aviso + botones de respaldo (abrir, otra forma, copiar pedido y número) · Áureo · 27-nov-2026 · **falta probarlo en un celular real desde Instagram**
 - W1 + Común · Home nueva «Arma lo que amas», menú desplegable / ☰ Menú y página por categoría (`#c/…`) · Áureo · 26-nov-2026 · falta: direcciones para Google (`/musica/`), packs por tramos de precio, fotos de clientes y de Javi y Caro
 - W4 + W3 · Pestaña **Visitas** en la bandeja con datos reales: la página anota cada visita (anónima) en VISITAS del maestro · Áureo · 25-nov-2026 · script instalado en Google como versión 17 (primera visita registrada)
 - W4 · Pestaña «Visitas» de prueba (estilo Shopify, números de ejemplo): aureocl.github.io/bandeja/visitas-prueba.html · Áureo · 25-nov-2026

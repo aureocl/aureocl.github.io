@@ -301,16 +301,17 @@ function enviarPedido(pagado){
     `Para: ${datos.nom}, ${dirCompleta()}, ${datos.com}${datos.reg&&datos.reg!=="Metropolitana"?`, ${datos.reg}`:""}${F.mod!=="Domicilio"?" (buscarme el punto Blue mas cercano)":""}`,
     ...(datos.regalo?["Es para regalo"]:[]),"",
     cta?`Ya transferi a la cuenta de ${cta}. Te envio el comprobante.`:"Quedo atento/a para transferir."];
-  const link=`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(sinTildes(M.join("\n")))}`;
+  const texto=sinTildes(M.join("\n")),link=waURL(texto);
   const g=k=>({fNom:datos.nom,fTel:datos.tel,fMail:datos.mail,fReg:datos.reg,fCom:datos.com,fDir:dirCompleta()}[k]||"");
   guardarPedido({id,e:{...F.e,tot:F.tot},mod:F.mod,base:F.T.base,g,pagoA:cta});
   medir("InitiateCheckout",{value:F.total,currency:"CLP",num_items:items().reduce((s,x)=>s+x.c,0)});
   /* El carro NO se vacía aquí: si WhatsApp no se abre o la persona vuelve, el pedido sigue ahí.
      Se vacía con «Hacer un pedido nuevo». Solo se recuerda el número y el total (nunca los datos personales). */
-  ultimo={id,total:F.total,link,pagado:!!cta};
+  ultimo={id,total:F.total,link,texto,pagado:!!cta};
   try{localStorage.setItem("aureo-enviado",JSON.stringify({id,total:F.total,pagado:!!cta,t:Date.now()}))}catch(e){}
+  /* Primero la pantalla final y en el mismo toque se abre WhatsApp (si se espera, el celular lo bloquea). */
   location.hash="#listo";
-  abrirWhatsApp(link);
+  abrirWhatsApp(texto);
 }
 
 /* Copia del pedido a la bandeja de Áureo y Caro (pestaña «PEDIDOS WEB» del maestro, vía Apps Script).
@@ -337,13 +338,27 @@ function guardarPedido({id,e,mod,base,g,pagoA},esperar){
   }catch(err){if(esperar)return Promise.reject(err)}
 }
 
-/* Celular (y navegadores de Instagram/Facebook, que bloquean ventanas nuevas): salto directo a WhatsApp.
-   Computador: pestaña nueva; si el navegador la bloquea, salto directo. */
-function abrirWhatsApp(link){
-  const cel=/Android|iPhone|iPad|iPod|FBAN|FBAV|Instagram/i.test(navigator.userAgent)||matchMedia("(pointer:coarse)").matches;
-  if(!cel){const w=window.open(link,"_blank");if(w)return}
-  setTimeout(()=>{location.href=link},150);
+/* Salto a WhatsApp (Áureo, 27-nov-2026). Antes iba a wa.me, que pasa por una página intermedia de WhatsApp con «Abrir aplicación»
+   y «Descargar»: en el celular (sobre todo dentro de Instagram/Facebook) la clienta se quedaba ahí y perdía nuestra pantalla final,
+   y en el computador siempre salía «Descargar». Ahora:
+   · Celular: se abre la app de WhatsApp directo (whatsapp://), sin salir de la web. Si a los 2 s la web sigue a la vista
+     (no se abrió), «Pedido listo» lo avisa y deja botones de respaldo.
+   · Computador: WhatsApp Web directo en una pestaña nueva (sin la página de «Descargar»).
+   · Respaldo en «Pedido listo»: botón grande, otra forma de abrirlo, «Copiar mi pedido» y el número escrito. */
+const esCel=()=>/Android|iPhone|iPad|iPod|FBAN|FBAV|Instagram/i.test(navigator.userAgent)||matchMedia("(pointer:coarse)").matches;
+const waURL=(t,m)=>{const e=encodeURIComponent(t);m=m||(esCel()?"app":"web");
+  return m==="app"?`whatsapp://send?phone=${WHATSAPP}&text=${e}`:m==="web"?`https://web.whatsapp.com/send?phone=${WHATSAPP}&text=${e}`:`https://wa.me/${WHATSAPP}?text=${e}`};
+const numeroWA=()=>{const n=String(WHATSAPP);return n.length===11&&n.startsWith("569")?`+56 9 ${n.slice(3,7)} ${n.slice(7)}`:"+"+n};
+let waAbrio=null;
+function abrirWhatsApp(texto){
+  waAbrio=null;
+  if(esCel()){
+    document.addEventListener("visibilitychange",()=>{if(document.hidden)waAbrio=true},{once:true});
+    location.href=waURL(texto,"app");
+    setTimeout(()=>{if(waAbrio)return;waAbrio=false;avisoWA()},2000);
+  }else{const w=window.open(waURL(texto,"web"),"_blank");waAbrio=!!w;if(!w)avisoWA()}
 }
+function avisoWA(){const a=document.getElementById("waAviso");if(!a)return;a.classList.add("fallo");const f=a.querySelector("[data-falla]");if(f)f.hidden=false;a.scrollIntoView({behavior:"smooth",block:"center"})}
 function enviadoReciente(){try{const x=JSON.parse(localStorage.getItem("aureo-enviado")||"null");return x&&Date.now()-x.t<2*864e5?x:null}catch(e){return null}}
 function pedidoNuevo(){carro=[];guardar();camisetas=[];coleccion=new Set();bumps={};datos={};metaRegalo=0;paso=0;ultimo=null;try{localStorage.removeItem("aureo-enviado")}catch(e){}location.hash=""}
 
@@ -351,7 +366,7 @@ function vistaListo(){
   modo("en-pedido","Pedido listo");window.scrollTo(0,0);
   const g=enviadoReciente();
   const u=ultimo||(g?{id:g.id,total:g.total,link:"",pagado:g.pagado}:{id:"",total:0,link:""});
-  const comp=`https://wa.me/${WHATSAPP}?text=${encodeURIComponent("Hola! Te envio el comprobante del pedido "+u.id)}`;
+  const cel=esCel(),comp=waURL("Hola! Te envio el comprobante del pedido "+u.id);
   if(u.equipo){
     document.getElementById("vista").innerHTML=`<div class="wrap pedido" style="max-width:560px"><div class="listo"><div class="ok">✓</div><h2>Guardado en la bandeja</h2>
       <p class="nota">Pedido <b>${esc(u.id)}</b> · ${clp(u.total)} · quedó «Pendiente». Cuando el cliente pague, márcalo en la bandeja.</p></div>
@@ -361,18 +376,24 @@ function vistaListo(){
   const C=cuentasListas(), sel=C.find(c=>c.quien===datos.cuenta)||C[0];
   document.getElementById("vista").innerHTML=`<div class="wrap pedido" style="max-width:560px">
     <div class="listo"><div class="ok">✓</div><h2>¡Tu pedido está listo!</h2>
-      <p class="nota">${u.id?`Pedido <b>${esc(u.id)}</b> · `:""}se abrió WhatsApp con todo escrito. <b>Si no alcanzaste a enviarlo</b>, ${u.link?`<a href="${u.link}" data-reabrir>ábrelo de nuevo</a>`:`<a href="#pedido">vuelve a tu pedido</a> y apriétalo otra vez`}: tu pedido sigue guardado.</p></div>
+      <p class="nota">${u.id?`Pedido <b>${esc(u.id)}</b> · `:""}${u.texto?"Se abrió WhatsApp con tu pedido escrito: <b>solo aprieta Enviar ➤</b>.":`<a href="#pedido">Vuelve a tu pedido</a> y apriétalo otra vez: tu pedido sigue guardado.`}</p></div>
+    ${u.texto?`<div class="wa-box${waAbrio===false?" fallo":""}" id="waAviso"><p class="wa-falla" data-falla ${waAbrio===false?"":"hidden"}>⚠️ No se abrió WhatsApp. Envíanos tu pedido con este botón:</p>
+      <p class="wa-tit">¿No alcanzaste a enviarlo?</p>
+      <a class="btn-grande wa wa-btn" href="${esc(waURL(u.texto))}" ${cel?"":'target="_blank" rel="noopener"'}>📲 Abrir WhatsApp con mi pedido</a>
+      ${cel?`<a class="wa-alt" href="${esc(waURL(u.texto,"wame"))}">¿No abre? Prueba aquí (en la página que sale, toca <b>«Abrir aplicación»</b>, no «Descargar»)</a>`
+        :`<a class="wa-alt" href="${esc(waURL(u.texto,"app"))}">Tengo WhatsApp instalado en este computador</a>`}
+      <div class="wa-copia"><button data-copiar="${esc(u.texto)}">Copiar mi pedido</button><span>y pégalo en un chat con <b>${numeroWA()}</b></span></div>
+    </div>`:""}
     <div class="paso-l"><div class="n">1</div><div style="flex:1"><h3>${u.pagado?"Transferencia hecha ✓":`Transfiere ${u.total?clp(u.total):"el total"}`}</h3>
       ${u.pagado?`<p class="nota" style="margin:0">Solo falta el comprobante.</p>`:!C.length?`<p class="nota" style="margin:0">Te llegan por WhatsApp los datos para transferir. <b>Esperamos tu transferencia para cerrar tu pedido.</b></p>`:`<p class="nota" style="margin:0 0 6px">Cuenta de ${esc(sel.quien)}:</p>`+sel.datos.map(([k,v])=>`<div class="dato-p"><div><span>${esc(k)}</span><br><b>${esc(v)}</b></div><button data-copiar="${esc(v)}">Copiar</button></div>`).join("")}
       ${u.total&&!u.pagado?`<div class="dato-p"><div><span>Monto</span><br><b>${clp(u.total)}</b></div><button data-copiar="${u.total}">Copiar</button></div>`:""}</div></div>
     <div class="paso-l"><div class="n">2</div><div style="flex:1"><h3>Envíanos el comprobante y cerramos tu pedido</h3>
-      <a class="btn-grande wa" style="display:flex;align-items:center;justify-content:center;text-decoration:none;height:46px" target="_blank" href="${comp}">Enviar comprobante por WhatsApp</a></div></div>
+      <a class="btn-grande wa" style="display:flex;align-items:center;justify-content:center;text-decoration:none;height:46px" ${cel?"":'target="_blank" rel="noopener"'} href="${esc(comp)}">Enviar comprobante por WhatsApp</a></div></div>
     <div class="paso-l"><div class="n">3</div><div><h3>Te confirmamos y despachamos</h3><p class="nota" style="margin:0">Javi o Caro revisan el pago, te confirman y te mandan el número de seguimiento cuando sale.</p></div></div>
     ${URGENCIA&&new Date()<=new Date(URGENCIA.hasta+"T23:59:59")?`<p class="nota" style="text-align:center;margin-top:14px"><b>${esc(URGENCIA.texto)}</b></p>`:""}
     <p style="text-align:center;margin-top:18px"><a class="avisame" target="_blank" href="${INSTAGRAM}">Síguenos en Instagram @aureo.cl</a></p>
     <p style="text-align:center;margin-top:10px"><button class="no-gracias" data-nuevo>Hacer un pedido nuevo</button></p>
   </div>`;
-  const re=document.querySelector("[data-reabrir]");if(re)re.onclick=ev=>{ev.preventDefault();abrirWhatsApp(u.link)};
   document.querySelector("[data-nuevo]").onclick=pedidoNuevo;
   document.querySelectorAll("[data-copiar]").forEach(b=>b.onclick=async()=>{try{await navigator.clipboard.writeText(b.dataset.copiar);b.textContent="✓ Copiado"}catch(e){b.textContent="Mantén apretado para copiar"}});
 }
