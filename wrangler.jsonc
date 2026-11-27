@@ -1,0 +1,18 @@
+// Cloudflare · Worker de la página de Aureo (W3, 27-nov-2026).
+// Los archivos del repo se sirven igual que antes; SOLO /api/* pasa por el código (api/worker.js).
+// Sin claves aquí: el repo es público. Las claves van como secretos en Cloudflare.
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "aureocl-github-io-catalogoweb",
+  "main": "api/worker.js",
+  "compatibility_date": "2026-11-01",
+  "assets": {
+    "directory": ".",
+    "binding": "ASSETS",
+    "run_worker_first": ["/api/*"]
+  },
+  "d1_databases": [
+    { "binding": "DB", "database_name": "aureo-pedidos", "database_id": "778e6a12-c7ae-4b01-91d8-36ef0c24bba0" }
+  ],
+  "observability": { "enabled": true }
+}

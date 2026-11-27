@@ -1,0 +1,8 @@
+# Lo que NO se publica como página en Cloudflare (código del backend y archivos internos).
+.git
+.github
+api
+wrangler.jsonc
+.assetsignore
+node_modules
+.wrangler
