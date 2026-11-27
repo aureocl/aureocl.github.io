@@ -315,6 +315,9 @@ function enviarPedido(pagado){
 
 /* Copia del pedido a la bandeja de Áureo y Caro (pestaña «PEDIDOS WEB» del maestro, vía Apps Script).
    Va en segundo plano: si falla, el pedido igual sale por WhatsApp. Ahí marcan «Pagó a Javi/Caro» y pasa a VENTAS. */
+/* Copia del pedido a Cloudflare (W3, fase 1): sin esperar respuesta; si falla, el pedido igual va a Google y a WhatsApp. */
+function copiaCloudflare(p){if(typeof API_PEDIDOS==="undefined"||!API_PEDIDOS)return;
+  try{fetch(API_PEDIDOS,{method:"POST",mode:"no-cors",keepalive:true,headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(p)}).catch(()=>{})}catch(e){}}
 function guardarPedido({id,e,mod,base,g,pagoA},esperar){
   if(!PEDIDOS_URL)return esperar?Promise.reject(new Error("apagado")):undefined;
   try{
@@ -328,6 +331,7 @@ function guardarPedido({id,e,mod,base,g,pagoA},esperar){
       regaloMini:llevaMini(),series:(datos.series||[]).filter(Boolean).join(", "),
       empaque:T.emp||0,dedicatoria:datos.ded||"",descEscudos:T.desc||0,descCol:T.descCol||0,
       envio:e.c||0,prioridad:datos.prio?PROP.prioridad:0,total:base+e.tot,esRegalo:!!datos.regalo,pagoDeclarado:pagoA||"",ingresadoPor:EQUIPO||""};
+    copiaCloudflare(p);
     if(esperar)return fetch(PEDIDOS_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(p)}).then(r=>r.json());
     fetch(PEDIDOS_URL,{method:"POST",mode:"no-cors",keepalive:true,headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(p)}).catch(()=>{});
   }catch(err){if(esperar)return Promise.reject(err)}

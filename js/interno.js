@@ -132,6 +132,7 @@ function rEnviar(btn){
     mini:null,regaloMini:!!R.mini,series:R.series.filter(Boolean).join(", "),
     empaque:0,dedicatoria:"",descEscudos:0,descCol:0,descInterno:X.descReal||0,motivoDesc:X.descReal?R.motivo.trim():"",
     envio:X.env,prioridad:0,total:X.total,esRegalo:false,pagoDeclarado:"",ingresadoPor:EQUIPO,rapido:true};
+  copiaCloudflare(p);
   btn.disabled=true;btn.textContent="Guardando…";
   fetch(PEDIDOS_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(p)}).then(r=>r.json())
     .then(r=>{if(!r||!r.ok)throw new Error((r&&r.error)||"");const id=R.id;R=rNuevo();rGuardar();
