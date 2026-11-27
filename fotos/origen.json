@@ -531,5 +531,11 @@
   "fecha": "2026-11-08T20:26:45",
   "origen": "taller",
   "producto": "Universitario de Deportes"
+ },
+ "zoey-cuerpo-entero": {
+  "fecha": "2026-11-26T22:54:07",
+  "origen": "taller",
+  "producto": "Zoey cuerpo entero",
+  "protegida": true
  }
 }
