@@ -30,3 +30,9 @@ CREATE TABLE IF NOT EXISTS gasto_meta (
   gasto INTEGER NOT NULL, gasto_iva INTEGER NOT NULL, mensajes INTEGER DEFAULT 0, actualizado TEXT,
   PRIMARY KEY (fecha, campana)
 );
+
+-- Visitas (27-nov-2026): antes en la hoja VISITAS del maestro. Anónimas: sin nombres ni teléfonos.
+CREATE TABLE IF NOT EXISTS visitas (id TEXT PRIMARY KEY, visitante TEXT NOT NULL, inicio TEXT NOT NULL, actualizado TEXT NOT NULL, origen TEXT, disp TEXT, entrada TEXT, carga REAL, paso INTEGER DEFAULT 1, vio TEXT, agrego TEXT, of_v TEXT, of_a TEXT, busq TEXT, pedido TEXT, compro TEXT, errores INTEGER DEFAULT 0, fotos TEXT, corte TEXT, dur INTEGER DEFAULT 0);
+CREATE INDEX IF NOT EXISTS visitas_inicio ON visitas(inicio);
+CREATE TABLE IF NOT EXISTS en_linea (visitante TEXT PRIMARY KEY, pag TEXT, ultimo INTEGER NOT NULL);  -- «ahora mismo»
+CREATE TABLE IF NOT EXISTS config (k TEXT PRIMARY KEY, v TEXT NOT NULL);  -- clave_bandeja_sha256 = huella de la clave, nunca la clave
