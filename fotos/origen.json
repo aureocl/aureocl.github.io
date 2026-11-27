@@ -392,6 +392,12 @@
   "origen": "taller",
   "producto": "O'Higgins"
  },
+ "pack-huntrix-chibi": {
+  "fecha": "2026-11-26T22:54:12",
+  "origen": "taller",
+  "producto": "Pack Huntrix chibi",
+  "protegida": true
+ },
  "pack-huntrix-derpy": {
   "fecha": "2026-11-26T22:54:01",
   "origen": "taller",
