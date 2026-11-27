@@ -188,6 +188,12 @@
   "origen": "laboratorio",
   "producto": "deportes-temuco"
  },
+ "derpy-el-tigre": {
+  "fecha": "2026-11-26T22:54:09",
+  "origen": "taller",
+  "producto": "Derpy, el tigre",
+  "protegida": true
+ },
  "everton": {
   "fecha": "2026-11-26T09:51:21",
   "origen": "taller",
