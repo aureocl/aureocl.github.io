@@ -34,7 +34,7 @@ function vistaCatalogo(){
   modo("en-catalogo");
   const cats=[...new Set(P.map(p=>p.cat))].sort((a,b)=>{const i=ORDEN.indexOf(a),j=ORDEN.indexOf(b);return(i<0?99:i)-(j<0?99:j)});
   const q=norm(document.getElementById("buscar").value);
-  const L=P.filter(p=>!esVarSec(p)&&(cat==="Todo"||p.cat===cat)&&(!q||coincide(p.nombre+" "+p.cat+" "+textoVar(p),q)));
+  const L=P.filter(p=>!esVarSec(p)&&(cat==="Todo"||p.cat===cat)&&(!q||coincide(p.nombre+" "+p.cat+" "+(p.tema||"")+" "+textoVar(p),q)));
   const tc=tramosCombo(),c=comboFila(),s=solaFila();
   document.getElementById("vista").innerHTML=`
   <nav class="chips">${["Todo",...cats].map(x=>`<button class="chip${x===cat?" activa":""}" data-cat="${esc(x)}">${x==="Todo"?"🏠 Inicio":esc(x)}</button>`).join("")}</nav>
@@ -57,6 +57,9 @@ const INTL=["barcelona","boca-juniors","real-madrid","river-plate","universitari
 const esIntl=p=>INTL.some(s=>p.slug===s||p.slug.startsWith(s+"-"));
 const esEsc=p=>p.cat==="Escudos de fútbol";
 const esMascota=p=>/mascota/i.test(p.nombre);
+const esFigura=p=>/^Figuras/.test(p.cat);
+const TEMAS_ORDEN=["Pokémon","Dragon Ball","Naruto","One Piece","Marvel","Disney","Videojuegos","Minecraft","Los Simpson","Bob Esponja","South Park","Hello Kitty y Kuromi","Harry Potter","KPop Demon Hunters"];
+const TEMAS_ICO={"Pokémon":"⚡","Dragon Ball":"🐉","Naruto":"🍥","One Piece":"🏴‍☠️","Marvel":"🦸","Disney":"🏰","Videojuegos":"🎮","Minecraft":"⛏️","Los Simpson":"🍩","Bob Esponja":"🍍","South Park":"❄️","Hello Kitty y Kuromi":"🎀","Harry Potter":"🪄","KPop Demon Hunters":"🎤","Otros":"🧩"};
 const visibles=()=>P.filter(p=>!esVarSec(p));
 const PAGS={
   "escudos-chilenos":{nom:"Escudos chilenos",ico:"🏟️",frase:"Tu club chileno, pieza por pieza.",f:p=>esEsc(p)&&!esIntl(p),rep:"colo-colo"},
@@ -77,16 +80,22 @@ const GRUPOS=[
   {id:"futbol",nom:"Fútbol",ico:"⚽",frase:"Escudos de tu club y camisetas con tu nombre.",subs:["escudos-chilenos","escudos-internacionales","camisetas"]},
   {id:"basquetbol",nom:"Básquetbol",ico:"🏀",subs:["basquetbol"]},
   {id:"musica",nom:"Música",ico:"🎵",subs:["musica"]},
-  {id:"figuras",nom:"Figuras",ico:"🧸",frase:"Tus personajes favoritos, en 3D y en 2D.",subs:["figuras-3d-mini","figuras-3d-grandes","figuras-2d"]},
+  {id:"tematicas",nom:"Temáticas",ico:"🎬",frase:"Tus series, películas y videojuegos favoritos, en 3D y en 2D.",subs:[],carpeta:1},
   {id:"personalizados",nom:"Personalizados",ico:"✨",frase:"Tu mascota o el diseño que quieras.",subs:["mascotas","a-pedido"]},
   {id:"regalos",nom:"Regalos",ico:"🎁",frase:"Te ayudamos a elegir: por persona o por presupuesto.",subs:[...PERSONAS.map(x=>x[0]),...TRAMOS.map(x=>x[0])]}];
 let paginasListas=false;
 function armarPaginas(){
   if(paginasListas)return;paginasListas=true;
+  /* Temáticas (antes «Figuras»): una carpeta por serie o personaje. La serie va en la planilla después de « · » en la
+     categoría (ej. «Figuras 3D mini · Pokémon»); las figuras sin serie quedan en «Otros». */
+  const temaDe=p=>p.tema||"Otros",pos=t=>{const i=TEMAS_ORDEN.indexOf(t);return t==="Otros"?999:i<0?500:i};
+  const temas=[...new Set(visibles().filter(esFigura).map(temaDe))].sort((a,b)=>pos(a)-pos(b)||a.localeCompare(b,"es"));
+  const ids=temas.map(t=>{const id=PAGS[slug(t)]?"tema-"+slug(t):slug(t);PAGS[id]={nom:t,ico:TEMAS_ICO[t]||"🎬",frase:t==="Otros"?"Más figuras para armar.":`Figuras de ${t} para armar.`,f:p=>esFigura(p)&&temaDe(p)===t};return id});
+  GRUPOS.find(g=>g.id==="tematicas").subs=ids;
   const base=Object.keys(PAGS).filter(k=>!PAGS[k].regalo);
   [...new Set(visibles().filter(p=>!base.some(k=>PAGS[k].f(p))).map(p=>p.cat))].forEach(c=>{const id=slug(c);
     PAGS[id]={nom:c,ico:"🧩",frase:"Lo nuevo de Áureo.",f:p=>p.cat===c,nueva:1};GRUPOS.splice(GRUPOS.length-1,0,{id,nom:c,ico:"🧩",subs:[id]})});
-  GRUPOS.forEach(g=>{if(g.subs.length>1&&!PAGS[g.id])PAGS[g.id]={nom:g.nom,ico:g.ico,frase:g.frase,f:p=>g.subs.some(s=>PAGS[s].f(p)),grupo:1}});
+  GRUPOS.forEach(g=>{if((g.subs.length>1||g.carpeta)&&!PAGS[g.id])PAGS[g.id]={nom:g.nom,ico:g.ico,frase:g.frase,f:p=>g.subs.some(s=>PAGS[s].f(p)),grupo:1}});
   PAGS.todo={nom:"Todo el catálogo",ico:"🧩",frase:"Todo lo que puedes armar con Áureo.",f:()=>true};
 }
 const grupoDePag=id=>GRUPOS.find(g=>g.id===id||g.subs.includes(id));
@@ -153,7 +162,7 @@ function vistaInicio(){
   const mv=masVendidos(),rep=c=>visibles().find(p=>p.cat===c&&p.precio),cc=porSlug("colo-colo");
   const nuevosT=visibles().filter(p=>p.precio&&/nuevo|lanzamiento/i.test(p.etq||"")&&!esEsc(p)),nuevos=[],vistas=new Set();
   nuevosT.forEach(p=>{if(!vistas.has(p.cat)){vistas.add(p.cat);nuevos.push(p)}});nuevosT.forEach(p=>{if(nuevos.length<8&&!nuevos.includes(p))nuevos.push(p)});
-  const tiles=["escudos-chilenos","escudos-internacionales","camisetas","musica","figuras-3d-mini","figuras-3d-grandes","figuras-2d","basquetbol","mascotas",...Object.keys(PAGS).filter(k=>PAGS[k].nueva)].filter(id=>PAGS[id]&&prods(id).length)
+  const tiles=["escudos-chilenos","escudos-internacionales","camisetas","musica","tematicas","basquetbol","mascotas",...Object.keys(PAGS).filter(k=>PAGS[k].nueva)].filter(id=>PAGS[id]&&prods(id).length)
     .map(id=>{const d=desdeDe(id);return `<a class="h-cat" href="#c/${id}"><div class="h-cat-ft"><img src="${esc(fotoPag(id))}" alt="" loading="lazy"></div><div class="h-cat-tx"><b>${PAGS[id].ico} ${esc(PAGS[id].nom)}</b><small>${esc(PAGS[id].frase)}</small>${d?`<span>Desde ${clp(d)}</span>`:""}</div></a>`}).join("");
   const ce=comboFila(),so=solaFila(),cams=cc?parCam(cc):[];
   const collage=["Escudos de fútbol","Música","Figuras 3D mini","Figuras 2D"].map(rep).filter(Boolean);
@@ -254,23 +263,23 @@ function ordenar(L){const nuevo=p=>/nuevo|lanzamiento/i.test(p.etq||"")?0:1,mv=t
 function vistaCategoria(id){
   armarMenu();
   const q=document.getElementById("buscar").value.trim();let pg=PAGS[id],L;
-  if(id==="buscar"){pg={nom:`Resultados para «${q}»`,ico:"🔎",frase:"Lo que encontramos en el catálogo."};L=visibles().filter(p=>coincide(p.nombre+" "+p.cat+" "+textoVar(p),q))}
+  if(id==="buscar"){pg={nom:`Resultados para «${q}»`,ico:"🔎",frase:"Lo que encontramos en el catálogo."};L=visibles().filter(p=>coincide(p.nombre+" "+p.cat+" "+(p.tema||"")+" "+textoVar(p),q))}
   else if(!pg){location.hash="";return}else L=prods(id);
   if(cat!==id)ordenCat="destacados";cat=id;
   modo("en-catalogo");document.getElementById("cab").style.display="none";marcarMenu(id==="buscar"||id==="todo"?null:id);
-  const g=id==="buscar"||id==="todo"?null:grupoDePag(id),herm=g?subsCon(g):[],esGrupo=!!g&&g.id===id&&g.subs.length>1;
-  const migas=`<a href="#">Inicio</a> › `+(!g||g.subs.length===1?esc(pg.nom):g.id===id?esc(g.nom):`${PAGS[g.id]?`<a href="#c/${g.id}">${esc(g.nom)}</a>`:esc(g.nom)} › ${esc(pg.nom)}`);
-  const chips=id==="todo"?GRUPOS.filter(x=>subsCon(x).length&&x.id!=="regalos").map(x=>`<a class="h-chip" href="#c/${PAGS[x.id]&&x.subs.length>1?x.id:subsCon(x)[0]}">${x.ico} ${esc(x.nom)}</a>`).join("")
-    :herm.length>1?(PAGS[g.id]&&g.id!=="regalos"?`<a class="h-chip" href="#c/${g.id}" aria-current="${esGrupo}">Todo ${esc(g.nom)}</a>`:"")+herm.map(s=>`<a class="h-chip" href="#c/${s}" aria-current="${s===id}">${esc(PAGS[s].corto||PAGS[s].nom)}</a>`).join(""):"";
+  const g=id==="buscar"||id==="todo"?null:grupoDePag(id),herm=g?subsCon(g):[],esGrupo=!!g&&g.id===id&&(g.subs.length>1||g.carpeta);
+  const migas=`<a href="#">Inicio</a> › `+(!g||(g.subs.length===1&&!g.carpeta)?esc(pg.nom):g.id===id?esc(g.nom):`${PAGS[g.id]?`<a href="#c/${g.id}">${esc(g.nom)}</a>`:esc(g.nom)} › ${esc(pg.nom)}`);
+  const chips=id==="todo"?GRUPOS.filter(x=>subsCon(x).length&&x.id!=="regalos").map(x=>`<a class="h-chip" href="#c/${PAGS[x.id]&&(x.subs.length>1||x.carpeta)?x.id:subsCon(x)[0]}">${x.ico} ${esc(x.nom)}</a>`).join("")
+    :(herm.length>1||(g&&g.carpeta))?(PAGS[g.id]&&g.id!=="regalos"?`<a class="h-chip" href="#c/${g.id}" aria-current="${esGrupo}">Todo ${esc(g.nom)}</a>`:"")+herm.map(s=>`<a class="h-chip" href="#c/${s}" aria-current="${s===id}">${esc(PAGS[s].corto||PAGS[s].nom)}</a>`).join(""):"";
   const lista=ordenar(L),d=id==="buscar"?0:desdeDe(id);
   document.getElementById("vista").innerHTML=`<div class="h-envio">${ENVIO_TXT}</div>
   <div class="pc-top"><div class="h-wrap pc-top-in"><div><div class="pc-migas">${migas}</div>
-    <h1>${pg.ico} ${esc(pg.nom)}</h1><p>${esc(pg.frase||"")}</p><span class="pc-cuenta">${L.length} ${L.length===1?"producto":"productos"}${d?" · desde "+clp(d):""}</span></div>
+    <h1>${pg.ico} ${esc(pg.nom)}</h1><p>${esc(pg.frase||"")}</p><span class="pc-cuenta">${esGrupo&&g.carpeta?`${herm.length} ${herm.length===1?"colección":"colecciones"}`:`${L.length} ${L.length===1?"producto":"productos"}`}${d?" · desde "+clp(d):""}</span></div>
     ${id==="buscar"?"":`<img src="${esc(fotoPag(id))}" alt="">`}</div></div>
   <section class="h-bloque h-pt0"><div class="h-wrap">
     <div class="pc-barra"><div class="h-chips">${chips}</div>
-      <label class="pc-orden">Ordenar <select id="pcOrden"><option value="destacados">Destacados</option><option value="menor">Menor precio</option><option value="mayor">Mayor precio</option><option value="nuevo">Lo nuevo</option></select></label></div>
-    ${lista.length?`<div class="grilla">${lista.map(tarjeta).join("")}</div>`:`<div class="a-pedido"><p class="serif" style="font-size:26px;margin:0">¿No está «${esc(q)}»?</p><p>Lo diseñamos a pedido: nos mandas la imagen, te decimos si se puede y te damos el precio.</p><a class="btn-grande wa" style="display:flex;align-items:center;justify-content:center;text-decoration:none" target="_blank" rel="noopener" href="${waLink("Hola Áureo! Quiero un diseño a pedido de: "+q)}">Pedir el mío por WhatsApp</a></div>`}
+      <label class="pc-orden"${esGrupo&&g.carpeta?` style="display:none"`:""}>Ordenar <select id="pcOrden"><option value="destacados">Destacados</option><option value="menor">Menor precio</option><option value="mayor">Mayor precio</option><option value="nuevo">Lo nuevo</option></select></label></div>
+    ${esGrupo&&g.carpeta?`<div class="pc-temas">${herm.map(s=>{const d=desdeDe(s);return `<a class="h-cat" href="#c/${s}"><div class="h-cat-ft"><img src="${esc(fotoPag(s))}" alt="" loading="lazy"></div><div class="h-cat-tx"><b>${PAGS[s].ico} ${esc(PAGS[s].nom)}</b><small>${prods(s).length} ${prods(s).length===1?"producto":"productos"}</small>${d?`<span>Desde ${clp(d)}</span>`:""}</div></a>`}).join("")}</div>`:lista.length?`<div class="grilla">${lista.map(tarjeta).join("")}</div>`:`<div class="a-pedido"><p class="serif" style="font-size:26px;margin:0">¿No está «${esc(q)}»?</p><p>Lo diseñamos a pedido: nos mandas la imagen, te decimos si se puede y te damos el precio.</p><a class="btn-grande wa" style="display:flex;align-items:center;justify-content:center;text-decoration:none" target="_blank" rel="noopener" href="${waLink("Hola Áureo! Quiero un diseño a pedido de: "+q)}">Pedir el mío por WhatsApp</a></div>`}
     ${lista.length?`<div class="h-pedido pc-pedido"><div><h2 class="h-t">¿No está el tuyo?</h2><p>Lo diseñamos para ti. Nos mandas la imagen, te decimos si se puede y te damos el precio.</p></div>
       <a class="h-btn wa" target="_blank" rel="noopener" href="${waLink("Hola Áureo! Quiero un diseño a pedido de: ")}">Pedir el mío por WhatsApp</a></div>`:""}
     <div class="h-garantias pc-gar">${GARANTIAS}</div>
@@ -354,7 +363,7 @@ function vistaFicha(s){
     <div class="f-galeria">${pl?`<img class="principal" id="fotoP" src="${fp(pl,pl.galeria[0])}" alt="${esc(p.nombre)}">
       <div class="miniaturas">${pl.galeria.map((k,i)=>`<img src="${fp(pl,k)}" data-gal="${fp(pl,k)}" class="${i?"":"sel"}" alt="">`).join("")}</div>`:`<div class="f-hero">${img(p)}</div>`}</div>
     <div class="f-info">
-      <div class="eyebrow">${h?`Para el ${esc(h[0])}`:esc(p.cat)}</div>
+      <div class="eyebrow">${h?`Para el ${esc(h[0])}`:esc(p.tema||p.cat)}</div>
       <h1 class="serif">${titulo}</h1>
       ${pl?`<div class="prueba-corta"><img src="${fp(pl,"cliente2")}" alt="">«${esc(pl.cita.split(",")[1]?.trim()||pl.cita)}…»</div>`:""}
       <div class="datos">${p.tam?`<span class="dato">📏 ${esc(p.tam)}</span>`:""}${pz?`<span class="dato">🧩 +${pz} piezas</span>`:""}${esEscudo(p)?`<span class="dato">⏳ 2 a 3 horas</span>`:""}</div>

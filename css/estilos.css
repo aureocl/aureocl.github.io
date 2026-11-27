@@ -463,6 +463,9 @@ body.final .quienes:has(>.placeholder){display:block}
 .h-cinta{display:flex;gap:14px;overflow-x:auto;scrollbar-width:none;padding:4px 0 8px}
 .h-cinta::-webkit-scrollbar{display:none}
 .h-cat{flex:none;width:clamp(155px,40vw,260px);text-decoration:none;color:inherit;background:#fff;border-radius:14px;overflow:hidden;border:1px solid var(--linea)}
+/* Carpetas de Temáticas (una por serie) */
+.pc-temas{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-top:12px}
+.pc-temas .h-cat{width:auto}
 .h-cat-ft{aspect-ratio:1/1;background:#efebe4;overflow:hidden}
 .h-cat-ft img{width:100%;height:100%;object-fit:cover}
 .h-cat-tx{padding:10px 12px 12px}

@@ -37,7 +37,9 @@ async function cargar(){
   const H=F.shift().map(norm);const col=n=>H.findIndex(h=>h.startsWith(n));
   const K={m:col("mostrar"),c:col("categoria"),n:col("producto"),t:col("tamano"),p:col("precio"),a:col("precio antes"),e:col("etiqueta"),d:col("detalle"),f:col("foto")};
   P=F.map(f=>({mostrar:norm(f[K.m]||"si"),cat:(f[K.c]||"Otros").trim(),nombre:(f[K.n]||"").trim(),tam:(f[K.t]||"").trim(),precio:num(f[K.p]),antes:num(f[K.a]),etq:(f[K.e]||"").trim(),det:(f[K.d]||"").trim(),foto:(f[K.f]||"").trim()}))
-    .filter(p=>p.nombre&&!["no","n","0"].includes(p.mostrar)).map(p=>({...p,slug:slug(p.nombre)}));
+    .filter(p=>p.nombre&&!["no","n","0"].includes(p.mostrar)).map(p=>({...p,slug:slug(p.nombre)}))
+    /* «Figuras 3D mini · Pokémon» en la planilla = categoría «Figuras 3D mini» + temática «Pokémon» (carpeta dentro de Temáticas). */
+    .map(p=>{const m=p.cat.match(/^(.+?)\s+·\s+(.+)$/);return m?{...p,cat:m[1].trim(),tema:m[2].trim()}:p});
 }
 const esEscudo=p=>p&&p.cat==="Escudos de fútbol"&&!/a pedido/i.test(p.nombre);
 const comboFila=()=>P.find(p=>/camiseta/i.test(p.nombre)&&/con escudo/i.test(p.nombre));
