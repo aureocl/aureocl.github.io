@@ -4,7 +4,7 @@ Tablero común de los dos PCs. Antes de tomar algo, revisar que nadie lo tenga �
 Formato: `hilo · qué · quién · estado` (estado: por hacer · en curso · espera a Áureo · listo).
 
 ## En curso
-- W3 · Fase 1 Cloudflare: base D1 «aureo-pedidos» + API `/api/pedidos` en el Worker; cada pedido web se guarda también en Cloudflare (en paralelo a Google, una semana de prueba) · Áureo · en curso
+- W3 · Fase 1 Cloudflare: comparar una semana (hasta 4-dic) que cada pedido de Google también esté en D1; después fase 2 (bandeja lee de Cloudflare, login por código al correo) · Áureo · en curso
 
 ## Por hacer
 - W2 · Escribir las cuentas de Javi y Caro en `CUENTAS` (`js/config.js`): mientras estén vacías, la pantalla de pago dice «te mandamos los datos por WhatsApp» · Áureo/Caro · espera a Áureo
