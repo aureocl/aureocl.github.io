@@ -100,14 +100,14 @@ const VISITA=(()=>{
 
   /* Envío: una sola fila por visita (el script la reescribe si llega de nuevo). Solo si cambió algo. */
   function enviar(){
-    if(AFUERA||BOT||typeof PEDIDOS_URL==="undefined"||!PEDIDOS_URL)return;
+    if(AFUERA||BOT||typeof VISITAS_URL==="undefined"||!VISITAS_URL)return;
     try{if(typeof EQUIPO!=="undefined"&&EQUIPO)return}catch(e){}
     const {enviada,t0,ult,...datos}=V,firma=JSON.stringify(datos);
     if(firma===V.enviada)return;
     V.enviada=firma;guardar();
     const cuerpo=JSON.stringify({tipo:"visita",visitante,dur:Math.round((Date.now()-t0)/1000),...datos});
-    try{if(navigator.sendBeacon&&navigator.sendBeacon(PEDIDOS_URL,new Blob([cuerpo],{type:"text/plain;charset=utf-8"})))return}catch(e){}
-    try{fetch(PEDIDOS_URL,{method:"POST",mode:"no-cors",keepalive:true,headers:{"Content-Type":"text/plain;charset=utf-8"},body:cuerpo}).catch(()=>{})}catch(e){}
+    try{if(navigator.sendBeacon&&navigator.sendBeacon(VISITAS_URL,new Blob([cuerpo],{type:"text/plain;charset=utf-8"})))return}catch(e){}
+    try{fetch(VISITAS_URL,{method:"POST",mode:"no-cors",keepalive:true,headers:{"Content-Type":"text/plain;charset=utf-8"},body:cuerpo}).catch(()=>{})}catch(e){}
   }
   document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="hidden")enviar()});
   addEventListener("pagehide",enviar);
@@ -118,10 +118,10 @@ const VISITA=(()=>{
     if(h==="#pedido")return"Pedido";if(h==="#listo")return"Pedido listo";return"Catálogo"}
   let ultimoVivo=0;
   function vivo(){
-    if(AFUERA||BOT||document.visibilityState!=="visible"||typeof PEDIDOS_URL==="undefined"||!PEDIDOS_URL)return;
+    if(AFUERA||BOT||document.visibilityState!=="visible"||typeof VISITAS_URL==="undefined"||!VISITAS_URL)return;
     try{if(typeof EQUIPO!=="undefined"&&EQUIPO)return}catch(e){}
     if(Date.now()-V.t0>30*60e3||Date.now()-ultimoVivo<5000)return;ultimoVivo=Date.now();
-    try{navigator.sendBeacon(PEDIDOS_URL,new Blob([JSON.stringify({tipo:"vivo",v:V.id,pag:corto(lugar(),60)})],{type:"text/plain;charset=utf-8"}))}catch(e){}
+    try{navigator.sendBeacon(VISITAS_URL,new Blob([JSON.stringify({tipo:"vivo",v:V.id,pag:corto(lugar(),60)})],{type:"text/plain;charset=utf-8"}))}catch(e){}
   }
   addEventListener("load",()=>setTimeout(vivo,1500));
   addEventListener("hashchange",()=>setTimeout(vivo,800));

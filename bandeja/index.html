@@ -1353,12 +1353,16 @@ function bloqueGanando({ R, hoy, en, ing, conC, mg, ADS, llave, signo, kpi }) {
    Lee la hoja VISITAS del maestro: una fila ANÓNIMA por visita al catálogo (js/medicion.js del repo aureocl.github.io).
    Pasos: 1 entró · 2 vio un producto · 3 agregó · 4 empezó el pedido · 5 envió el pedido; «Pagó» = su AU-… está Pagado o Enviado. */
 let VIS = null, VIS_T = 0, PEND_WEB = null;
+/* Desde el 27-nov-2026 las visitas viven en Cloudflare (D1), no en la hoja VISITAS. */
+const VIS_URL = 'https:\/\/aureocl-github-io-catalogoweb.aureo-clventas.workers.dev/api/visitas';
+const leerVisitasCF = () => fetch(VIS_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ clave: K }) })
+  .then(r => r.json()).then(r => { if (!r.ok) throw new Error(r.error || 'Error'); return r.r; });
 function pedirVisitas(forzar) {
   if (VIS === 'cargando' || (VIS && !VIS.error && !forzar && Date.now() - VIS_T < 120000)) return;
   const antes = VIS && !VIS.error && VIS !== 'cargando' ? VIS : null;
   VIS = antes || 'cargando';
   if (antes) VIS.recargando = true;
-  llamar('visitas')
+  leerVisitasCF().catch(() => llamar('visitas'))  // desde el 27-nov en Cloudflare; si falla, lo antiguo de Google
     .then(r => { VIS = r; VIS_T = Date.now(); })
     .catch(e => { VIS = antes || { error: /Acción desconocida/.test(e.message) ? 'falta-script' : e.message }; if (antes) { VIS.recargando = false; VIS_T = Date.now(); } })
     .then(() => { if (VISTA === 'visitas') pintarPanel(); });
