@@ -5,6 +5,7 @@ Formato: `hilo · qué · quién · estado` (estado: por hacer · en curso · es
 
 ## En curso
 - W3 · Fase 1 Cloudflare: comparar una semana (hasta 4-dic) que cada pedido de Google también esté en D1; después fase 2 (bandeja lee de Cloudflare, login por código al correo) · Áureo · en curso
+- W2 · Arreglo del salto a WhatsApp al enviar el pedido (se quedaba en la página «Descargar» de WhatsApp o no abría en el celular): app directa en celular, WhatsApp Web en computador y botones de respaldo en «Pedido listo» · Áureo · en curso
 
 ## Por hacer
 - W2 · Escribir las cuentas de Javi y Caro en `CUENTAS` (`js/config.js`): mientras estén vacías, la pantalla de pago dice «te mandamos los datos por WhatsApp» · Áureo/Caro · espera a Áureo
